@@ -5,7 +5,11 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
+<<<<<<< Updated upstream
   Global Dim sVillaVersion:         String    := '9.10'
+=======
+  Global Dim sVillaVersion:         String    := '9.12'
+>>>>>>> Stashed changes
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -17,7 +21,7 @@ Proc Main
   Dim rCountMinute:                 real      := now
 
   Repeat
-    Call CheckUpdate
+
     // Pause bei Initialisierung
     if (bInit) then pause 300
 
