@@ -1,0 +1,121 @@
+﻿
+
+<div class="w3-padding CenterThings" style="max-width:600px; margin: auto; flex-direction: column;">
+
+<div class="w3-padding w3-margin-bottom w3-large" style="color: var(--ColorYellow);">Statusseite</div>
+
+
+
+
+<div class="CenterThings w3-padding w3-border w3-border-dark-grey w3-margin-top" style="width:100%">
+  <div class="w3-margin" style="margin-right:auto; width:100px;">Chart.js</div>
+  <div class="" id="IDChartJS" style="width:100%;">wait ...</div>
+</div>
+
+<div class="CenterThings w3-padding w3-border w3-border-dark-grey w3-margin-top" style="width:100%">
+  <div class="w3-margin" style="margin-right:auto; width:100px;">jQuery</div>
+  <div class="" id="IDJqueryStatus" style="width:100%;">wait ....</div>
+</div>
+
+
+<div class="CenterThings w3-padding w3-border w3-border-dark-grey w3-margin-top" style="width:100%">
+  <div class="w3-margin" style="margin-right:auto; width:100px;">Touch-Support</div>
+  <div class="" id="IDTochSupportStatus" style="width:100%;">wait ....</div>
+</div>
+
+<div class="CenterThings w3-padding w3-border w3-border-dark-grey w3-margin-top" style="width:100%">
+  <div class="w3-margin" style="margin-right:auto; width:100px;">Touch-Mode</div>
+  <div class="" id="IDTouchStatus" style="width:100%;">wait ....</div>
+</div>
+
+<div class="CenterThings w3-padding w3-border w3-border-dark-grey w3-margin-top" style="width:100%">
+  <div class="w3-margin" style="margin-right:auto; width:100px;">Line Awesome</div>
+  <div style="color: rgba(255, 0, 0, 0.7); width:100%;">
+    <div class="w3-normal las la-dot-circle a3-green w3-xxlarge" style=""></div>
+</div>
+
+
+</div>
+
+<div class="CenterThings w3-padding w3-border w3-border-dark-grey w3-margin-top" style="width:100%">
+  <div class="w3-margin" style="margin-right:auto; width:100px;">CSS</div>
+  <div class="w3-normal w3-animate-fading a3-green" style="width:100%;">Working...</div>
+</div>
+  
+
+
+
+<script>
+    
+  statusElement = document.getElementById('IDChartJS');
+       
+  if (typeof Chart !== 'undefined') {
+    statusElement.textContent = 'Chart.js ist erfolgreich geladen. Version: ' + Chart.version;
+    statusElement.style.color = 'var(--ColorGreen)';
+  } else {
+    statusElement.textContent = 'Chart.js konnte nicht geladen werden.';
+    statusElement.style.color = 'red';
+  }
+
+  statusElement = document.getElementById('IDJqueryStatus');
+    
+  if (typeof jQuery !== 'undefined') {
+    statusElement.textContent = 'jQuery ist verfügbar. Version: ' + jQuery.fn.jquery;
+    statusElement.style.color = 'var(--ColorGreen)';
+  } else {
+    statusElement.textContent = 'jQuery ist nicht verfügbar.';
+    statusElement.style.color = 'red';
+  }
+
+
+  statusElement = document.getElementById('IDTochSupportStatus');
+    
+  if (typeof tsVersion !== 'undefined') {
+    statusElement.textContent = 'touchsupport.js ist verfügbar. Version: ' + tsVersion;
+    statusElement.style.color = 'var(--ColorGreen)';
+  } else {
+    statusElement.textContent = 'touchsupport.js ist nicht verfügbar.';
+    statusElement.style.color = 'red';
+  }
+
+
+  lastInputMethod = 'unknown';
+
+  statusElement = document.getElementById('IDTouchStatus');
+
+  // Touch-Erkennung
+  document.addEventListener('touchstart', function() {
+    lastInputMethod = 'touch';
+    updateStatus();
+  }, { passive: true });
+
+  // Maus-Erkennung
+  document.addEventListener('mousemove', function() {
+    if (lastInputMethod !== 'touch') {
+      lastInputMethod = 'mouse';
+      updateStatus();
+    }
+  });
+
+  function updateStatus() {
+    if (lastInputMethod === 'touch') {
+      statusElement.textContent = 'Touch-Eingabe aktiv';
+      statusElement.style.color = 'var(--ColorGreen)';
+    } else if (lastInputMethod === 'mouse') {
+      statusElement.textContent = 'Maus-Eingabe aktiv';
+      statusElement.style.color = 'var(--ColorBlue)';
+    } else {
+      statusElement.textContent = 'Keine Eingabemethode erkannt';
+      statusElement.style.color = 'gray';
+    }
+  }
+
+  // Initiale Statusaktualisierung
+  updateStatus();
+
+
+</script>
+
+
+
+</div>

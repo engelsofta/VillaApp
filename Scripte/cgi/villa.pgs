@@ -1,0 +1,74 @@
+
+  // http://localhost/ProjektName/cgiscript/villa.htm
+
+  // PagePara[1] = Date  ("akt" für aktuelles Datum)
+  // PagePara[2] = GruppenHandle bei ajax_selectgroup
+  // PagePara[3] = Hour (Archivfilter)
+  // PagePara[4] = Reportnummer (bei Statusliste)  / DP bei Multiarchiv
+  // PagePara[5] = Archiv Tabelle oder Diagramm
+  
+
+  //                    1 / 3 = Tabellarische Darstellung / Eventarchiv
+  //                    2     = Zähler Monatsauswertung
+  //                    50    = Archivchart (Zähler oder Analogarchiv)
+
+  // PagePara[6] = false (false = Menü oben und an der Seite wird ausgeblendet)
+
+Proc Main
+
+  Include \cgi\villa\aktion
+  Include \cgi\villa\archiv
+  Include \cgi\villa\vorlagen
+  Include \cgi\villa\rev
+  Include \cgi\villa\ajax
+
+  Global Dim sPage:                 String		:= sVal((ReqVar.page))
+  Global Dim sAktion:               String		:= sVal((ReqVar.aktion))
+  Global Dim sHandle:               String		:= sVal((ReqVar.handle))
+  Global Dim iHandle:               Int			  := iVal(sHandle)
+  Global Dim aPagePara:             Array		  := []
+  Global Dim Page:                  Array		  := []
+  Global Dim aErg:                  Array		  := []
+  Global Dim bOK:                   Boolean   := False
+  Global Dim iSchleife:             Int			  := 0
+  Global Dim X2:                    Int			  := 0
+  Global Dim Datum:                 String		:= ''
+
+  Split aPagePara, sVal((ReqVar.pagepara)), ','
+
+  //logbook ReqVar.SESSIONID
+
+  if (sAktion <> '') Then
+
+    if (sAktion = '10') then
+      ajax.Main
+    else
+      Call aktion.Main
+    endif
+	
+  else
+
+    Append Page, ReadTextFile (ProPath + '\Web\menue\mainmenue.html')
+	
+    Append Page, '<script>'
+
+    Append Page, '  document.cookie = "session_id=' + ReqVar.SESSIONID + '; path=/";'
+
+//    Append Page, '  var PrioColorListJS = ' + GetMessageVar('PrioColorListJS') + ';'
+//    Append Page, 'console.log(PrioColorListJS[1])'
+
+    if (aPagePara[6] <> '') then
+      Append Page, '  var NoAdminUserMode = true;'
+      Append Page, '  var StartPage = ' + #39 + aPagePara[6] + #39 + ';'
+    else
+      Append Page, '  var NoAdminUserMode = false;'
+      Append Page, '  var StartPage = `villa`;'
+    endif
+
+    Append Page, '</script>'
+
+  EndIf
+
+EndProc
+
+
