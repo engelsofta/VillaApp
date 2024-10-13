@@ -1,0 +1,191 @@
+Proc Main
+
+  Dim aREV: Array         := []
+  Dim bVersion: Boolean   := false
+  Dim iSchleifeLine: int
+  Dim sAktVersion: String
+  Dim SNextVersion: String
+
+  aREV[142] := ['9.07', 'clColors available in charts']  
+  aREV[141] := ['9.06', 'added line-awesome to status page', 'design >-<', 'some main-UI changes', 'color 4-10 for undefined config colors']  
+  aREV[140] := ['9.05', 'style set-settings', 'call archiv from actvalue on settings', 'direct opening for switching with spinner on change switch']
+  aREV[139] := ['9.04', 'statuspage now online']  
+  aREV[138] := ['9.03', 'style of animated icons', 'manuel revised', 'styles var', 'manual (hover details)', 'style flex added', 'css of touch help and check page'] 
+  aREV[137] := ['9.02', 'touchsupport page-back optimized', 'test new getvalue css faults', 'gradient main name']  
+  aREV[136] := ['9.01', 'chart.js 4.4.4 (local)', 'zooming chart by wheel and pinch', 'removed button for analog filtering and + month zooming', 'add x-scale zoom by clicking', 'added min swipe distance to menu', 'no line break in menu']
+  aREV[135] := ['9.00', 'CHART.JS in the house &nbsp; <i class="las la-chart-bar w3-text-green w3-large"></i>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> PalarArea Charts</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> Doughnut Charts</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> dynamic chart views</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> individual data can be hidden</div>',  '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> compare monthly archives possible</div>', 'some fixes in table analog', 'Refresh of chart data optimized', 'new chart colors', 'chart legend optimized', 'event-search width optimized']
+  aREV[134] := ['8.03', 'search size / events css']  
+  aREV[133] := ['8.02', 'some changes in modal search', 'set autocomplete to off']  
+  aREV[132] := ['8.01', 'size of searchbox', 'new calculation "TimeBetween"', 'New style of the fault report list']  
+  aREV[131] := ['8.00', 'notification-groups filtering in the house &nbsp; <i class="la la-list w3-text-khaki w3-large"></i>', 'dynamic style of height', 'GitHub Beta 01', 'new ManualMenu API', 'w3-card-x / a3-color style', 'new "EventCount"', 'style search events']
+  aREV[130] := ['7.27', 'margin top buttons', 'SQL Select group menue']  
+  aREV[129] := ['7.26', 'bugfix v7.25', 'chart height deleted']  
+  aREV[128] := ['7.25', 'standardization of CSS elements', 'style optimizations', 'templates for panels']  
+  aREV[127] := ['7.24', 'uniform background settings (V2)', 'design optimized']  
+  aREV[126] := ['7.23', 'uniform background settings']  
+  aREV[125] := ['7.22', 'first step of icon and design update']  
+  aREV[124] := ['7.21', 'the current state is visible upon selection', 'IOS18 dark icon', 'FIX: name in settings']  
+  aREV[123] := ['7.20', 'ProGraf 9 ready &nbsp; <i class="las la-cogs w3-text-indigo w3-spin w3-large"></i>']  
+  aREV[122] := ['7.11', 'name in settings', 'design optimized']  
+  aREV[121] := ['7.10', 'Fix: z-index ui close', 'FIX: settings style']
+  aREV[120] := ['7.09', 'new close ui elements 2', 'Progress bar smart slide']  
+  aREV[119] := ['7.08', 'add special texts description', 'dynamic length adjustment of special text', 'new close ui elements']  
+  aREV[118] := ['7.07', 'new getvalue2 functions']  
+  aREV[117] := ['7.06', 'clear search content', 'rev style optimized', 'new resize draw arc methode', 'new function updateLoop', 'new dropdown-trigger JS']  
+  aREV[116] := ['7.05', 'test version']  
+  aREV[115] := ['7.04', 'the search now uses *input*', 'search results optimized']  
+  aREV[114] := ['7.03', 'code optimizations']  
+  aREV[113] := ['7.02', 'FIX: Faktor analog DPs', 'settings design', 'CSS InputNormal changes']  
+  aREV[112] := ['7.01', 'catching errors in config file', 'code optimizations', 'document.ready function', 'B2 settings']  
+  aREV[111] := ['7.00', 'new datapoint settings in the house &nbsp; <i class="las la-cog w3-text-light-green w3-spin w3-large"></i>']  
+  aREV[110] := ['6.14', 'JQuery v3.7.1', 'sankey height', 'new settings', 'FIX: swipe on settings', 'FIX: touch support', 'logbook output removed', 'add switching command settings', 'code optimizations', 'Javascript InitCheckAndSend', 'FIX: swipe on rev', 'FIX: GenVarList']
+  aREV[109] := ['6.13', 'set limits optimizations']  
+  aREV[108] := ['6.12', 'design optimizations', 'change comment in settings', 'filtering IPs in groups', 'show count IPs in list', 'set limits available', 'new touch swipe api']  
+  aREV[107] := ['6.10', 'new touch manual', '"Sondertexte" are visible and can set', 'optimization of settings data-Touch']  
+  aREV[106] := ['6.09', 'Apple themes adjusted', 'Apple startup picture']  
+  aREV[105] := ['6.08', 'Settings03 now with PrioColor', 'color display optimizations in getvalue', 'FIX: fading objects', 'multiple status states are possible', 'horizontal adjustment of the font size in rev and guide']
+  aREV[104] := ['6.07', 'Statuspage now with new design and status color']
+  aREV[103] := ['6.06', 'top-swipe to search', 'optimization of predefined hidden rows', 'speed of the fade-in function', 'design of historical search optimized']
+  aREV[102] := ['6.05', 'Beta 01 Toggle of BIT DPs is possible']
+  aREV[101] := ['6.04', 'load the chart js in defer mode', 'optimizations in evaluation of the summary archive']
+  aREV[100] := ['6.03', 'add action SetMessageVar', 'some major changes in request message']
+  aREV[99] :=  ['6.02', 'CSS angepasst', 'kleine Codeverbesserungen', 'Kommentare mit DP ist anklickbar'] 
+  aREV[98] :=  ['6.01', 'Sankey Optimierungen', 'change detection angepasst', 'Optimization of the viewport for new iphones']  
+  aREV[97] :=  ['6.00', 'single collect ajax in the house &nbsp; <i class="las la-cart-arrow-down w3-text-light-green w3-xlarge"></i>']
+  aREV[96] :=  ['5.52', 'BETA 03 Single collect', 'Modal DPs free', 'Style last search']    
+  aREV[95] :=  ['5.51', 'BETA 02 Single collect']  
+  aREV[94] :=  ['5.50', 'BETA 01 Single collect']
+  aREV[93] :=  ['5.17', 'Fix: manual - überarbeitet Version', 'neues Verhalten des clipboards', 'Round Parameter im Menü geändert', 'Test mit Collect Interval', 'Anzahl der Informationen pro Zeile erhöht']
+  aREV[92] :=  ['5.16', 'JQuery v3.6.4', 'Design MainMenu', 'manual NEU']  
+  aREV[91] :=  ['5.15', 'Fix: JS SleepRefresh', 'Fix: TouchSupport Menüausblendung', 'Fix: DP List-View Leiste unten wurde nicht akt.', 'Design Suchverlauf']  
+  aREV[90] :=  ['5.14', 'DP Eventlist - Links entfernt', 'Ansicht % einzelner Events', 'Fix: Suchverlauf Design']  
+  aREV[89] :=  ['5.13', 'Optimierung Ansicht Suchergebnisse', 'Design Eventarchiv', 'CSS Suche angepasst']  
+  aREV[88] :=  ['5.12', 'Align der ModalPanels angepasst', 'color-scheme: dark und weitere Optimierungen der Suchen', 'Fix: Settingsmenü']  
+  aREV[87] :=  ['5.11', 'FIX: wenn kein Archivwert vorhanden + Codeoptimierungen', 'Kalender "max" today + ICON white', 'FIX: Settings01 height:auto', 'Design modale Panels']  
+  aREV[86] :=  ['5.10', 'Fix: Eventarchiv (Tabelle) fehlten Farben', 'Codeanpassungen', 'Style Faults optimiert,', 'Quellcode Content optimiert']  
+  aREV[85] :=  ['5.09', 'Design Sankey verbessert']  
+  aREV[84] :=  ['5.08', 'Menü active Button geändert', 'Google Analytics Test']  
+  aREV[83] :=  ['5.07', 'Legende im Multiarchiv kann zweizeilig sein', 'IOBroker Schnittstelle', 'HTML Color Optimierungen', 'OpenWeather durch WeatherUnderground ersetzt']  
+  aREV[82] :=  ['5.06', 'MultiArchiv jetzt mit beliebig vielen Einträgen&nbsp; <i class="las la-chart-area w3-text-orange"></i> (siehe Anleitung)']  
+  aREV[81] :=  ['5.05', 'Anpassungen in verschiedenenen DIVs', 'reloadthepage entfernt', 'X2 aus Archiv entfernt', 'schnellere Farbumwandlung PGNT->HTML', 'Directory check', 'Grössere Änderungen Archivabfragen (noch schneller)']  
+  aREV[80] :=  ['5.04', 'Overlay in mobiler Ansicht angepasst']  
+  aREV[79] :=  ['5.03', 'app.haisla.de Domain Weiterleitung', 'Anzeige DP-Typ in Suche']
+  aREV[78] :=  ['5.02', 'mehrer Tabellen entfernt', 'Fix: Eventlist Swipe', 'Analogevents - Prozentbalken wird angezeigt', 'Beta-Kanal eingefügt&nbsp; <i class="lab la-soundcloud w3-text-orange"></i>']
+  aREV[77] :=  ['5.01', 'Settings JavaScript angepasst']
+  aREV[76] :=  ['5.00', 'App-AutoUpdate in the house &nbsp; <i class="lab la-soundcloud w3-text-light-green w3-animate-fading w3-xlarge"></i>']
+  aREV[75] :=  ['4.30', 'Ajax ShowMGR auf Array umgebaut', 'Design Eventsuche angepasst', 'Fix: DP Suche teilweise falscher ArchivMode']
+  aREV[74] :=  ['4.21', 'Style EventSearch angepasst', 'Fix: Anpassung Archiv wenn keine Werte vorhanden', 'loader.js wieder auf das Internet verlagert', 'Opacity in Navigation entfernt']
+  aREV[73] :=  ['4.20', 'VerlaufsIcon in Suche nur sichtbar wenn Verlauf vorhanden', 'Neugenerierung wird live angezeigt', 'Anzahl Events werden live angezeigt']
+  aREV[72] :=  ['4.19', 'Keine Wartezeit mehr bei Änderung Konfig (VillaWeb.pgs muss Endlosscripte laufen)']
+  aREV[71] :=  ['4.18', 'Fix: Settings-Icon Archiv Zähler', 'zeilenumburch Scannerinfo', 'Anleitung Buttons/Bilder überarbeitet']
+  aREV[70] :=  ['4.17', 'Suche mit Verlauf', 'Echtes Event Archiv aktiviert', 'Archivtyp einstallbar (Gruppe VILLA-ARCHIV-CURVE anlegen)', 'Fix: in Gruppenzuordnung wenn Gruppe leer', 'Fix: Settings Anzeige unter mobile Devices + Anzeige Curve', 'Optimierung Snackbar', 'Test neue Optik Events', 'Settings faster', 'Zeilenumbruch in REV', 'Style Eventlist angepasst']
+  aREV[69] :=  ['4.16', 'Hochkomme ersetzt durch `', 'Content -> alle Stellen in der Config beachten', 'Fix: Menü (#touchbox.click)']
+  aREV[68] :=  ['4.15', 'NoAdminUserMode (http://IP-ADRESSE:PORT/PROJECTNAME/cgiscript/villa.htm?pagepara=,,,,,PAGE)', 'neue Version der Anleitung']
+  aREV[67] :=  ['4.14', 'kleine Codeanpassungen (opacity)', 'Multiarchiv Syntax Fehler', 'Fix: in Analogarchiv / EndArchiv', 'Background stretch eingestellt', 'Grenzwerte werden in der Info angezeigt', 'jQuery 3.6.1 Update', 'bottommenü add/remove css']
+  aREV[66] :=  ['4.13', 'DP Eventarchiv BugFix', 'Fix: Event to SumArchiv', 'Color Pie Chart angepasst']
+  aREV[65] :=  ['4.12', 'DP Eventarchiv Time Fertigstellung']
+  aREV[64] :=  ['4.11', 'ArchivButtonMenü Größe angepasst', 'Opimierungen für 4.10', 'Codeüberarbeitungen', 'Sprung von Zähler Monat -> Tageswerte', 'Settings Icon optimiert', 'SQL Anfrage für Events verkleinert' , 'DP Eventarchiv Time (BETA)', 'Grössenanpassung Menü unten', 'analoger Filter hour Button angepasst', 'Summenarchiv blauer Button angepasst']
+  aREV[63] :=  ['4.10', 'neue Behandlung für Archiv Buttons', 'Zähler Monatsarchiv eingebaut']
+  aREV[62] :=  ['4.02', 'Request für HideLine nur wenn konfiguriert', 'AddYear Icon angepasst', 'Menü FadeOut entfernt', 'Safari blur() Problem gefixt']
+  aREV[61] :=  ['4.01', 'Filterbutton wird ausgeblendet wenn nicht benötigt', 'REV-Datei optimiert']
+  aREV[60] :=  ['4.00', 'Neues transparentes Design']
+  aREV[59] :=  ['3.22', 'FIX Getvalue - Fehler bei Analogwerten', 'OpenWeather ICONs werden unterstützt', 'Fix: Iconfarbe im Menü', 'Codeanpassung ElseIf', 'CollectData() sofort nach erstem INIT', 'JS für Suche ausgelagert', 'Menü: Fault Styleänderung']
+  aREV[58] :=  ['3.21', 'FIX: margin:bottom Fehler in HTML Code', 'SinglePanel jetzt mit Bild und transp. Hintergrund möglich', 'FIX: Stufe 01 Anzeigefehler']
+  aREV[57] :=  ['3.20', 'ajax_selectanahour auf die letzten zwei Stunden festgelegt', 'Sleeprefresh aus villa.js entfernt', 'neue Version ProgressBar (Transparent + Fabrverlauf)', 'TopMenu + Snackbar Border-Round', 'Faults FadeIn', 'Fix: Touch-Geste Menü back']
+  aREV[56] :=  ['3.19', 'DP Settings überarbeitet', 'ConsoleLog einstellbar (true/false)', 'Sankey zeigt bei Quelle "0" eine Info', 'Refresh der Charts verbessert', 'villa.js Quellcode überarbeitet', 'neue Funktion für Zwischenablage']
+  aREV[55] :=  ['3.18', 'DPMain verschwindet ggf bei Snackbar']
+  aREV[54] :=  ['3.17', 'Sankey Bugfix', 'Panels können transparent dargestellt werden ("Show": "transparent")', 'Panels mit Hintergrundbild ("Show": "picture")', 'Anpassung Snackbar']
+  aREV[53] :=  ['3.16', 'Snackbar in TopMenue', 'MultiPanel und SinglePanel Ausrichtungen geändert', 'Settings (3) Design', 'Archivmenü Designanpassungen']
+  aREV[52] :=  ['3.15', 'Zeilen hide jetzt auch mit Analogwert 0', 'Design geändert']
+  aREV[51] :=  ['3.14', 'Quelltext formatiert und auf VSC umgestellt', 'content auf Case umgestellt']
+  aREV[50] :=  ['3.13', 'Animation Snackbar angepasst', 'Variablen angepasst', 'br`s durch CSS ersetzt', 'neue REV Datei', 'Snackbar Animation umgestellt', 'height in Modal angepasst', 'Kuchendiagramm Datum ausgeblendet', 'status.rev wird nicht mehr benötigt']
+  aREV[49] :=  ['3.12', 'MultiMessage Snackbar']
+  aREV[48] :=  ['3.11', 'Eventarchiv CSS angepasst', 'Settings: nur stellbare Gruppen', 'Settings: isMeldeGruppe']
+  aREV[47] :=  ['3.10', 'Events können durchsucht werden', 'JQuery focus() auf search Elemente', 'search auf onInput geändert', 'MainHandle hinzugefügt', 'Touch Menü auf 0.9 geändert', 'Searchfeld Time verkürzt', 'Zeilen können jetzt ausgeblendet werden']
+  aREV[46] :=  ['3.09', 'function SendPost angepasst', 'Datum max = heute', 'CSS SideMenü Anpassungen', 'Slide Support bei AddYear entfernt', 'PieChart Legende optisch angepasst']
+  aREV[45] :=  ['3.08', 'Verhalten der Modal-Settings angepasst', 'Design Modal-Settings angepasst', 'TouchSupport Showmenü > Medium', 'Modal-Settings Ana-Aktwert', 'Style der Suche angepasst + Löschbutton', 'w3_open angepasst', 'Menü seitlich onMouseOver', 'Gruppenmeldungen überarbeitet', 'Get Switchmeldung Fehler']
+  aREV[44] :=  ['3.07', 'Link in Störmeldeanzeige geändert', 'SendPost Buttons angepasst', 'Archiv resize Funktion', 'Jahreszahl in Kuchendiagramm', 'Modal Hintergrund überall gleich', 'Design Settings überarbeitet', '$(window).on load function geändert', 'Touchbox Click auf onLoadSide ausgelagert', 'Anzeigefehler bei Dig-Archiv und aktuellem Tag', 'Touch isSlider angepasst']
+  aREV[43] :=  ['3.06', 'Live-Sanckey Diagramm jetzt verfügbar', 'Style der Dialoge angepasst', 'Datum bei Störungen war falsch']
+  aREV[42] :=  ['3.05', 'Background entfernt', 'Menü Element-fault -> IDelementglobal', '3D Kuchenchart']
+  aREV[41] :=  ['3.04', 'Designanpassungen', 'Anzeige bei 0 Störungen ok']
+  aREV[40] :=  ['3.03', 'Eventarchiv / idmain -> blur geändert', 'Störungen werden jetzt live aktualisiert', 'vorlagen.header in Menü verschoben', 'CollectData() sofort bei ajax_default', 'Hintergrundbild jetzt auch bei IOs fix']
+  aREV[39] :=  ['3.02', 'Codeäberarbeitung', 'Javascript GET nur bei Änderungen', 'Menü als Datei', 'Link bei Eventarchiv angepasst', 'App erkennt selbst Update', 'JQuery 3.6.0']
+  aREV[38] :=  ['3.01', 'Fehler in Ajax-Störmeldeliste', 'Loader.fadeOut zu schnell', 'Wischgeste r->l fehlerhaft', 'Suche jetzt direkt über die Handles', 'Fix Multiarchiv Link', 'datum.setDate in Links eingefügt','verschiedene Linkanpassungen in Archivcharts', 'Kuchenchart umgestellt auf Ajax', 'Richtige Werte im Archiv hinterlegt']
+  aREV[37] :=  ['3.00', '<p class=w3-text-light-green><i class="w3-xlarge w3-text-blue las la-fighter-jet"></i> Ajax is in the house</P>']
+  aREV[36] :=  ['2.73', 'Menü wird jetzt mit AJAX geladen', 'Switch Settings auf JQuery umgestellt', 'AJAX Menüumschaltung von Archiv funktioniert nicht', 'REV/Anleitung/Statusmeldungen/Settings auf AJAX umgestellt']
+  aREV[35] :=  ['2.72', 'Erste Version mit AJAX Elemente', 'Settings JS wird nur geladen wenn nötig', 'GenVarList jetzt ohne Gruppen in Result']
+  aREV[34] :=  ['2.71', 'Schaltbefehl können jetzt in IOS Design geschalten werden', 'Settings 02/03 Border Anpassungen', 'Settingsmenü oben angepasst', 'Snackbar Designanpassungen']
+  aREV[33] :=  ['2.70', 'Touchgesten sind jetzt unabhängig von der Seitenhöhe', 'Sidemenü verschwindet wenn outside geklickt wird', 'Wischgeste von links nach rechts lässt das Menü wieder verschwinden', 'Timing verhalten bei Touch geändert','aResult Auswertung fehlerhaft', 'Form Datenpunktdialog - optische Anpassungen']
+  aREV[32] :=  ['2.69', 'Anleitung auf HTML umgestellt und angepasst <i class="las la-arrow-circle-right w3-large w3-text-light-green"></i>', 'REV-Seite und Anleitung auf dynamische Schriftgröße umgestellt', 'Anleitung/REV überschrift und mouseover angepasst', 'Fehlermeldung bei Aktion angepasst']
+  aREV[31] :=  ['2.68', 'Snackbar Meldung jetzt in IOS Design']
+  aREV[30] :=  ['2.67', 'Internetverbindung wird nicht mehr benötigt', '"apple-touch-startup-image" entfernt - funktioniert nicht']
+  aREV[29] :=  ['2.66', 'Die APP-Version ist jetzt über das Menü ersichtlich <i class="la la-file-text-o w3-text-light-green w3-large"></i>','Die App zeigt die Rev in HTML an','Modale Filterbox bei Events ausgerichtet', 'LongPress wieder entfernt', 'Info Symbol eingeführt (Hide-Large)', 'neues Icon für DP-Dialog <i class="la la-cogs w3-text-light-green w3-large"></i>', 'neues Verhalten des DP-Dialog Icons']
+  aREV[28] :=  ['2.65', 'Long-Press öffnet jetzt direkt die Sollwertverstellung eines Datenpunktes', 'styles.css: Markierungen in der kompletten App deaktiviert']
+  aREV[27] :=  ['2.64', 'Dynamische Grids / die Grids passen sich jetzt auf jede Bildschirmgrösse an']
+  aREV[26] :=  ['2.63', 'FIX: Fehler in styles.css entfernt (webkit-overflow-scrolling: touch;)', 'styles.css Komprimierungen', 'Optimierung villa.js (Ergänzung jquery)', 'Datenpunktliste wird asynchron und nur bei Bedarf geladen -> alle Seiten laden noch schneller']
+  aREV[25] :=  ['2.62', 'FIX: Fehler bei Aktion=1 behoben', 'Icons in Statusbox angepasst', 'Icongrösse im Menü oben angepasst', 'Status-Seite / HTML Code angepasst', 'Glockenicon im Menü entfernt', 'Störmeldeliste Rahmen angepasst', 'Statusübersicht jetzt in IOS Design', 'Statusübersicht: Gruppen mit 0 Einträgen sind grau', 'Suche jetzt im IOS Design', 'InfoBOX: Designanpassungen', 'Snackbar: Designanpassungen', 'MyIDMain: Opacity angepasst']
+  aREV[24] :=  ['2.61', 'Designanpassungen und neue <a href="https://icons8.de/line-awesome" class="w3-text-blue">ICONS</a> werden verwendet dadurch müssen alle fa-.... Bilder in der config durch la-.... ersetzt werden!']
+  aREV[23] :=  ['2.60', 'Quelltext bereinigt']
+  aREV[22] :=  ['2.59', 'set.pgs wird nicht mehr benötigt (bitte löschen)', 'Step (2) Set Funktion komplett migriert']
+  aREV[21] :=  ['2.58', 'Clipboard Funktion geändert', '- Step (1) Set Funktion in Datenpunktdialog migriert']
+  aREV[20] :=  ['2.57', 'NEU: Meldegruppen können für DP konfiguriert werden']
+  aREV[19] :=  ['2.56', 'Optik Menü unten angepasst']
+  aREV[18] :=  ['2.55', 'Schaltbefehle und BIT Datenpunkte zeigen im Archiv jetzt die richtige Stufe an', 'Archivauslesung (digital) schneller, da der Vortag nicht mehr benötigt wird']
+  aREV[17] :=  ['2.54', 'FIX: isHandle(ival(x)) liefert im PG_Script den Wert 0! Wenn der Handle mit 0 vorhanden ist gab es einen Fehler.']
+  aREV[16] :=  ['2.53', 'Links in Zustandslisten angepasst']
+  aREV[15] :=  ['2.52', 'Eventarchiv optisch optimiert (Autoscale v-Axis)']
+  aREV[14] :=  ['2.51', 'FIX: Linkänderung wegen MultiArchiv', 'FIX: Lanscape-Mode on Safari (white bars entfernt)', 'Archiv.pgs anpassung JS']
+  aREV[13] :=  ['2.50', 'MultiArchive können dargestellt werden (zwei Kurven gleichzeitig) siehe Content unten']
+  aREV[12] :=  ['2.36', 'Ordner "Vorlagen" wird nicht mehr benötigt - bitte löschen', 'Javascript Dateien werden parallel zur Seite geladen (faster)', 'Datenpunktliste für die Suche werden im Hintergrund geladen (faster)', 'Projektnamen und Shortname können jetzt in der config.json eingestellt werden']
+  aREV[11] :=  ['2.35', 'finish.html ausgelagert in villa.js (even faster)']
+  aREV[10] :=  ['2.34', 'Summenarchiv jetzt mit Kuchencharts', 'finish.html teilweis auf JQuery umgestellt (even faster)', 'Menü unten wird jetzt auch unscharf bei Modal-Dialog', 'z-index angepasst', 'neuen schlanken Ladeslider eingefügt (ohne zusätzlichen CSS)']
+  aREV[9] :=  ['2.33', 'Touchgesten optimiert', 'Archivmenü (unten) optisch optimiert und vereinheitlicht (Handy/Touch Bedienung)', 'Optimierungen wegen Apple "Home Indicator" balken unten', 'Summenarchiv zeigt jetzt den Monatsdruchschnitt an (Klick auf Jahr(e))', 'Touchsupport Javascript von 6KB auf 3KB komprimiert', 'Schalter können nach Aktion nicht mehr kurz zurück springen (JS)', 'Standard Hintergrundbild von 2000KB auf 1000KB verkleinert', 'Archivscript optimiert (center elements)']
+  aREV[8] :=  ['2.32', 'Eventarchiv zeigt jetzt jedes Event an', 'Ladespinner jetzt oben in der Leiste', 'Schaltbefehl kann jetzt auch per Button auf GLT / AS gestellt werden']
+  aREV[7] :=  ['2.31', 'ProgressBar: Vorder-Hintergrundfarbe einstellbar', 'ProgressBar: mit runden Ecken / bessere Stör- und GLT Anzeige', 'ProgressBar: analoger MIN/MAX Bereich ist jetzt variabel', 'Style Height auf fix 100% eingestellt (bessere Touchbedienung)', 'Fix: Kamerastream funktionierte nicht']
+  aREV[6] :=  ['2.30', 'Wischgeste von rechts simuliert jetzt das Einblenden des Menüs']
+  aREV[5] :=  ['2.29', 'Kamerastreams möglich / --> ["URL", 6, Refresh in ms, 1 (0=Snapshot / 1=Stream)]']
+  aREV[4] :=  ['2.28', 'Analogwertverstellung per Slider + man. Eingabe möglich']
+  aREV[3] :=  ['2.27', 'Summenarchiv: Beschriftung der Charts farblich hinzugefügt', 'Code-Menü aufgeräumt', 'Fix: Anzeigefehler in SinglePanels behoben', 'Bilder (1) können jetzt auch "Toggle" und "Impuls"']
+  aREV[2] :=  ['2.26', 'Fix: Slider können beim Schalten nicht mehr -kurz- zurück springen']
+  aREV[1] :=  ['2.00', 'Browser Icon verfügbar', 'Fehler in der Anzeige der Gauge behoben', 'LOADER wird jetzt auch unter Safari angezeigt', 'Touch-Gesten eingefügt:', '-> Rechts nach Links wischen: 	Menü wird eingeblendet (Start im rechten Drittel)', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Bei Archiv -> wird ausgeführt (linke 2/3tel)', '-> Links nach Rechts wischen: 	Menü wird ausgeblendet', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Suche wird eingeblendet', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Bei Archiv <- wird ausgeführt']
+
+  Append Page, '        <div class="w3-padding CenterThings" style="max-width:600px; margin: auto; flex-direction: column;">'
+
+
+  Append Page, '        <table class="w3-animate-left" style="width:100%; font-size: min(2.5vw, 14px);">'
+
+  for iSchleife = Count(aREV) downto 1
+
+    StrCopy sAktVersion,aREV[iSchleife,1],1,1
+    StrCopy sNextVersion,aREV[iSchleife - 1,1],1,1
+
+
+    if (sAktVersion <> sNextVersion) then
+      Append Page, '        <td class="w3-border-left w3-border-red w3-left-align w3-padding w3-animate-top-slow" style="border-width:3px!important;">' + aREV[iSchleife,1] + '</td>'
+    else
+      Append Page, '        <td class="w3-border-left w3-border-khaki w3-left-align w3-padding w3-animate-top-slow" style="border-width:3px!important;">' + aREV[iSchleife,1] + '</td>'
+    endif
+
+
+	
+    for iSchleifeLine = 2 to count(aREV[iSchleife])	
+	
+	    Append Page, '        <td class="w3-left-align w3-padding zeilenumburch" style="">' +  aREV[iSchleife, iSchleifeLine] + '</td>'
+      Append Page, '        <tr><td></td>'
+
+    next
+
+    Append Page, '        </tr>'
+    Append Page, '        <tr>'
+
+  next
+
+  Append Page, '        </table>'
+
+  Append Page, '       </div>'
+
+  Append Page, '        <script>isSwipeEnable = true;</script>'
+
+EndProc
+
+

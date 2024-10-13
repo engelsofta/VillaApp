@@ -1,0 +1,2034 @@
+
+Proc Main
+
+  Dim bCheckForUpdates:             boolean   := true
+
+  Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
+  Global Dim aConfigJson:           Array     := []
+  Global Dim sVillaVersion:         String    := '9.08'
+  Global Dim sConfigJsonMode:       String    := ''
+  Global Dim sPageRefresh:          String    := ''
+  Global Dim SConfigJsonShowSingle: String    := ''
+
+  Dim bInit:                        boolean   := true
+  Dim bOnRequest:                   boolean   := false
+  Dim bOnConnect:                   boolean   := false
+  Dim bOneMinute:                   boolean   := false
+  Dim rCountMinute:                 real      := now
+
+  Repeat
+ 
+    // Pause bei Initialisierung
+    if (bInit) then pause 300
+
+    // Freigabe einmal täglich
+    if (hour<2 and GetMessageVar('sOnceADay') = 'true') then
+
+      SetMessageVar 'sOnceADay', 'false'
+
+      if (bCheckForUpdates) then
+        Call CheckUpdate
+      endif
+
+      Call MakePrioColorList
+
+    else
+
+      // Freigabe einmal täglich zurück setzen
+      if (hour>2 and GetMessageVar('sOnceADay') <> 'true') then
+        SetMessageVar 'sOnceADay', 'true'
+      endif
+
+    endif
+
+
+    // TimerOnRequest
+    if (now - rval(GetMessageVar('sLastRequest')) < 0.0012) and (bOnRequest = false) and (bOnConnect = false) then
+      pause 2000
+      bOnRequest := true
+      bOnConnect := true
+    endif
+
+    if (now - rval(GetMessageVar('sLastRequest')) > 0.0012) and (bOnConnect = true) then
+      bOnConnect := false
+    endif
+
+    // MinutenTimer
+    if (now - rCountMinute > 0.00068) then
+      rCountMinute := now
+      bOneMinute := true
+    endif
+
+
+    // 1 Minute und CLIENT verbunden oder REQUEST AKTUELL
+    if ((bOneMinute) and (bOnConnect)) or (bOnRequest) Then
+      Call CheckFaultCount
+      tty '--- > StörCount'
+      Call CheckEventCount
+      tty '--- > EventCount'
+
+    EndIf
+
+
+    // Bei START oder NEUE REQUEST Anfrage
+    if (bInit) or (bOnRequest) then
+      Call GenVarList
+      tty '--- > VARList + sonstige Settings'
+    EndIf
+
+
+
+    // 1 Minute check
+    if (bOneMinute) then
+
+      if (GetMessageVar('VersionConfig') <> sVal(FileUtcDateTime(sConfigJson))) or (GetMessageVar('VersionVilla') <> sVillaVersion) Then
+        Call MainMenue
+        tty '--- > Konfigänderung'
+      endif
+
+    endIf
+
+
+
+    // nix los
+    if (bOneMinute) and (not bOnConnect) then
+      SetMessageVar 'sCountFaults', '0'
+    endif
+
+
+
+
+    pause 1000
+    bInit := false
+    bOnRequest := false
+    bOneMinute := false
+
+  Until false
+
+EndProc
+
+
+
+
+
+
+
+
+
+Proc CheckUpdate
+
+  Dim bIsBeta: boolean             := bval(GetMessageVar('bIsBeta'))
+
+  Dim sOutput:string               := ProPath + '\Update\' // '\
+  
+  Dim sUpdateURL:string            := 'app.haisla.de/' 
+  Dim sVersionOnline:string        := ''
+  Dim sVersionOffline:string       := GetMessageVar('VersionVilla')
+  Dim sCurl:string                 := sOutput + 'curl.exe'
+
+  Dim aErr: array
+  Dim bOK: boolean
+  Dim iExitCode: int
+  Dim aData: array
+  Dim aVersionJson: array
+
+
+  // Check for Updates
+  ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sUpdateURL + 'main/version.json -L --max-time 10 -o ' + sOutput + 'version.json')
+
+  // Fehlerauswertung
+  if not bOK then
+
+    Logbook 'VillaWeb: Fehler beim Auslesen der Version'
+
+  else
+
+    aVersionJson := readtextfile(sOutput + 'version.json')
+    aVersionJson := JsonToArray(aVersionJson, true)
+
+    // check ob normale Version oder Beta Version
+    if (bIsBeta) then
+      sVersionOnline := aVersionJson.versionBeta
+      //sUpdateURL := sUpdateURL + sVersionOnline
+    else
+      sVersionOnline := aVersionJson.version
+    endif
+
+    sUpdateURL := sUpdateURL + 'main'
+
+
+    // check auf neue Version
+    if (sVersionOnline = sVersionOffline) then
+
+      Logbook 'VillaWeb: Die Version ist aktuell (' + sVersionOnline + ')'
+
+    else  
+
+      Logbook 'VillaWeb: Update ist verfügbar - Starte Update auf (' + sVersionOffline + ') -> (' + sVersionOnline + ')'
+
+      // Update aus dem Internet laden
+      ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sUpdateURL + '/VillaWeb.zip -L --max-time 10 -o ' + sOutput + 'VillaWeb.zip')
+
+      if not bOK then
+
+          logbook 'VillaWeb: Fehler beim laden der ZIP Datei aus dem Internet ' + sVersionOnline
+
+      else 
+
+        // Extrahieren
+        ExecRedirectEx(bOK, iExitCode, aData, aErr, sOutput + '7z.exe x ' + sOutput + 'VillaWeb.zip -o' + ProPath + '\ -aoa')
+
+        if not bOK then
+          logbook 'VillaWeb: Fehler beim einspielen des Updates auf Version ' + sVersionOnline
+        else
+          logbook 'VillaWeb: Update auf Version ' + sVersionOnline + ' abgeschlossen'
+        endif
+
+      Endif
+
+    Endif
+
+  Endif
+
+
+EndProc
+
+
+
+
+
+
+
+
+
+
+Proc CheckFaultCount
+
+  Dim sSQL:                         String    := ''
+  Dim aErg:                         Array     := []
+  Dim bok:                          boolean   := false
+
+  sSQL = 'Select K.Handle From "Konfig" K, "Prozess" P ' + "Where K.Handle = P. Handle and P.Stoerung > 0"
+  Sql bok, aErg, ProAlias, sSQL
+ 
+  SetMessageVar 'sCountFaults', sval(Count(aErg)-1)
+
+EndProc
+
+
+
+
+
+
+
+
+
+
+
+Proc CheckEventCount
+
+  Dim sTimeStampStart: String
+  Dim sTimeStampEnd: String
+  Dim sFileEnd: String
+
+  Dim sSQL: String
+  Dim aResGesamt: Array
+  Dim bOk: boolean
+
+  FormatDateTime(sTimeStampStart, 'yyyy-mm-dd', now-1)
+  FormatDateTime(sTimeStampEnd, 'yyyy-mm-dd', now)
+  FormatDateTime(sFileEnd, 'yyyymmdd', now)
+
+  sSQL := "Select "
+  sSQL := sSQL + "DEvent.Handle,"
+  sSQL := sSQL + 'M.Bearbeitet,DEvent."Text" '
+  sSQL := sSQL + "From D_Event_" + sFileEnd + " as DEvent "
+  sSQL := sSQL + "Inner Join ProAlias.Konfig K On K.Handle = DEvent.Handle "
+  sSQL := sSQL + 'Inner Join "DIGITAL-ARCHIV_' + sFileEnd + '" M On M.Satz_Nr = DEvent.Satz_Nr '
+  sSQL := sSQL + "Where DEvent.Typ <> 2 AND DEvent.Handle < 10000000 "
+  sSQL := sSQL + "AND DEvent.Datum_Uhrzeit >= TimeStamp '" + sTimeStampStart + " 22:00:00.000' "
+  sSQL := sSQL + "AND DEvent.Datum_Uhrzeit < TimeStamp '" + sTimeStampEnd + " 22:00:00.000'"
+  sSQL := sSQL + ""
+
+  Sql(bOk, aResGesamt, MGRAlias, sSQL)
+
+  SetMessageVar 'sCountEvents', sval(count(aResGesamt)-1)
+
+
+EndProc
+
+
+
+
+
+
+
+
+
+
+
+Proc GenVarList
+
+  Dim aSearchErg:Array    := []
+  Dim aHandleList:Array   := []
+  Dim a:Array             := []
+  Dim ok:Boolean          := False
+  Dim x:Int               := 0
+  Dim sTempComment:string := ''
+
+  Dim sColConfig:string
+  Dim sRGBArc:string
+  Dim sRGBTMP:string
+
+  Dim aFileList:Array     := []
+
+  // VarList
+  Sql ok , a, ProAlias, 'SELECT Handle,Name,Kommentar, DP_Typ FROM "Konfig" where DP_Typ<5'
+
+  Append aHandleList, 'var dplist =['
+
+  For x = 2 to Count(a)
+
+    GetExtVar sColConfig, ival(a[x,1]), 'ArchivColor' 
+
+    if (len(sColConfig) > 1 ) and not (sColConfig[1] = 'c') then
+
+      // Farbe fängt mit c an
+      if (sColConfig[1] = 'c') Then
+        StrCopy sRGBArc, sColConfig, 3, Len(sColConfig)
+      else
+
+        // Farbe fängt mit $ an
+        if (sColConfig[1] = '$') Then
+
+          sRGBTMP := sColConfig[8] + sColConfig[9]
+          sRGBTMP := ival('$' + sRGBTMP)
+          sRGBArc := sRGBTMP
+
+          sRGBTMP := sColConfig[6] + sColConfig[7]
+          sRGBTMP := ival('$' + sRGBTMP)
+          sRGBArc := sRGBArc + ', ' + sRGBTMP
+            
+          sRGBTMP := sColConfig[4] + sColConfig[5]
+          sRGBTMP := ival('$' + sRGBTMP)
+          sRGBArc := sRGBArc + ', ' + sRGBTMP
+
+        endIf
+
+      endif
+
+    else 
+        
+      sRGBArc := ''
+
+    endif
+
+
+
+
+
+    sTempComment := a[x,3]
+    StrReplace sTempComment, '`', '"'  
+    Append aHandleList, '[`' +  sTempComment + '`,`' +  a[x, 1] + '`,`' +  a[x, 4] + '`,`' +  sRGBArc + '`],'
+    
+    sleep(10)
+
+  Next
+
+  Append aHandleList, '];'
+  WriteTextFile ProPath + '\web\varlist.js', aHandleList
+
+  // SetFileExtension
+  aFileList := GetFileList(ProPath + '\konfig.psq*')
+  SetMessageVar 'sFileExtension', FileExt(ProPath + '\' + aFileList[1])   // '\
+
+
+
+EndProc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Proc MainMenue
+
+  Dim iSchleife01:          Int      := 0
+  Dim sAktiveLine:          String   := ''
+  Dim s01ConfigJson:        String   := ''
+  Dim s02ConfigJson:        String   := ''
+  Dim s03ConfigJson:        String   := ''
+  Dim s04ConfigJson:        String   := ''
+  Dim s05ConfigJson:        String   := ''
+  Dim s06ConfigJson:        String   := ''
+
+  Dim aPageMenue:              array       := []
+
+  Dim sConfigJsonMainHandle:  String   := ''
+  Dim sConfigJsonProName:     String 
+  Dim sConfigJsonShortName:   String
+ 
+  aConfigJson := readtextfile(sConfigJson)
+  aConfigJson := JsonToArray(aConfigJson, true)
+
+  sConfigJsonProName    := aConfigJson.Main[0].Projektname
+  sConfigJsonShortName  := aConfigJson.Main[0].Shortname
+  sConfigJsonMainHandle := aConfigJson.Main[0].TopMenueHandle 
+
+
+  // Loader anzeigen wenn Seiten generiert werden
+  SetMessageVar 'VersionHTML', '<i class="la la-spinner w3-spin" style="font-size:22px"></i>'
+
+  // Page HEADER --------------------------------------------------------------------------------------------------------
+  Append aPageMenue, '<!DOCTYPE html>'
+  Append aPageMenue, '<html lang="de">'
+
+  Append aPageMenue, '<head>'
+
+
+  // Google Analytics TEST
+  Append aPageMenue, '<!-- Google tag (gtag.js) -->'
+  Append aPageMenue, '<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5Z5LQ6NH8"></script>'
+
+
+
+  Append aPageMenue, '  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" charset="utf-8" />'
+//  Append aPageMenue, '  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+
+  Append aPageMenue, '  <link rel="stylesheet" type="text/css" href="/styles.css">'
+
+  Append aPageMenue, '  <link rel="stylesheet" href="/line-awesome/css/line-awesome.min.css">'
+ 
+  Append aPageMenue, '  <link rel="preload" as="image" href="/background.png">'
+  
+  Append aPageMenue, '  <!-- Als Web-App ausweisen und Anwendung im Vollbildmodus anzeigen. -->'
+  Append aPageMenue, '  <meta name="mobile-web-app-capable" content="yes">'
+  Append aPageMenue, '  <meta name="apple-mobile-web-app-capable" content="yes">'
+
+  Append aPageMenue, '  <!-- Namen der Anwendung festlegen. -->'
+  Append aPageMenue, '  <meta name="apple-mobile-web-app-title" content="' + sConfigJsonProName + '">'
+  Append aPageMenue, '  <meta name="application-name" content="' + sConfigJsonProName + '"> <!-- Windows -->'
+
+  Append aPageMenue, '  <!-- Icon der Anwendung festlegen. -->'
+  Append aPageMenue, '  <link rel="apple-touch-icon" href="/icon.png">'
+  
+  Append aPageMenue, '  <!-- Schwarze Statusbar mit weißem Text. -->'
+  Append aPageMenue, '  <meta name="apple-mobile-web-app-status-bar-style" content="default">'
+  Append aPageMenue, '  <meta name=theme-color content=#000000>'
+
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/icons/apple-launch-1284x2778.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/icons/apple-launch-1170x2532.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/icons/apple-launch-828x1792.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/icons/apple-launch-1125x2436.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/icons/apple-launch-1242x2688.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/icons/apple-launch-750x1334.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/icons/apple-launch-1242x2208.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2)" href="/icons/apple-launch-1620x2160.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="/icons/apple-launch-1536x2048.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" href="/icons/apple-launch-1668x2224.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" href="/icons/apple-launch-1668x2388.png">'
+  Append aPageMenue, '    <link rel=apple-touch-startup-image media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="/icons/apple-launch-2048x2732.png">'
+
+  Append aPageMenue, '  <script src="/jquery.js"></script>'
+  Append aPageMenue, '  <script defer src="/touchsupport.js"></script>'
+  Append aPageMenue, '  <script defer src="/villa.js"></script>'
+
+
+
+
+  Append aPageMenue, '  <script src="/varlist.js" defer></script>'
+  Append aPageMenue, '  <script defer>'
+  Append aPageMenue, '    $(document).ready(function() {'
+  Append aPageMenue, '      $("#myInputSearch").focus().val("");'
+  Append aPageMenue, '      setTimeout(function() {'
+  Append aPageMenue, '        autocomplete($("#myInputSearch"), dplist);'
+//  Append aPageMenue, '    console.log(dplist);'
+  Append aPageMenue, '      }, 0);'
+  Append aPageMenue, '    });'
+
+
+
+  Append aPageMenue, '  </script>'
+
+
+
+// Chart.JS Teil   
+
+  Append aPageMenue, '  <script src="/chart.js"></script>'
+  Append aPageMenue, '  <script src="/chartjs-date-fns.js"></script>'
+
+  Append aPageMenue, '  <script src="/hammer.min.js"></script>'
+  Append aPageMenue, '  <script src="/chartjs-plugin-zoom.min.js"></script>'
+
+// **********************
+
+
+
+
+
+
+  Append aPageMenue, '  <title>' + ProName + '  (' + sVillaVersion + ')</title>'
+
+  Append aPageMenue, '</head>'
+
+  Append aPageMenue, '<body class="" id="DivBody" style="background-color: #000;">'
+
+  Append aPageMenue, '<div id="background_wrap"></div>'
+  Append aPageMenue, '<div id="snackbar">snackbar result</div>'
+  // --------------------------------------------------------------------------------------------------------------------------
+
+
+  
+// Menü oben
+  Append aPageMenue, '<!-- Top container -->'
+
+
+
+  Append aPageMenue, '<div class="w3-text-white w3-top w3-large" style="height: var(--TopMenueHeight); display: flex; align-items: center; background-image: linear-gradient(55deg, rgba(0,0,0,0.8), rgba(0,0,0,0.5)); border-radius: 0px 0px 15px 15px; z-index:4">'
+
+  Append aPageMenue, '  <div onclick="ajax_menu(`villa`);" id="IDMainName" class="w3-padding-small w3-margin-left gradient-text">' + sConfigJsonProName + '</div>'
+
+  Append aPageMenue, '  <div style="position: absolute; right: 0px; display: flex; align-items: center; height: 100%;">'
+      
+  Append aPageMenue, '    <div onclick="AjaxArchivMode=`50`; AjaxAktion=`1`; AjaxHandle =  ' + sConfigJsonMainHandle + '; ajax_callarchiv(`#idmain`);" class="w3-padding-small w3-text-light-grey w3-normal w3-hover-none" style=""><div id="DIVCollectMainHandle" style="display:inline" data-datapoint="' + sConfigJsonMainHandle + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate="">---</div></div>'
+  Append aPageMenue, '    <div id="IDSettingsIconOben" onclick="ajax_default(`#IDelementglobal`, `ajax_settings`); modalklick(`IDelementglobal`)" class="w3-margin-small w3-padding-small w3-hide w3-hide-large w3-large la la-cogs"></div>'
+  Append aPageMenue, '    <div id="DivTopMenueRight" class="w3-hide-medium w3-hide-small" style="width:180px">&nbsp; </div>'
+
+  Append aPageMenue, '    <div id="IDHamburger" class="w3-padding-small w3-large w3-hide-large w3-margin-right" onclick="w3_open();"><i class="la la-bars"></i></div>'
+       
+  Append aPageMenue, '  </div>'
+
+
+  Append aPageMenue, '  <div id="DIVloader" class="w3-padding w3-center w3-spin" style="position: absolute; z-index:99; width:100%; height:40px; margin: 0 auto;">'
+  Append aPageMenue, '    <i class="la la-spinner gradient-text" style="font-size:22px"></i>'
+  Append aPageMenue, '  </div>'
+
+  Append aPageMenue, '</div>'
+
+
+
+
+  Append aPageMenue, '<div id="touchbox" class="touchbox">'
+
+
+  // Menü seitlich
+
+  Append aPageMenue, ''
+  Append aPageMenue, '<!-- Sidebar/menu -->'
+
+  Append aPageMenue, '<div id="myVillaSideBar" class="w3-card-2 w3-sidebar w3-round-large w3-collapse w3-text-white" style="z-index:3; top: calc(var(--TopMenueHeight) + 4px); right:0px; width:260px; position: absolute;">'
+
+  Append aPageMenue, '  <div class="w3-container w3-row" style="width:100%">'
+  Append aPageMenue, '    <div class="w3-bar w3-margin-top" style="white-space: nowrap;">'
+
+  // Search Button
+  Append aPageMenue, '      <div onclick="modalklick(`elementsearch`)" class="w3-button w3-round"><i class="la la-search w3-large"></i></div>' 
+
+  // Statusmeldungen
+  Append aPageMenue, '      <div onclick="ajax_default(`#IDelementglobal`, `ajax_status`); modalklick(`IDelementglobal`)" class="w3-button w3-round"><i class="la la-file-text-o w3-large"></i></div>'
+
+  // Settings Button
+  Append aPageMenue, '      <div id="IDSettingsIcon" onclick="ajax_default(`#IDelementglobal`, `ajax_settings`); modalklick(`IDelementglobal`)" class="w3-hide w3-button w3-hide-small w3-hide-medium w3-round"><i class="la la-cogs w3-large"></i></div>'    
+
+  // Fault Button
+
+
+
+//  Append aPageMenue, '      <div class="w3-button w3-round" onclick="ajax_default(`#IDelementglobal`, `ajax_faults`); modalklick(`IDelementglobal`)" id="DIVCollectFaults" data-datapoint="" data-mode="11" data-pic="" data-col00="" data-col01="" data-col02="" data-animate="" ></div>'
+  Append aPageMenue, '      <div class="w3-button w3-round" onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,4`);" id="DIVCollectFaults" data-datapoint="" data-mode="11" data-pic="" data-col00="" data-col01="" data-col02="" data-animate="" ></div>'
+
+  Append aPageMenue, '    </div>'
+
+
+  // Menü
+
+  Append aPageMenue, '    <h5 class="w3-border-bottom w3-border-pale-yellow"></h5>'
+
+  for iSchleife01 := 0 to 50
+   
+    s01ConfigJson := aConfigJson.MainMenu[iSchleife01].Name
+   
+    If (ErrorResult = 56) Then 
+      Break
+    Endif
+
+    s02ConfigJson := aConfigJson.MainMenu[iSchleife01].Pagename
+    s03ConfigJson := aConfigJson.MainMenu[iSchleife01].Bild
+    s04ConfigJson := aConfigJson.MainMenu[iSchleife01].Handle
+    s05ConfigJson := aConfigJson.MainMenu[iSchleife01].Animation
+    s06ConfigJson := aConfigJson.MainMenu[iSchleife01].AniColor
+    sConfigJsonMode := aConfigJson.MainMenu[iSchleife01].Mode
+    SConfigJsonShowSingle := aConfigJson.MainMenu[iSchleife01].Show
+  
+
+        // Eintrag verstecken
+    If (s05ConfigJson = '3') Then
+      sAktiveLine := ' w3-hide'
+    else 
+      sAktiveLine := ''
+    EndIf
+
+
+        // Handle ist vorhanden
+
+      Append aPageMenue, '    <div id="btnMain' + s02ConfigJson + '" onclick="ajax_menu(`' + s02ConfigJson + '`);" style="min-height:36px;" class="w3-button w3-border-white w3-block w3-display-container ' + sAktiveLine + '">'
+
+    Append aPageMenue, '      <div class="w3-display-left w3-center">'
+
+    if (s04ConfigJson <> '0') Then
+      Append aPageMenue, '        <div style="width:45px" class="w3-large w3-button" id="' + 'DIVCollect' + sVal(iSchleife01) + '" data-datapoint="' + s04ConfigJson + '" data-mode="1" data-pic="' + s03ConfigJson + '" data-col00="black" data-col01="' + s06ConfigJson + '" data-col02="00802b" data-animate="' + s05ConfigJson + '"></div>'
+    else
+      Append aPageMenue, '        <div style="width:45px;" class="w3-large w3-button la ' + s03ConfigJson + '"></div>'
+    EndIf
+
+    Append aPageMenue, '        <div class="w3-button">' +  s01ConfigJson + '</div>'
+    Append aPageMenue, '      </div>'
+    Append aPageMenue, '    </div>'
+
+       sPageRefresh := s02ConfigJson
+      call Content
+  
+  Next
+
+  Append aPageMenue, '  </div>'
+  Append aPageMenue, '</div>'
+
+  Append aPageMenue, ''
+  Append aPageMenue, ''
+  Append aPageMenue, '<!-- Overlay effect when opening sidebar on small screens -->'
+  Append aPageMenue, '<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_open()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>'
+
+
+
+  // Modale BOX allgemein  !!!!
+  Append aPageMenue, ''
+  Append aPageMenue, '<!-- MODALE BOX allgemein -->'
+  Append aPageMenue, '<div id="IDelementglobal" class="w3-container w3-modal"></div>'
+
+
+
+  // Modale SearchBOX
+  Append aPageMenue, ''
+  Append aPageMenue, '<!-- Search BOX -->'
+  Append aPageMenue, '<div id="elementsearch" class="w3-modal">'
+  Append aPageMenue, '  <div class="w3-modal-content w3-text-black w3-padding-16 w3-animate-opacity">'
+
+  // Inhalt der Suche ************************************************************
+  Append aPageMenue, '    <form autocomplete="off" enctype="utf-8">'
+  Append aPageMenue, '      <div class="autocomplete w3-margin-left w3-small w3-opacity">'
+  Append aPageMenue, '        <input class="w3-padding w3-text-sand w3-round-xxlarge modalbox" autocomplete="off" id="myInputSearch" type="search" name="ISearch" placeholder="Datenpunkt" style="color-scheme: dark; outline: none;width:calc(100% - 8px); height: 55px;">'
+
+  Append aPageMenue, '        <div id="IDLastSearch" class="lastsearchIcon" onclick="Switch_Search()" ><i class="las la-history"></i></div>'
+
+  Append aPageMenue, '      </div>'
+  Append aPageMenue, '    </form>'
+
+  Append aPageMenue, '  </div>'
+  Append aPageMenue, '</div>'
+
+// *****************************************************************************
+
+
+
+  // Menü unten für Archive
+  Append aPageMenue, '<!-- Menü unten -->'
+  Append aPageMenue, '<div id="bottommenue" class="w3-bottom w3-hide" style="height:60px;">'
+  Append aPageMenue, '  <div id="DivArchivRight" class="w3-hide-small w3-hide-medium" style="width:264px; min-height:40px; float:right;"></div>'
+  Append aPageMenue, '  <div class="w3-card-2 w3-display-container w3-text-white w3-rest w3-large w3-padding-small" style="border-radius: 15px 15px 0px 0px; height:60px; margin-left:4px; margin-right:4px;">'
+
+  // links
+  Append aPageMenue, '    <div class="w3-display-left" style="padding-left:8px">'
+
+//  Append aPageMenue, '      <div onclick="AjaxArchivMode=`1`; Para02=``; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-list-ul" id="btnResetArcChanceViewtoList"></div>'
+
+  Append aPageMenue, '      <div onclick="AjaxArchivMode=`3`; Para02=``; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-list-ul" id="btnResetArcChanceViewtoList"></div>'
+
+
+  Append aPageMenue, '      <div onclick="AjaxArchivMode=`50`; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-chart-line" id="btnResetArcChanceViewtoChart"></div>'
+  Append aPageMenue, '    </div>'
+
+  // mitte
+  Append aPageMenue, '    <div class="w3-display-middle" style="height:100%;">'
+  Append aPageMenue, '      <div id="ArchivBack" class="w3-button la la-caret-left"></div>'
+  Append aPageMenue, '      <div id="IDAjaxDate" class="w3-button" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);" style="font-size: 9px;">...</div>'
+  Append aPageMenue, '      <div id="ArchivNext" class="w3-button la la-caret-right"></div>'
+  Append aPageMenue, '    </div>'
+
+  // rechts
+  Append aPageMenue, '    <div class="w3-display-right" style="padding-right:8px">'
+  Append aPageMenue, '      <div onclick="" id="btnResetArcfilter" class="w3-padding-16 w3-button la la-filter"></div>'
+  Append aPageMenue, '      <div onclick="" id="btnResetArcCalenderPlus" class="w3-hide w3-padding-16 w3-button la la-poll"></div>'
+  Append aPageMenue, '      <div onclick="AjaxArchivMode = `50`; ajax_callarchiv(`#idmain`);" id="btnResetArcarcyearzaehler" class="w3-hide w3-padding-16 w3-button la la-search-minus"></div>'
+  Append aPageMenue, '      <div onclick="" id="btnResetArcarcchance" class="w3-hide w3-padding-16 w3-button la la-search-plus"></div>'
+  Append aPageMenue, '      <div onclick="" id="btnResetArcResetArcTabDay" class="w3-hide w3-padding-16 w3-button la la-search-plus"></div>'
+  Append aPageMenue, '    </div>'
+
+
+  Append aPageMenue, '  </div>'
+  Append aPageMenue, '</div>'
+
+  Append aPageMenue, '<!-- !PAGE CONTENT!-->'
+
+  Append aPageMenue, '<div id="idmain" class="w3-main w3-normal w3-hide" style="margin-right:260px;margin-top: calc(var(--TopMenueHeight) + 4px);"></div>'
+
+
+  SetMessageVar 'VersionConfig', sVal(FileUtcDateTime(sConfigJson))
+  SetMessageVar 'VersionVilla', sVillaVersion
+  SetMessageVar 'VersionHTML', datetimetostr(now)
+
+  Append aPageMenue, '</body>'
+  Append aPageMenue, '</html>'
+
+
+  if (MkDir(ProPath + '\Web\menue')) then
+    WriteTextFile ProPath + '\Web\menue\mainmenue.html', aPageMenue
+  endif
+
+EndProc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Proc Content
+
+  Dim iSchleifePanels:  Int       := 0
+  Dim iSchleifeLines: Int         := 0
+  Dim iSchleifeRows:  Int         := 0
+  
+  Dim aGroupData: Array           := []
+  Dim bGroup: Boolean             := False
+  Dim bTempBR:  Boolean           := False
+  Dim iSuchErg: Int               := 0
+
+  Dim sConfigJsonPageName:  String      := ''
+  Dim sConfigJsonName:  String          := ''
+  Dim sConfigJsonColor: String          := ''
+  Dim sConfigJsonStrReplace:  String    := ''
+  Dim SConfigJsonGroup: String          := ''
+  Dim SConfigJsonShow: String           := ''
+
+  Dim sConfigJsonLines: String          := ''
+  Dim sConfigJsonLinesNext: String      := ''
+  Dim sConfigJsonCont00:  String        := ''
+  Dim sConfigJsonCont01:  String        := ''
+  Dim sConfigJsonCont02:  String        := ''
+  Dim sConfigJsonCont03:  String        := ''
+  Dim sConfigJsonCont04:  String        := ''
+  Dim sConfigJsonCont05:  String        := ''
+  Dim sConfigJsonCont06:  String        := ''
+  Dim sConfigJsonCont07:  String        := ''
+  Dim sConfigJsonCont08:  String        := ''
+  Dim sConfigJsonLinePara:  String      := ''
+
+  Dim sFaultHandle :String              := '<div class="w3-red w3-round">Handle?</div>'
+
+  Dim sComment: String                  := ''
+  Dim aContent: Array                   := []
+  Dim sDIVVariable: String              := ''    
+
+  Dim sShowLine: String                 := ''
+
+  Dim TmpCaseVar:String                 := ''
+  Dim TmpCaseVar2:String                := ''
+
+  If (sConfigJsonMode = '1') Then
+
+    Append aContent, '  <div class="w3-left w3-container w3-col w3-hide-medium w3-hide-small" style="width:15%"></div>'
+    Append aContent, '  <div class="w3-right w3-container w3-col w3-hide-medium w3-hide-small" style="width:15%"></div>'
+
+    SConfigJsonShow := aConfigJson.Panels[0].Show
+
+    // Hintergrundauswahl
+    Select SConfigJsonShowSingle
+
+      // transparent
+      Case 'transparent'
+        Append aContent, '  <div class="w3-card-2 w3-container w3-border-dark-grey w3-rest w3-text-white w3-center w3-round-xlarge w3-padding" style="margin-left:8px; margin-right:8px; margin-bottom:16px; background: rgba(200, 54, 54, 0.0);">'
+
+      // Bild
+      Case 'picture'
+        Append aContent, '  <div class="w3-container w3-border-dark-grey w3-rest w3-text-white w3-center w3-round-xlarge w3-padding" style="margin-left:8px; margin-right:8px; margin-bottom:16px; background-image: url(' + #39 + '/panelback.png' + #39 + '); background-repeat: no-repeat; background-size: 100% 100%;">'
+    
+      // Farbverlauf
+      else
+        Append aContent, '  <div class="w3-card-2 w3-container w3-border-dark-grey w3-rest w3-text-white w3-center w3-round-xlarge w3-padding" style="margin-left:8px; margin-right:8px; margin-bottom:16px;">'        
+  
+    EndSelect
+
+    Append aContent, '    <!-- HeadSinglePanelPage -->'
+
+  EndIf
+
+  If (sConfigJsonMode = '2') Then
+
+//    Append aContent, '  <div class="w3-green w3-left w3-container w3-hide-medium w3-hide-small" style="width:2%"></div>'
+//    Append aContent, '  <div class="w3-green w3-right w3-container w3-hide-medium w3-hide-small" style="width:2%"></div>'
+    Append aContent, '  <div class="wrapper">'
+
+  EndIf
+
+  // Panels Abfragen
+  for iSchleifePanels = 0 to 100
+
+    sConfigJsonPageName := aConfigJson.Panels[iSchleifePanels].Pagename
+
+    If (ErrorResult = 56) Then 
+      Break
+    Endif
+
+      // richtiges Panel gefunden
+    If (sPageRefresh = sConfigJsonPageName) Then
+        
+      bGroup := False
+      sConfigJsonName := aConfigJson.Panels[iSchleifePanels].Name
+      sConfigJsonColor := aConfigJson.Panels[iSchleifePanels].Color
+      sConfigJsonStrReplace := aConfigJson.Panels[iSchleifePanels].StrReplace
+      SConfigJsonGroup := aConfigJson.Panels[iSchleifePanels].Group
+      
+      // alte Konfig abfangen
+      SConfigJsonShow := ''
+      
+      SConfigJsonShow := aConfigJson.Panels[iSchleifePanels].Show
+
+      If (sConfigJsonMode = '1') Then
+        
+              // mit Überschrift
+        If (sConfigJsonName <> '') Then
+          Append aContent, '      <h5 class="w3-bottombarsmall w3-margin-right w3-border-' + sConfigJsonColor + ' w3-half w3-left-align">' + sConfigJsonName + '</h5>'
+              // ohne Überschrift
+        else
+        EndIf
+
+        Append aContent, '      <table class="w3-table w3-centered">'
+      
+      EndIf
+
+      If (sConfigJsonMode = '2') Then
+          
+        Append aContent, '    <div class="">'
+
+
+        Select SConfigJsonShow
+
+          // Hintergrund transparent
+          Case 'transparent'
+            Append aContent, '      <div class="w3-text-white w3-round-xlarge w3-padding w3-padding-16 w3-border w3-border-dark-grey" style="min-height:250px; background: rgba(200, 54, 54, 0.0);">'
+
+          //Hintergrund mit Bild
+          Case 'picture'
+            Append aContent, '      <div class="w3-text-white w3-round-xlarge w3-padding w3-padding-16" style="min-height:250px; background-image: url(' + #39 + '/panelback.png' + #39 + '); background-repeat: no-repeat; background-size: 100% 100%;">'
+  
+          //Hintergrund mit Farbverlauf
+          else
+            Append aContent, '      <div class="w3-card-2 w3-text-white w3-round-xlarge w3-padding w3-padding-16" style="min-height:250px;">'
+  
+        EndSelect
+
+
+
+        if (len(sConfigJsonName) > 0) then
+          Append aContent, '      <h5 class="w3-border-bottom w3-margin-right w3-border-' + sConfigJsonColor + '">' + sConfigJsonName + '</h5>'
+        endif
+
+        Append aContent, '      <table class="w3-table w3-centered" style="max-width: 100%; width: 100%; table-layout: fixed;">'
+          
+      EndIf
+
+      StrPos (iSuchErg, 'SELECT', SConfigJsonGroup)
+
+      // SQL Gruppe
+      If (iSuchErg > 0) Then
+            
+        Sql bOK , aGroupData, ProAlias, SConfigJsonGroup
+        Delete aGroupData, 1
+        bGroup := True
+      
+      else
+
+        If (isGroup(NameToHandle(SConfigJsonGroup))) Then
+          aGroupData := GetGroupList(NameToHandle(SConfigJsonGroup))
+          bGroup := True
+        EndIf
+
+      EndIf
+
+      // Zeilen in den Panels
+      for iSchleifeLines = 0 to 25
+
+        // Keine Gruppe vorhanden
+        If (bGroup = False) Then
+
+          ReadArrayVar(sConfigJsonLines, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[0,0]')
+          ReadArrayVar(sConfigJsonLinesNext, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines+1) + '].Content[0,0]')
+              
+          If (sConfigJsonLines = '') Then 
+            Break
+          Endif
+                
+              // Gruppe vorhanden
+        else
+
+          If Count(aGroupData) = iSchleifeLines Then 
+            Break
+                Endif
+
+        EndIf
+
+
+        ReadArrayVar(sConfigJsonLinePara, aConfigJson, 'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Settings')
+
+        sShowLine := ''
+
+        If (isHandle(ival(sConfigJsonLinePara))) then
+            Append aContent, '        <div class="w3-hide" id="' + 'DIVCollectLine' + sVal(iSchleifePanels) + 'Lines' + sVal(iSchleifeLines) + '" data-datapoint="' + sConfigJsonLinePara + '" data-mode="5" data-pic="Panel' + sVal(iSchleifePanels) + 'Lines' + sVal(iSchleifeLines) + '" data-col00="" data-col01="" data-col02="" data-animate=""></div>' 
+          sShowLine := 'display:none;'
+        Endif
+
+
+
+        If (sConfigJsonLinesNext = '') Then 
+          Append aContent, '        <tr id="Panel' + sVal(iSchleifePanels) + 'Lines' + sVal(iSchleifeLines) + '">'
+        else
+          Append aContent, '        <tr id="Panel' + sVal(iSchleifePanels) + 'Lines' + sVal(iSchleifeLines) + '" class="w3-border-bottom w3-border-dark-grey" style="' + sShowLine + '">'
+        EndIf
+
+
+        // Spalten in Zeile
+        for iSchleifeRows = 0 to 20
+
+          // Keine Gruppe vorhanden
+          If (bGroup = False) Then
+
+            ReadArrayVar(sConfigJsonCont00, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',0]')
+                          
+            If (sConfigJsonCont00 = '') Then 
+              Break
+                    Endif
+
+            sDIVVariable := 'P' + sVal(iSchleifePanels) + 'L' + sVal(iSchleifeLines) + 'R' + sVal(iSchleifeRows)
+            ReadArrayVar(sConfigJsonCont01, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',1]')
+            ReadArrayVar(sConfigJsonCont02, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',2]')
+            ReadArrayVar(sConfigJsonCont03, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',3]')
+            ReadArrayVar(sConfigJsonCont04, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',4]')
+            ReadArrayVar(sConfigJsonCont05, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',5]')
+            ReadArrayVar(sConfigJsonCont06, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',6]')
+            ReadArrayVar(sConfigJsonCont07, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',7]')
+            ReadArrayVar(sConfigJsonCont08, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[' + sVal(iSchleifeLines) + '].Content[' + sVal(iSchleifeRows) + ',8]')
+
+                  // Gruppe vorhanden
+          else
+
+            ReadArrayVar(sConfigJsonCont00, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',0]')
+              
+            If (sConfigJsonCont00 = '') Then 
+              Break
+            Endif
+
+            sDIVVariable := 'P' + sVal(iSchleifePanels) + 'L' + sVal(iSchleifeLines) + 'R' + sVal(iSchleifeRows)
+
+            ReadArrayVar(sConfigJsonCont01, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',1]')
+            ReadArrayVar(sConfigJsonCont02, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',2]')
+            ReadArrayVar(sConfigJsonCont03, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',3]')
+            ReadArrayVar(sConfigJsonCont04, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',4]')
+            ReadArrayVar(sConfigJsonCont05, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',5]')
+            ReadArrayVar(sConfigJsonCont06, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',6]')
+            ReadArrayVar(sConfigJsonCont07, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',7]')
+            ReadArrayVar(sConfigJsonCont08, aConfigJson,  'Panels[' + sVal(iSchleifePanels) + '].Lines[0].Content[' + sVal(iSchleifeRows) + ',8]')
+
+          EndIf
+
+          // DP ist In der Gruppe
+          If (sConfigJsonCont00 = "-1") Then
+            sConfigJsonCont00 := aGroupData[iSchleifeLines + 1, 1]
+          // DP ist nicht In der Gruppe
+          else
+          EndIf
+
+
+          If (bTempBR = True) Then
+            Append aContent, '          <br>'
+            bTempBR = False
+          else
+            Append aContent, '          <td>'
+          EndIf
+        
+
+          If (sConfigJsonCont08 = '1') Then
+            bTempBR = True
+          else
+            bTempBR = False
+          EndIf
+
+
+          Select sConfigJsonCont01
+
+          // ZEICHNE  ->  Bild  (1)
+          Case '1'
+
+            // kein Handle
+            If (sConfigJsonCont00 = '0') Then
+
+              Append aContent, '          <p class="la ' + sConfigJsonCont02 + ' w3-large" style="display:inline">'
+
+            // Handle falsch
+            elseif not (isHandle(ival(sConfigJsonCont00))) then
+
+              Append aContent, '            ' + sFaultHandle
+
+            // Handle vorhanden
+            else
+
+              // DP nicht schalten
+              If (sConfigJsonCont07 = '') or (sConfigJsonCont07 = '9') Then
+
+                Append aContent, '           <a class="w3-hover-opacity" onclick="AjaxAktion=`1`; AjaxHandle = ' + sConfigJsonCont00 + '; ajax_callarchiv(`#idmain`);">'
+                Append aContent, '            <div id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="1" data-pic="' + sConfigJsonCont02 + '" data-col00="' + sConfigJsonCont03 + '" data-col01="' + sConfigJsonCont04 + '" data-col02="' + sConfigJsonCont05 + '" data-animate="' + sConfigJsonCont06 + '"> </div>'
+                Append aContent, '           </a>'
+
+              else
+
+                // Schaltbefehl
+                If (ival(sConfigJsonCont07) < 5) then
+
+                  Append aContent, '          <div onclick="SendPost(this, ' + #39 + sConfigJsonCont07 + #39 + ', ' +#39 + '3' + #39 +', ' + #39 + sConfigJsonCont00 + #39 + ')" style="margin: 0 auto; height: 30px; max-width: 100px" class="w3-hover-opacity w3-round-large w3-card-2 w3-border w3-border-dark-grey">'
+                  Append aContent, '            <div id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="1" data-pic="' + sConfigJsonCont02 + '" data-col00="' + sConfigJsonCont03 + '" data-col01="' + sConfigJsonCont04 + '" data-col02="' + sConfigJsonCont05 + '" data-animate="' + sConfigJsonCont06 + '" class="w3-padding-small"> </div>'
+                  Append aContent, '          </div>'
+                
+                EndIf
+
+
+                // Toggle
+                If (ival(sConfigJsonCont07) = 5) then
+                  Append aContent, '          <div onclick="SendPost(this, `rollo`, ' +#39 + '1' + #39 +', ' + #39 + sConfigJsonCont00 + #39 + ')" style="margin: 0 auto; height: 30px; max-width: 100px" class="w3-hover-opacity w3-round-large w3-border w3-border-dark-grey">'
+                  Append aContent, '            <div id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="1" data-pic="' + sConfigJsonCont02 + '" data-col00="' + sConfigJsonCont03 + '" data-col01="' + sConfigJsonCont04 + '" data-col02="' + sConfigJsonCont05 + '" data-animate="' + sConfigJsonCont06 + '" class="w3-padding-small"> </div>'
+                  Append aContent, '          </div>'
+                Endif
+
+                // Impuls
+                If (ival(sConfigJsonCont07) = 6) then
+                  Append aContent, '          <div onclick="SendPost(this, `rollo`, ' +#39 + '2' + #39 +', ' + #39 + sConfigJsonCont00 + #39 + ')" style="margin: 0 auto; height: 30px; max-width: 100px" class="w3-hover-opacity w3-round-large w3-border w3-border-dark-grey">'
+                  Append aContent, '            <div id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="1" data-pic="' + sConfigJsonCont02 + '" data-col00="' + sConfigJsonCont03 + '" data-col01="' + sConfigJsonCont04 + '" data-col02="' + sConfigJsonCont05 + '" data-animate="' + sConfigJsonCont06 + '" class="w3-padding-small"> </div>'
+                  Append aContent, '          </div>'
+                Endif
+
+              EndIf
+
+            EndIf
+
+
+
+          // ZEICHNE  ->  Kommentar  (2)
+          Case '2'
+
+            // Kein Handle
+            If (sConfigJsonCont00 = '0') Then
+
+              Append aContent, '            ' + sConfigJsonCont02
+
+            // Handle falsch
+            elseif not (isHandle(ival(sConfigJsonCont00))) then
+
+              Append aContent, '            ' + sFaultHandle
+
+            // Handle vorhanden
+            else
+
+              Append aContent, '           <a class="w3-hover-opacity" onclick="AjaxAktion=`1`; AjaxHandle = ' + sConfigJsonCont00 + '; ajax_callarchiv(`#idmain`);">'
+
+              If (sConfigJsonStrReplace <> '') Then
+                sComment := GetComment(iVal(sConfigJsonCont00))
+                StrReplaceEx sComment, sConfigJsonStrReplace, ''
+              else
+                sComment := GetComment(iVal(sConfigJsonCont00))
+              EndIf
+
+              Append aContent, '             ' + sComment
+            
+              Append aContent, '           </a>'
+
+            EndIf
+
+
+
+
+
+
+          // ZEICHNE  ->  Aktwert  (3)
+          Case '3'
+
+            // Handle falsch
+            if not (isHandle(ival(sConfigJsonCont00))) then
+
+              Append aContent, '            ' + sFaultHandle
+
+            else
+
+              // Öffnen von dem Archiv oder direkt die Settings zum schalten
+              if (sConfigJsonCont04='1') then
+                Append aContent, '           <a onclick="AjaxAktion=`1`; AjaxHandle = ' + sConfigJsonCont00 + '; ajax_default(`#IDelementglobal`, `ajax_settings`); modalklick(`IDelementglobal`)">'
+              else
+                Append aContent, '           <a onclick="AjaxAktion=`1`; AjaxHandle = ' + sConfigJsonCont00 + '; ajax_callarchiv(`#idmain`);">'
+              endif
+
+              Append aContent, '            <div class="w3-hover-opacity" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '           </a>'
+
+            endif
+
+
+
+
+          // ZEICHNE  ->  ProcessData  (4)
+          Case '4'
+
+            // Handle falsch
+            if not (isHandle(ival(sConfigJsonCont00))) then
+
+              Append aContent, '            ' + sFaultHandle
+
+            else
+
+              Append aContent, '           <a onclick="AjaxAktion=`1`; AjaxHandle = ' + sConfigJsonCont00 + '; ajax_callarchiv(`#idmain`);">'
+              Append aContent, '            <div style="display:inline" id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="4" data-pic="' + sConfigJsonCont02 + '" data-col00="' + sConfigJsonCont03 + '" data-col01="" data-col02="" data-animate="1"> </div>'                              
+              Append aContent, '           </a>'
+
+            endif
+
+
+
+          // ZEICHNE  ->  SLIDER  (5)
+          Case '5'
+
+            // Handle falsch
+            if not (isHandle(ival(sConfigJsonCont00))) then
+
+              Append aContent, '            ' + sFaultHandle
+
+            else
+
+              Append aContent, '            <div id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="3" data-pic="" data-col00="" data-col01="' + sConfigJsonCont03 + '" data-col02="' + sConfigJsonCont02 + '" data-animate="1"> </div>'                              
+
+            endif
+
+
+          // ZEICHNE  ->  SNAPSHOT Kamera  (6)
+          Case '6'
+
+            Append aContent, '<img id="CAM' + sDIVVariable + '" style="width:100%; opacity:100%"></img>'
+
+            Append aContent, '<script>'
+            Append aContent, '  $(document).ready(function(){'
+            Append aContent, '    var update = function(){'
+
+            If (sConfigJsonCont03 = "1") then
+              Append aContent, '      var url = "' + sConfigJsonCont00 + '";'
+            else
+              Append aContent, '      var url = "' + sConfigJsonCont00 + '?rnd="+Math.random();'
+            Endif
+              
+            Append aContent, '      $(`#CAM' + sDIVVariable + '`).attr("src",url);'
+            Append aContent, '    };'
+            Append aContent, '    var auto_refresh = setInterval(function(){update();}, ' + sConfigJsonCont02 + ');'
+            Append aContent, '    update();'
+            Append aContent, '  });'
+            Append aContent, '</script>'
+
+
+
+
+
+
+          // ZEICHNE  ->  GAUGE  (7)
+          Case '7'
+
+            // Handle falsch
+            if not (isHandle(ival(sConfigJsonCont00))) then
+
+              Append aContent, '            ' + sFaultHandle
+
+            else
+
+
+
+            if (sConfigJsonCont04 <> 'null') then
+              Append aContent, '            <div class="w3-hover-opacity" onclick="AjaxAktion=`1`; AjaxHandle = ' + sConfigJsonCont00 + '; ajax_callarchiv(`#idmain`);" style="max-width:500px; height:' + sConfigJsonCont04 + 'px; margin:auto; text-align:center;">'
+            else
+              Append aContent, '            <div class="w3-hover-opacity" onclick="AjaxAktion=`1`; AjaxHandle = ' + sConfigJsonCont00 + '; ajax_callarchiv(`#idmain`);" style="max-width:500px; height:150px; margin:auto; text-align:center;">'
+            endif
+
+            Append aContent, '              <canvas id="gaugeChart' + sDIVVariable + '" style="display:inline-block;"></canvas>'
+            Append aContent, '            </div>'            
+
+
+            Append aContent, '            <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollectWert' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+
+
+            Append aContent, '            <script>'
+
+            Append aContent, '              wert' + sDIVVariable + ' = 0; // Startwert für das Gauge'
+            Append aContent, '              gaugeChart' + sDIVVariable + ' = []; // Variable für das Chart-Objekt'
+
+
+            Append aContent, '              function createDataset' + sDIVVariable + '(value) {'
+
+            Append aContent, '                // Einstellbare Schwellenwerte'
+            Append aContent, '                yellowThreshold = 80;'
+            Append aContent, '                redThreshold = 90;'
+
+            Append aContent, '                colors = {'
+            Append aContent, '                  green: `#42D06A`,'
+
+            // Hintergrund gelb
+            if (sConfigJsonCont03 = '1') then
+              Append aContent, '                  yellow: `rgba(255, 202, 44, 0.4)`,'
+            else
+              Append aContent, '                  yellow: `rgba(224, 224, 224, 0.1)`,'
+            endif
+
+            // Hintergrund rot
+            if (sConfigJsonCont02 = '1') then
+              Append aContent, '                  red: `rgba(255, 99, 132, 0.5)`,'
+            else
+              Append aContent, '                  red: `rgba(224, 224, 224, 0.1)`,'
+            endif
+
+            Append aContent, '                  gray: `rgba(224, 224, 224, 0.1)`'
+            Append aContent, '                };'
+
+
+
+
+            Append aContent, '                const segments = ['
+            Append aContent, '                  { value: Math.min(value, yellowThreshold), color: colors.green },'
+            Append aContent, '                  { value: Math.max(0, Math.min(value, redThreshold) - yellowThreshold), color: colors.green },'
+            Append aContent, '                  { value: Math.max(0, value - redThreshold), color: colors.green }'
+            Append aContent, '                ];'
+
+            Append aContent, '                // Füge die Hintergrundsegmente hinzu'
+            Append aContent, '                if (value < yellowThreshold) {'
+            Append aContent, '                  segments.push({ value: yellowThreshold - value, color: colors.gray });'
+            Append aContent, '                  segments.push({ value: redThreshold - yellowThreshold, color: colors.yellow });'
+            Append aContent, '                  segments.push({ value: 100 - redThreshold, color: colors.red });'
+            Append aContent, '                } else if (value < redThreshold) {'
+            Append aContent, '                  segments.push({ value: redThreshold - value, color: colors.yellow });'
+            Append aContent, '                  segments.push({ value: 100 - redThreshold, color: colors.red });'
+            Append aContent, '                } else if (value < 100) {'
+            Append aContent, '                  segments.push({ value: 100 - value, color: colors.red });'
+            Append aContent, '                }'
+
+            Append aContent, '                return segments.filter(segment => segment.value > 0);'
+            Append aContent, '              }'
+
+            Append aContent, '              function initChart' + sDIVVariable + '() {'
+            Append aContent, '                const ctx = document.getElementById(`gaugeChart' + sDIVVariable + '`).getContext(`2d`);'
+            Append aContent, '                gaugeChart' + sDIVVariable + ' = new Chart(ctx, {'
+            Append aContent, '                  type: `doughnut`,'
+            Append aContent, '                  data: {'
+            Append aContent, '                    datasets: [{'
+            Append aContent, '                      data: createDataset' + sDIVVariable + '(wert' + sDIVVariable + ').map(segment => segment.value),'
+            Append aContent, '                      backgroundColor: createDataset' + sDIVVariable + '(wert' + sDIVVariable + ').map(segment => segment.color),'
+            Append aContent, '                      borderWidth: 0'
+            Append aContent, '                    }],'
+            Append aContent, '                  centerText: `${wert' + sDIVVariable + '}`'
+            Append aContent, '                  },'
+
+            Append aContent, '                  options: {'
+
+            Append aContent, '                    animation: {'
+            Append aContent, '                      animateScale: false,    // Deaktiviert die Skalierungsanimation beim Start'
+            Append aContent, '                      animateRotate: true,    // Deaktiviert die Rotationsanimation beim Start'
+            Append aContent, '                      duration: 0,           // Dauer der normalen Animation'
+            Append aContent, '                      easing: `easeOutQuart`'
+            Append aContent, '                    },'
+
+
+            Append aContent, '                    responsive: true,'
+            Append aContent, '                    circumference: 180,'
+            Append aContent, '                    rotation: -90,'
+            Append aContent, '                    cutout: `85%`,'
+            Append aContent, '                    plugins: {'
+            Append aContent, '                      legend: { display: false },'
+            Append aContent, '                      tooltip: { enabled: false }'
+            Append aContent, '                    },'
+            Append aContent, '                  },'
+            
+            Append aContent, '                  plugins: [{'
+            Append aContent, '                    id: `centerText`,'
+            Append aContent, '                    afterDraw: (chart) => {'
+            Append aContent, '                      const { ctx, chartArea: { top, right, bottom, left, width, height } } = chart;'
+            Append aContent, '                      const centerX = (left + right) / 2;'
+            Append aContent, '                      const centerY = (top + bottom) / 2;'
+
+            Append aContent, '                      ctx.save();'
+            
+            Append aContent, '                      // Dynamically calculate font size based on chart width'
+            Append aContent, '                      const fontSize = Math.min(width, height) / 7; // Adjust the divisor to change the relative size'
+            Append aContent, '                      ctx.font = `${fontSize}px Helvetica, sans-serif`;'
+
+            Append aContent, '                      ctx.fillStyle = `#FFF`;'
+            Append aContent, '                      ctx.textAlign = `center`;'
+            Append aContent, '                      ctx.textBaseline = `middle`;'
+            Append aContent, '                      ctx.fillText(`${chart.data.centerText}`, centerX, centerY + 10);'
+
+            Append aContent, '                      // Dynagte font size2 based on chart width'
+            Append aContent, '                      const fontSize2 = Math.min(width, height) / 10; // Adjust the divisor to change the relative size'
+            Append aContent, '                      ctx.font = `${fontSize2}px Helvetica, sans-serif`;'
+
+            Append aContent, '                      ctx.fillText(`' + GetAnaUnit(ival(sConfigJsonCont00)) + '`, centerX, centerY + 15 + fontSize2);'
+
+            Append aContent, '                      ctx.restore();'
+            Append aContent, '                    }'
+            Append aContent, '                  }]'
+            Append aContent, '                });'
+
+
+
+            Append aContent, '                // Animation nach dem Laden aktivieren'
+            Append aContent, '                setTimeout(() => {'
+            Append aContent, '                  gaugeChart' + sDIVVariable + '.options.animation.duration = 3000; // Setzt die Animationsdauer'
+            Append aContent, '                }, 3000);'
+
+
+            Append aContent, '              }'
+
+
+
+
+
+
+
+
+
+
+            Append aContent, '              // Initialisiere das Chart'
+            Append aContent, '              initChart' + sDIVVariable + '();'
+
+
+            Append aContent, '              (function() {'
+            Append aContent, '                // Das Ziel-Element, das beobachtet werden soll'
+            Append aContent, '                const targetNode = document.querySelector(`.watch' + sDIVVariable + '`);'
+
+            Append aContent, '                // Optionen für den Observer (was genau beobachtet werden soll)'
+            Append aContent, '                const config = { childList: true, subtree: true };'
+
+            Append aContent, '                // Callback-Funktion, die bei Änderungen ausgeführt wird'
+            Append aContent, '                const callback = function(mutationsList, observer) {'
+            Append aContent, '                  for (let mutation of mutationsList) {'
+            Append aContent, '                    if (mutation.type === `childList`) {'
+
+            Append aContent, '                      Divwert = ' + sval(100 / GetMaxValue(ival(sConfigJsonCont00))) + ';'
+
+            Append aContent, '                      rawValue = document.getElementById("DIVCollectWert' + sDIVVariable + '").innerHTML;'
+            Append aContent, '                      cleanedValue = rawValue.replace(`,`, `.`);'
+            Append aContent, '                      newData = createDataset' + sDIVVariable + '(cleanedValue * Divwert);'
+
+            Append aContent, '                      gaugeChart' + sDIVVariable + '.data.centerText = document.getElementById("DIVCollectWert' + sDIVVariable + '").innerHTML;'
+            Append aContent, '                      gaugeChart' + sDIVVariable + '.data.datasets[0].data = newData.map(segment => segment.value);'
+            Append aContent, '                      gaugeChart' + sDIVVariable + '.data.datasets[0].backgroundColor = newData.map(segment => segment.color);'
+            Append aContent, '                      gaugeChart' + sDIVVariable + '.update();'
+
+
+            Append aContent, '                    }'
+            Append aContent, '                  }'
+            Append aContent, '                };'
+
+            Append aContent, '                // Einen Observer-Instanz erstellen und starten'
+            Append aContent, '                const observer = new MutationObserver(callback);'
+            Append aContent, '                observer.observe(targetNode, config);'
+
+            Append aContent, '              })();'
+
+
+            Append aContent, '            </script>'
+
+
+
+
+
+
+
+            Endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  // ZEICHNE  ->  MultiArchiv  (8)
+          Case '8'
+
+            If (isana(ival(sConfigJsonCont03))) then //and isana(ival(sConfigJsonCont04))) then
+
+              Append aContent, '           <a class="w3-hover-opacity" onclick="AjaxSummeArchiv02 =``; AjaxArchivMode = `50` ; AjaxHandle=`' + sConfigJsonCont03 + '`;  AjaxHandle2=`' + sConfigJsonCont04 + '` ;ajax_callarchiv(`#idmain`);">'
+                           
+              // Bild oder Text anzeigen
+              If (sConfigJsonCont02 = '0') then
+                Append aContent,   '             <i class="w3-hover-opacity la la-chart-line"></i>'
+              else
+                Append aContent, '             ' + sConfigJsonCont02
+              endif
+
+            else
+
+              Append aContent,   '             <i title="Nur analoge Handles !" class="la la-blind"></i>'
+                
+            Endif
+
+            Append aContent,   '           </a>'
+
+
+
+
+
+
+
+
+
+          // ZEICHNE  ->  PROGRESSBAR  (9)
+          Case '9'
+           
+
+            // Handle falsch
+            if not (isHandle(ival(sConfigJsonCont00))) then
+
+              Append aContent, '            ' + sFaultHandle
+
+            else
+
+              // Hintergrundfarbe vorhanden
+              if (len(sConfigJsonCont02) > 4) then
+                TmpCaseVar := 'background-color:#' + sConfigJsonCont02 + ';'
+              else
+                TmpCaseVar := ''
+              endif
+
+
+              // Hintergrundfarbe Progress vorhanden
+              if (len(sConfigJsonCont03) > 4) then
+                TmpCaseVar2 := 'background-color:#' + sConfigJsonCont03 + ';'
+              else
+                TmpCaseVar2 := 'background-image: linear-gradient(90deg, #4876FF 0%, #cd3333 130%);'
+              endif
+
+
+
+              Append aContent, '           <a class="w3-hover-opacity" onclick="AjaxAktion=`1`; AjaxHandle = ' + sConfigJsonCont00 + '; ajax_callarchiv(`#idmain`);">'
+
+              Append aContent, '            <div style="width:100%; margin-top:6px; margin-bottom:4px;' + TmpCaseVar + '" class="w3-round-large w3-border-dark-grey w3-border">'
+
+                    Append aContent, '              <div id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="2" data-pic="' + 'DIVCollect' + sDIVVariable + '" data-col00="" data-col01="" data-col02="" data-animate="" class="w3-container w3-round-large w3-card-2" style="padding:0px; width:0%; height:12px;' + TmpCaseVar2 + '"></div>'
+
+              Append aContent, '            </div>'
+
+              Append aContent, '           </a>'
+
+            endif
+
+
+
+
+
+
+          // ZEICHNE  ->  MessageVar  (10)
+          Case '10'
+            Append aContent, '            <div id="' + 'DIVCollect' + sDIVVariable + '" data-datapoint="0" data-mode="10" data-pic="" data-col00="' + sConfigJsonCont00 + '" data-col01="" data-col02="" data-animate=""> </div>'
+
+
+
+
+
+
+
+
+
+          // ZEICHNE  ->  PalarArea Chart  (11)
+          Case '11'
+
+            Dim sCalcTemp:string      := ''
+            Dim sLabTemp:string       := ''
+            Dim sDataTemp:string      := ''
+            Dim sValTemp:String       := ''
+
+            Dim sShowLegend:String    := 'true'
+
+
+            if (sConfigJsonCont07 = '0') then sShowLegend := 'false'
+
+            Append aContent, '            <div class="CenterThings">'
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey01" data-datapoint="' + sConfigJsonCont00 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment01" data-datapoint="' + sConfigJsonCont00 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit01" data-datapoint="' + sConfigJsonCont00 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey02" data-datapoint="' + sConfigJsonCont03 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment02" data-datapoint="' + sConfigJsonCont03 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit02" data-datapoint="' + sConfigJsonCont03 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              sLabTemp := '`' + GetComment(ival(sConfigJsonCont03)) + '`'
+              sDataTemp := '0'
+              sValTemp := 'dat02' 
+            endif
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey03" data-datapoint="' + sConfigJsonCont04 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment03" data-datapoint="' + sConfigJsonCont04 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit03" data-datapoint="' + sConfigJsonCont04 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              sLabTemp :=  sLabTemp + ',`' + GetComment(ival(sConfigJsonCont04)) + '`'
+              sDataTemp := sDataTemp + ',0'
+              sValTemp := sValTemp + ',dat03' 
+            endif
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey04" data-datapoint="' + sConfigJsonCont05 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment04" data-datapoint="' + sConfigJsonCont05 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit04" data-datapoint="' + sConfigJsonCont05 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              sLabTemp :=  sLabTemp + ',`' + GetComment(ival(sConfigJsonCont05)) + '`'
+              sDataTemp := sDataTemp + ',0'
+              sValTemp := sValTemp + ',dat04' 
+            endif
+
+            if (isHandle(ival(sConfigJsonCont06))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey05" data-datapoint="' + sConfigJsonCont06 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment05" data-datapoint="' + sConfigJsonCont06 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit05" data-datapoint="' + sConfigJsonCont06 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              sLabTemp :=  sLabTemp + ',`' + GetComment(ival(sConfigJsonCont06)) + '`'
+              sDataTemp := sDataTemp + ',0'
+              sValTemp := sValTemp + ',dat05' 
+            endif
+
+
+
+            Append aContent, '              <canvas id="myPieChart' + sDIVVariable + '"></canvas>'
+
+            Append aContent, '            </div>'
+
+            Append aContent, '            <script>'
+            Append aContent, '              // Initialisieren des Pie-Charts'
+            Append aContent, '              var ctx' + sDIVVariable + ' = document.getElementById(`myPieChart' + sDIVVariable + '`).getContext(`2d`);'
+            Append aContent, '                var myPieChart' + sDIVVariable + ' = new Chart(ctx' + sDIVVariable + ', {'
+            Append aContent, '                type: `polarArea`,'
+            Append aContent, '                data: {'
+            Append aContent, '                  labels: [' + sLabTemp + '],'
+            Append aContent, '                  datasets: [{'
+            Append aContent, '                    data: [' + sDataTemp + '],'
+            Append aContent, '                    borderWidth: 0,'
+
+            Append aContent, '                    backgroundColor: ['
+            Append aContent, '                      `rgba(41, 159, 255, 0.5)`,  // blau'
+            Append aContent, '                      `rgba(255, 202, 44, 0.5)`,  // gelb'
+            Append aContent, '                      `rgba(66, 208, 106, 0.5)`,  // grün'
+            Append aContent, '                      `rgba(255, 99, 132, 0.5)`   // rot'
+            Append aContent, '                    ],'
+            
+            Append aContent, '                  }]'
+            Append aContent, '                },'
+
+            Append aContent, '                options: {'
+            Append aContent, '                  responsive: true,'
+            Append aContent, '                  animation: {'
+            Append aContent, '                    duration: 0 // Animationsdauer in Millisekunden'
+            Append aContent, '                  },'
+
+            Append aContent, '                  scales: {'
+            Append aContent, '                    r: {'
+
+            Append aContent, '                      ticks: {'
+            Append aContent, '                        color: `rgba(255, 255, 255, 0.5)`, // Farbe der Zahlen'
+            Append aContent, '                        backdropColor: `rgba(255, 255, 255, 0.0)` // Hintergrundfarbe der Zahlen'
+            Append aContent, '                      },'
+
+            Append aContent, '                      angleLines: {'
+            Append aContent, '                        color: `rgba(255, 0, 0, 1.0)` // Farbe der Winkel-Linien'
+            Append aContent, '                      },'
+
+            Append aContent, '                      grid: {'
+            Append aContent, '                        color: `rgba(255, 255, 255, 0.1)` // Farbe der Kreis-Rasterlinien'
+            Append aContent, '                      }'
+              
+            Append aContent, '                    }'
+            Append aContent, '                  },'
+
+
+            Append aContent, '                  plugins: {'
+
+            Append aContent, '                    legend: {'
+            Append aContent, '                      display: ' + sShowLegend + ','
+            Append aContent, '                      position: `top`,'
+
+            Append aContent, '                      labels: {'
+            Append aContent, '                        boxWidth: 15, // Breite der farbigen Box'
+            Append aContent, '                        borderWidth: 0, // Entfernt den Rahmen um die Boxen'
+            Append aContent, '                        color: `#EEE`, // Ändert die Schriftfarbe der Legende'
+
+            Append aContent, '                        font: {'
+            Append aContent, '                          family: `Helvetica`, // Schriftart'
+            Append aContent, '                          size: 12, // Schriftgröße'
+            Append aContent, '                          style: `normal` // Schriftstil (normal, italic, bold, etc.)'
+            Append aContent, '                        }'
+
+            Append aContent, '                      }'
+
+            Append aContent, '                    },'
+
+            Append aContent, '                    title: {'
+            Append aContent, '                      display: ' + sShowLegend + ','
+            Append aContent, '                      text: `' + GetComment(ival(sConfigJsonCont00)) + '`,'
+            Append aContent, '                      color: `#F5F5DC`'
+            Append aContent, '                    }'
+            Append aContent, '                  }'
+            Append aContent, '                }'
+            Append aContent, '              });'
+
+
+            Append aContent, '              // Animation nach dem Laden aktivieren'
+            Append aContent, '              setTimeout(() => {'
+            Append aContent, '                myPieChart' + sDIVVariable + '.options.animation.duration = 3000; // Setzt die Animationsdauer auf 1000 ms'
+            Append aContent, '              }, 3000);'
+
+
+            Append aContent, '              (function() {'
+            Append aContent, '                // Das Ziel-Element, das beobachtet werden soll'
+            Append aContent, '                const targetNodes = document.querySelectorAll(`.watch' + sDIVVariable + '`);'
+
+            Append aContent, '                // Optionen für den Observer (was genau beobachtet werden soll)'
+            Append aContent, '                const config = { childList: true, subtree: true };'
+
+            Append aContent, '                // Callback-Funktion, die bei Änderungen ausgeführt wird'
+            Append aContent, '                const callback = function(mutationsList, observer) {'
+            Append aContent, '                  for (let mutation of mutationsList) {'
+            Append aContent, '                    if (mutation.type === `childList`) {'
+
+
+            
+
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '                      var dat01Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment01").innerHTML'
+              Append aContent, '                      var dat01Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit01").innerHTML'
+              Append aContent, '                      var dat01 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey01").innerHTML);'
+              sCalcTemp := '[]'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '                      var dat02Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment02").innerHTML'
+              Append aContent, '                      var dat02Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit02").innerHTML'
+              Append aContent, '                      var dat02 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey02").innerHTML);'
+            endif
+
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '                      var dat03Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment03").innerHTML'
+              Append aContent, '                      var dat03Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit03").innerHTML'
+              Append aContent, '                      var dat03 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey03").innerHTML);'
+            endif
+
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '                      var dat04Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment04").innerHTML'
+              Append aContent, '                      var dat04Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit04").innerHTML'
+              Append aContent, '                      var dat04 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey04").innerHTML);'
+            endif
+
+
+            if (isHandle(ival(sConfigJsonCont06))) then
+              Append aContent, '                      var dat05Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment05").innerHTML'
+              Append aContent, '                      var dat05Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit05").innerHTML'
+              Append aContent, '                      var dat05 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey05").innerHTML);'
+            endif
+
+
+            Append aContent, '                      // Vordefiniertes Array mit neuen Werten'
+            Append aContent, '                      var newValues = [' + sValTemp + '];'
+
+            Append aContent, '                      myPieChart' + sDIVVariable + '.options.plugins.title.text = dat01Comment + " " + dat01 + " " + dat01Unit;'
+            Append aContent, '                      myPieChart' + sDIVVariable + '.data.datasets[0].data = newValues;'
+            Append aContent, '                      myPieChart' + sDIVVariable + '.update();'
+
+
+            Append aContent, '                    }'
+            Append aContent, '                  }'
+            Append aContent, '                };'
+
+
+            Append aContent, '                // Für jedes Ziel-Element einen Observer-Instanz erstellen und starten'
+            Append aContent, '                targetNodes.forEach(targetNode => {'
+            Append aContent, '                  const observer = new MutationObserver(callback);'
+            Append aContent, '                  observer.observe(targetNode, config);'
+            Append aContent, '                });'
+
+            Append aContent, '              })();'
+
+            Append aContent, '            </script>'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          // ZEICHNE  ->  Doughnut Chart  (12)
+          Case '12'
+
+            Dim sCalcTemp:string      := ''
+            Dim sLabTemp:string       := ''
+            Dim sDataTemp:string      := ''
+            Dim sValTemp:String       := ''
+
+            Dim sShowLegend:String    := 'true'
+
+            if (sConfigJsonCont07 = '0') then sShowLegend := 'false'
+
+
+            Append aContent, '            <div class="CenterThings">'
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey01" data-datapoint="' + sConfigJsonCont00 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment01" data-datapoint="' + sConfigJsonCont00 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit01" data-datapoint="' + sConfigJsonCont00 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey02" data-datapoint="' + sConfigJsonCont03 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment02" data-datapoint="' + sConfigJsonCont03 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit02" data-datapoint="' + sConfigJsonCont03 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              sLabTemp := '`' + GetComment(ival(sConfigJsonCont03)) + '`'
+              sDataTemp := '0'
+              sValTemp := 'dat02' 
+            endif
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey03" data-datapoint="' + sConfigJsonCont04 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment03" data-datapoint="' + sConfigJsonCont04 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit03" data-datapoint="' + sConfigJsonCont04 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              sLabTemp :=  sLabTemp + ',`' + GetComment(ival(sConfigJsonCont04)) + '`'
+              sDataTemp := sDataTemp + ',0'
+              sValTemp := sValTemp + ',dat03' 
+            endif
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey04" data-datapoint="' + sConfigJsonCont05 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment04" data-datapoint="' + sConfigJsonCont05 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit04" data-datapoint="' + sConfigJsonCont05 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              sLabTemp :=  sLabTemp + ',`' + GetComment(ival(sConfigJsonCont05)) + '`'
+              sDataTemp := sDataTemp + ',0'
+              sValTemp := sValTemp + ',dat04' 
+            endif
+
+            if (isHandle(ival(sConfigJsonCont06))) then
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'Sankey05" data-datapoint="' + sConfigJsonCont06 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyComment05" data-datapoint="' + sConfigJsonCont06 + '" data-mode="6" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              Append aContent, '              <div class="w3-hide watch' + sDIVVariable + '" style="display:inline;" id="' + 'DIVCollect' + sDIVVariable + 'SankeyUnit05" data-datapoint="' + sConfigJsonCont06 + '" data-mode="7" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+              sLabTemp :=  sLabTemp + ',`' + GetComment(ival(sConfigJsonCont05)) + '`'
+              sDataTemp := sDataTemp + ',0'
+              sValTemp := sValTemp + ',dat05' 
+            endif
+
+
+
+            Append aContent, '              <canvas id="myPieChart' + sDIVVariable + '"></canvas>'
+
+            Append aContent, '            </div>'
+
+            Append aContent, '            <script>'
+            Append aContent, '              // Initialisieren des Pie-Charts'
+            Append aContent, '              var ctx = document.getElementById(`myPieChart' + sDIVVariable + '`).getContext(`2d`);'
+            Append aContent, '              var myPieChart' + sDIVVariable + ' = new Chart(ctx, {'
+            Append aContent, '                type: `doughnut`,'
+            Append aContent, '                data: {'
+            Append aContent, '                  labels: [' + sLabTemp + '],'
+            Append aContent, '                  datasets: [{'
+            Append aContent, '                    data: [' + sDataTemp + '],'
+            Append aContent, '                    borderWidth: 0,'
+
+            Append aContent, '                    backgroundColor: ['
+            Append aContent, '                      `rgba(41, 159, 255, 0.8)`,  // blau'
+            Append aContent, '                      `rgba(255, 202, 44, 0.8)`,  // gelb'
+            Append aContent, '                      `rgba(66, 208, 106, 0.8)`,  // grün'
+            Append aContent, '                      `rgba(255, 99, 132, 0.8)`   // rot'
+            Append aContent, '                    ],'
+
+
+            Append aContent, '                  }]'
+            Append aContent, '                },'
+
+            Append aContent, '                borderWidth: 0,'
+
+            Append aContent, '                options: {'
+            Append aContent, '                  cutout: `60%`, // Stellt die Dicke des Rings ein'
+            Append aContent, '                  responsive: true,'
+            Append aContent, '                  animation: {'
+            Append aContent, '                      duration: 0 // Animationsdauer in Millisekunden'
+            Append aContent, '                  },'
+
+            Append aContent, '                  plugins: {'
+            Append aContent, '                    legend: {'
+            Append aContent, '                      display: ' + sShowLegend + ','
+            Append aContent, '                      position: `top`,'
+
+            Append aContent, '                      labels: {'
+            Append aContent, '                        boxWidth: 15, // Breite der farbigen Box'
+            Append aContent, '                        borderWidth: 0, // Entfernt den Rahmen um die Boxen'
+            Append aContent, '                        color: `#EEE`, // Ändert die Schriftfarbe der Legende'
+
+            Append aContent, '                        font: {'
+            Append aContent, '                          family: `Helvetica`, // Schriftart'
+            Append aContent, '                          size: 12, // Schriftgröße'
+            Append aContent, '                          style: `normal` // Schriftstil (normal, italic, bold, etc.)'
+            Append aContent, '                        }'
+            Append aContent, '                      }'
+
+            Append aContent, '                    },'
+
+            Append aContent, '                    title: {'
+            Append aContent, '                      display: ' + sShowLegend + ','
+            Append aContent, '                      text: `' + GetComment(ival(sConfigJsonCont00)) + '`,'
+            Append aContent, '                      color: `#F5F5DC`'
+            Append aContent, '                    }'
+
+            Append aContent, '                  }'
+            Append aContent, '                }'
+            Append aContent, '              });'
+
+
+            Append aContent, '              // Animation nach dem Laden aktivieren'
+            Append aContent, '              setTimeout(() => {'
+            Append aContent, '                myPieChart' + sDIVVariable + '.options.animation.duration = 3000; // Setzt die Animationsdauer'
+            Append aContent, '              }, 3000);'
+
+
+            Append aContent, '              // Funktion zum Aktualisieren der Daten'
+
+            Append aContent, '              (function() {'
+            Append aContent, '                // Das Ziel-Element, das beobachtet werden soll'
+            Append aContent, '                const targetNodes = document.querySelectorAll(`.watch' + sDIVVariable + '`);'
+
+            Append aContent, '                // Optionen für den Observer (was genau beobachtet werden soll)'
+            Append aContent, '                const config = { childList: true, subtree: true };'
+
+            Append aContent, '                // Callback-Funktion, die bei Änderungen ausgeführt wird'
+            Append aContent, '                const callback = function(mutationsList, observer) {'
+            Append aContent, '                  for (let mutation of mutationsList) {'
+            Append aContent, '                    if (mutation.type === `childList`) {'
+
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '                      var dat01Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment01").innerHTML'
+              Append aContent, '                      var dat01Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit01").innerHTML'
+              Append aContent, '                          var dat01 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey01").innerHTML);'
+              sCalcTemp := '[]'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '                      var dat02Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment02").innerHTML'
+              Append aContent, '                      var dat02Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit02").innerHTML'
+              Append aContent, '                      var dat02 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey02").innerHTML);'
+            endif
+
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '                      var dat03Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment03").innerHTML'
+              Append aContent, '                      var dat03Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit03").innerHTML'
+              Append aContent, '                      var dat03 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey03").innerHTML);'
+            endif
+
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '                      var dat04Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment04").innerHTML'
+              Append aContent, '                      var dat04Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit04").innerHTML'
+              Append aContent, '                      var dat04 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey04").innerHTML);'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont06))) then
+              Append aContent, '                      var dat05Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment05").innerHTML'
+              Append aContent, '                      var dat05Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit05").innerHTML'
+              Append aContent, '                      var dat05 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey05").innerHTML);'
+            endif
+
+
+            Append aContent, '                      // Vordefiniertes Array mit neuen Werten'
+            Append aContent, '                      var newValues = [' + sValTemp + '];'
+
+            Append aContent, '                      myPieChart' + sDIVVariable + '.options.plugins.title.text = dat01Comment + " " + dat01 + " " + dat01Unit;'
+
+            Append aContent, '                      myPieChart' + sDIVVariable + '.data.datasets[0].data = newValues;'
+            Append aContent, '                      myPieChart' + sDIVVariable + '.update();'
+
+
+            Append aContent, '                    }'
+            Append aContent, '                  }'
+            Append aContent, '                };'
+
+
+            Append aContent, '                // Für jedes Ziel-Element einen Observer-Instanz erstellen und starten'
+            Append aContent, '                targetNodes.forEach(targetNode => {'
+            Append aContent, '                  const observer = new MutationObserver(callback);'
+            Append aContent, '                  observer.observe(targetNode, config);'
+            Append aContent, '                });'
+
+            Append aContent, '              })();'
+
+
+            Append aContent, '            </script>'
+
+
+
+
+
+
+
+
+
+
+
+
+          EndSelect
+
+
+
+
+
+
+          If (bTempBR = True) Then
+          else
+            Append aContent, '          </td>'
+          EndIf
+
+          // LogBook 'Panel:' + sVal(iSchleifePanels) + '  /  ' + 'Lines:' + sVal(iSchleifeLines) + '  /  ' + 'Row:' + sVal(iSchleifeRows)
+              
+        Next
+
+        Append aContent, '        </tr>'
+
+      Next
+
+      Append aContent, '      </table>'
+
+        If (sConfigJsonMode = '2') Then
+        Append aContent, '      </div>'
+        Append aContent, '    </div>'
+        EndIf
+
+    EndIf
+
+  Next
+
+
+  If (sConfigJsonMode = '1') Then
+    Append aContent, '  </div> <!-- FooterSinglePanelPage -->'
+  EndIf
+
+  If (sConfigJsonMode = '2') Then
+    Append aContent, '  </div>'
+  EndIf
+ 
+  if (MkDir(ProPath + '\Web\menue')) then
+    WriteTextFile ProPath + \Web\menue\ + sPageRefresh + '.html', aContent
+  endif
+
+EndProc
+
+
+
+
+
+
+
+
+Proc MakePrioColorList
+
+  Dim iSchleifeCountPrio:int
+  Dim sQuellColor:String
+  Dim aColorList:array
+  Dim sColorListJS:String
+
+  sColorListJS := '['
+
+  for iSchleifeCountPrio = 0 to 99
+
+    sQuellColor := PrioToColor(iSchleifeCountPrio)
+    sQuellColor := ColorToStr(iVal(sQuellColor))
+
+    if (sQuellColor[1] = 'c') Then
+      StrCopy sQuellColor, sQuellColor, 3, Len(sQuellColor)
+    else
+
+      if (sQuellColor[1] = '$') Then
+        sQuellColor := '#' + sQuellColor[8] + sQuellColor[9] + sQuellColor[6] + sQuellColor[7] + sQuellColor[4] + sQuellColor[5]
+      endIf
+
+    endIf
+
+    Append aColorList, sQuellColor
+
+//    if (iSchleifeCountPrio = 0) then
+//      sColorListJS := sColorListJS + '"' + sQuellColor + '"'
+//    else
+//      sColorListJS := sColorListJS + ',' + '"' + sQuellColor + '"'
+//    endif
+
+  Next
+
+//  sColorListJS := sColorListJS + ']'
+
+
+  SetMessageVar 'PrioColorList', ArrayToStr(aColorList)
+//  SetMessageVar 'PrioColorListJS', sColorListJS
+
+
+EndProc
+
+
+
+
+;EOF
