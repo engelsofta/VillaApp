@@ -122,6 +122,7 @@ Proc CheckUpdate
   Dim sOutput:string               := ProPath + '\Update\' // '\
   
   Dim sUpdateURL:string            := 'app.haisla.de/' 
+  Dim sVersionUrl:string           := 'appversion.haisla.de'
   Dim sVersionOnline:string        := ''
   Dim sVersionOffline:string       := GetMessageVar('VersionVilla')
   Dim sCurl:string                 := sOutput + 'curl.exe'
@@ -134,7 +135,7 @@ Proc CheckUpdate
 
 
   // Check for Updates
-  ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sUpdateURL + 'main/version.json -L --max-time 10 -o ' + sOutput + 'version.json')
+  ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sVersionUrl + ' -L --max-time 10 -o ' + sOutput + 'version.json')
 
   // Fehlerauswertung
   if not bOK then
@@ -149,12 +150,11 @@ Proc CheckUpdate
     // check ob normale Version oder Beta Version
     if (bIsBeta) then
       sVersionOnline := aVersionJson.versionBeta
-      //sUpdateURL := sUpdateURL + sVersionOnline
     else
       sVersionOnline := aVersionJson.version
     endif
 
-    sUpdateURL := sUpdateURL + 'main'
+    sUpdateURL := sUpdateURL + 'archive/refs/heads/main.zip'
 
 
     // check auf neue Version
@@ -167,7 +167,7 @@ Proc CheckUpdate
       Logbook 'VillaWeb: Update ist verfügbar - Starte Update auf (' + sVersionOffline + ') -> (' + sVersionOnline + ')'
 
       // Update aus dem Internet laden
-      ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sUpdateURL + '/VillaWeb.zip -L --max-time 10 -o ' + sOutput + 'VillaWeb.zip')
+      ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sUpdateURL + ' -L --max-time 10 -o ' + sOutput + 'VillaWeb.zip')
 
       if not bOK then
 
