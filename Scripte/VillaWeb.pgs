@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.20'
+  Global Dim sVillaVersion:         String    := '9.21'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -177,14 +177,14 @@ Proc CheckUpdate
       else 
 
         // Extrahieren
-        ExecRedirectEx(bOK, iExitCode, aData, aErr, 'tar.exe -xf ' + sOutput + 'VillaWeb.zip -C ' + sOutput)
+        ExecRedirectEx(bOK, iExitCode, aData, aErr, 'tar.exe -xf ' + sOutput + 'VillaWeb.zip --strip-components=1 -C ' + ProPath + '\')
 
         // Update verschieben
-        ExecRedirectEx(bOK, iExitCode, aData, aErr, 'xcopy ' + sOutput + 'VillaApp-main\web ' + ProPath + '\web /E /C /Y')
-        ExecRedirectEx(bOK, iExitCode, aData, aErr, 'xcopy ' + sOutput + 'VillaApp-main\Scripte ' + ProPath + '\Scripte /E /C /Y')
+        //ExecRedirectEx(bOK, iExitCode, aData, aErr, 'xcopy ' + sOutput + 'VillaApp-main\web ' + ProPath + '\web /E /C /Y')
+        //ExecRedirectEx(bOK, iExitCode, aData, aErr, 'xcopy ' + sOutput + 'VillaApp-main\Scripte ' + ProPath + '\Scripte /E /C /Y')
 
         // aufräumen
-        ExecRedirectEx(bOK, iExitCode, aData, aErr, 'rmdir /S /Q "' + sOutput + 'VillaApp-main"')
+        //ExecRedirectEx(bOK, iExitCode, aData, aErr, 'rmdir /S /Q "' + sOutput + 'VillaApp-main"')
 
         if not bOK then
           logbook 'VillaWeb: Fehler beim einspielen des Updates auf Version ' + sVersionOnline
