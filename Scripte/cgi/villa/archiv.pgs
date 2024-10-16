@@ -147,9 +147,9 @@ Proc Main
 
 
       if (isHandle(ihandle)) Then
-        Append Page, '        <div class="el00">'
+        Append Page, '        <button class="el00">'
       else
-        Append Page, '        <div class="el00" onclick="AjaxHandle=`' + aRes[iSchleife, 6] + '`; ajax_callarchiv(`#idmain`);">'
+        Append Page, '        <button class="el00" onclick="AjaxHandle=`' + aRes[iSchleife, 6] + '`; ajax_callarchiv(`#idmain`);">'
       Endif
 
       Append Page, '          <div class="el01">' + TimeToStr(UtcDateTimeToLocalDateTime(rVal(aRes[iSchleife, 1]))) + '</div>'
@@ -161,7 +161,7 @@ Proc Main
         Append Page, '          <div class="el05" style="background-image: linear-gradient(90deg, #299FFF ' + sval(rWertBetween) + '%, black ' + sval(rWertBetween) + '%)"></div>'
       Endif
 
-      Append Page, '        </div>'
+      Append Page, '        </button>'
       
     Next
 

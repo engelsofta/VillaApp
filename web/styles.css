@@ -512,7 +512,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .EventList .el00 {
   color:#fdf5e6;
   height:60px;
-  padding:16px;
+  padding: 12px 0;
   cursor:default;
   border-bottom:1px solid #383232c1!important;
 }
@@ -718,17 +718,17 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 
 
-
-
 /* Organisation der GRIDs auf dem Dashboard */
 
 .wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(374px, 3fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 3fr));
   gap: 5px;
   grid-auto-flow: dense;
   padding: 5px; /* Innenabstand für den Container */
 }
+
+
 
 
 

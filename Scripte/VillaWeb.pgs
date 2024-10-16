@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.21'
+  Global Dim sVillaVersion:         String    := '9.22'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -177,7 +177,7 @@ Proc CheckUpdate
       else 
 
         // Extrahieren
-        ExecRedirectEx(bOK, iExitCode, aData, aErr, 'tar.exe -xf ' + sOutput + 'VillaWeb.zip --strip-components=1 -C ' + ProPath + '\')
+        ExecRedirectEx(bOK, iExitCode, aData, aErr, 'tar.exe -xf ' + sOutput + 'VillaWeb.zip --strip-components=1 -C ' + ProPath + '\') //'
 
         // Update verschieben
         //ExecRedirectEx(bOK, iExitCode, aData, aErr, 'xcopy ' + sOutput + 'VillaApp-main\web ' + ProPath + '\web /E /C /Y')
@@ -842,8 +842,10 @@ Proc Content
       EndIf
 
       If (sConfigJsonMode = '2') Then
-          
-        Append aContent, '    <div class="">'
+
+
+// wenn das wegfallen kann den darunter liegen QuellCode noch einrücken
+//        Append aContent, '    <div class="">'
 
 
         Select SConfigJsonShow
@@ -868,7 +870,7 @@ Proc Content
           Append aContent, '      <h5 class="w3-border-bottom w3-margin-right w3-border-' + sConfigJsonColor + '">' + sConfigJsonName + '</h5>'
         endif
 
-        Append aContent, '      <table class="w3-table w3-centered" style="max-width: 100%; width: 100%; table-layout: fixed;">'
+        Append aContent, '      <table class="w3-table w3-centered" style="max-width: 100%; width: 100%; table-layout: fixed">'
           
       EndIf
 
@@ -1964,7 +1966,7 @@ Proc Content
 
         If (sConfigJsonMode = '2') Then
         Append aContent, '      </div>'
-        Append aContent, '    </div>'
+//        Append aContent, '    </div>'
         EndIf
 
     EndIf
