@@ -79,6 +79,10 @@ el.ontouchend = function (e) {
       modalklick('elementsearch');
     } 
 
+    if (endX > MinSwipeMenue && showmenu) {
+      $("#myVillaSideBar").css("width", 265);
+    }
+
     verifyHorizontalSwipe(endX, endY, endtime);
     verifyVerticalSwipe(endX, endY, endtime);
 
@@ -189,8 +193,6 @@ function verifyHorizontalSwipe(endX, endY, endtime) {
   
     if (Math.sign(distanceTraveled) == 1) {
 
-      console.log(duration);
-
       if (document.getElementById('TouchArchiv')) {	 	
         document.getElementById("ArchivBack").click();
 		  } else {
@@ -199,8 +201,6 @@ function verifyHorizontalSwipe(endX, endY, endtime) {
     }
 
     else if (Math.sign(distanceTraveled) == -1) {
-
-      console.log("Linke Wischgeste (rechts nach links)");
 
       if (showmenu) {
 
