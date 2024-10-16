@@ -6,6 +6,7 @@ Proc Main
   Dim sAktVersion: String
   Dim SNextVersion: String
 
+  aREV[144] := ['9.22', 'Fix: design', 'Dashboard with full size lines']  
   aREV[143] := ['9.21', 'Update via GitHub']  
   aREV[142] := ['9.07', 'clColors available in charts']  
   aREV[141] := ['9.06', 'added line-awesome to status page', 'design >-<', 'some main-UI changes', 'color 4-10 for undefined config colors']  
