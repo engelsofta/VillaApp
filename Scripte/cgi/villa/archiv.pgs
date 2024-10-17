@@ -617,10 +617,13 @@ Proc Main
               sFillArcDate := Datum + ' 23:59:59'
             endif
 
-            // noch eine entsprechende Zeile unten einfügen
-            Append aArchiv, aArchiv[count(aArchiv)] 
-            aArchiv[Count(aArchiv),1] := sFillArcDate
-            aArchiv[Count(aArchiv),2] := aArchiv[Count(aArchiv) - 1,2]
+
+            // noch eine entsprechende Zeile unten einfügen wenn Wert vorhanden sind
+            if (count(aArchiv) > 0) then 
+              Append aArchiv, aArchiv[count(aArchiv)] 
+              aArchiv[Count(aArchiv),1] := sFillArcDate
+              aArchiv[Count(aArchiv),2] := aArchiv[Count(aArchiv) - 1,2]
+            endif
 
           endif
 
