@@ -6,6 +6,7 @@ Proc Main
   Dim sAktVersion: String
   Dim SNextVersion: String
 
+  aREV[145] := ['9.23', 'Github - Update latest' 'MinSwipeMenue set to 50', 'Fix: empty archiv data']  
   aREV[144] := ['9.22', 'Fix: design', 'Dashboard with full size lines']  
   aREV[143] := ['9.21', 'Update via GitHub']  
   aREV[142] := ['9.07', 'clColors available in charts']  

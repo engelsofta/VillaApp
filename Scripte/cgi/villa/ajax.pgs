@@ -33,12 +33,13 @@ Proc Main
     SQL bOK, aGroupList, ProAlias, sSQL
 
 
-    Append Page, '  <div class="w3-text-sand modalAlign w3-animate-opacity" style="max-width:400px;width:calc(100% - 50px)">'
+    Append Page, '  <div class="w3-text-sand modalAlign w3-animate-opacity" style="min-width:380px;width:40vw;max-width: 700px;">'
 
     // Inhalt der Meldegruppenbox *********************
     for iSchleife = 2 to count(aGroupList)
 
-      Append Page, '        <div onclick="Para02=`' + aGroupList[iSchleife,2] + '_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings w3-margin-top w3-border w3-border-dark-grey w3-hover-opacity w3-round-xlarge w3-black" style="cursor: pointer; display:flex; height:35px;">'
+      Append Page, '        <div onclick="Para02=`' + aGroupList[iSchleife,2] + '_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings modalbox w3-margin-top w3-round-large w3-hover-opacity w3-text-sand" style="cursor: pointer; display:flex; height:40px;">'
+   //   Append Page, '        <div onclick="Para02=`' + aGroupList[iSchleife,2] + '_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings w3-border-dark-grey w3-border w3-margin-top w3-round-large w3-hover-opacity" style="cursor: pointer; display:flex; height:40px;background: linear-gradient(70deg, #2E2E2E, #2E2E2E);box-shadow: 4px 8px 10px rgba(0, 0, 0, 0.9);">'
 
 		  Append Page, '      <div class="w3-small" style="">' + aGroupList[iSchleife,2] + '</div>'
 		  Append Page, '    </div>'
@@ -72,7 +73,8 @@ Proc Main
 
     Dim aConvert: Array           := []
     
-    Append Page, '  <div class="w3-text-sand modalAlign CenterThings" style="flex-direction: column; max-width:500px;width:calc(100% - 25px)">'
+    Append Page, '  <div class="w3-text-sand modalAlign CenterThings" style="flex-direction: column; min-width:380px;width:40vw;max-width: 700px;">'
+//    Append Page, '  <div class="w3-text-sand modalAlign CenterThings w3-blue" style="flex-direction: column; max-width:500px;width:calc(100% - 25px)">'
 
     // Schleife in PGNT Settings wandeln
     aConvert[1] := [12,'Offline', 'la-eye-slash']
@@ -88,9 +90,9 @@ Proc Main
       GetReportHandles aGroupListStatus, 0, ival(aConvert[iSchleife, 1])
 
       if (Count(aGroupListStatus) > 0) Then
-        Append Page, '        <div onclick="AjaxArchivMode=`50`; ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,' + aConvert[iSchleife, 1] + '`);" class="CenterThings w3-border w3-hover-opacity w3-padding w3-margin-top w3-round-xxlarge w3-text-sand modalbox" style="cursor: pointer; width:100%; height:55px;">'
+        Append Page, '        <div onclick="AjaxArchivMode=`50`; ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,' + aConvert[iSchleife, 1] + '`);" class="CenterThings w3-hover-opacity w3-padding w3-margin-top w3-round-xlarge w3-text-sand modalbox" style="cursor: pointer; width:100%; height:55px;">'
 			else
-        Append Page, '        <div onclick="" class="CenterThings w3-border w3-hover-opacity w3-margin-top w3-padding w3-round-xxlarge w3-text-sand modalbox" style="height:55px; width:100%;">'
+        Append Page, '        <div onclick="" class="CenterThings w3-hover-opacity w3-margin-top w3-padding w3-round-xlarge w3-text-sand modalbox" style="height:55px; width:100%;">'
       EndIf
 
 		  Append Page, '      <div class="" style="margin-right: auto; width:75px"><i class="la ' + aConvert[iSchleife, 3] + ' w3-xlarge"></i></div>'
@@ -100,14 +102,14 @@ Proc Main
 
 		Next
 
-    Append Page, '    <div onclick="Para02=`DIGITAL-ARCHIV_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings w3-border w3-hover-opacity w3-round-xxlarge w3-padding w3-margin-top modalbox" style="cursor: pointer; height:55px; width:100%;">'
+    Append Page, '    <div onclick="Para02=`DIGITAL-ARCHIV_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings w3-hover-opacity w3-round-xlarge w3-padding w3-margin-top modalbox" style="cursor: pointer; height:55px; width:100%;">'
     Append Page, '      <div class="" style="margin-right: auto; width:75px"><i class="la la-stack-overflow w3-xlarge"></i></div>'
     Append Page, '      <div class="w3-normal" style="">Events</div>'
     Append Page, '      <div class="w3-margin-right" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusEvents" data-datapoint="0" data-mode="10" data-pic="" data-col00="sCountEvents" data-col01="" data-col02="" data-animate="">---</div>'
     Append Page, '    </div>'
 
     // Info unten
-    Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-border w3-hover-opacity w3-round-xxlarge w3-padding w3-margin-top w3-text-grey modalbox" style="cursor: pointer; height:45px; width:100%">'
+    Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-hover-opacity w3-round-xlarge w3-padding w3-margin-top w3-text-grey modalbox" style="cursor: pointer; height:45px; width:100%;">'
     Append Page, '      <div class="w3-small w3-margin-left" style="margin-right: auto; width:75px">Version</div>'
     Append Page, '      <div class="w3-small" id="DIVCollectAjaxStatusUnten" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionHTML" data-col01="" data-col02="" data-animate="">---</div>'
     Append Page, '      <div class="w3-margin-right w3-small" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusVersion" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionVilla" data-col01="" data-col02="" data-animate="">---</div>'
@@ -826,6 +828,8 @@ Proc Main
     Append Page, '        };'
 
     Append Page, '            // Pie Chart erstellen'
+
+
     Append Page, '            var myPieChart = new Chart(ctx, config);'
     Append Page, '    </script>'
 
