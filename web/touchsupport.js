@@ -25,7 +25,7 @@ var courceTolerance = 80;
 var el = document.getElementById("touchbox");
 
 // Mindestdistanz für Erscheinen des Menüs
-var MinSwipeMenue = 30;
+var MinSwipeMenue = 50;
 
  
 /* ENDE Optionen */
