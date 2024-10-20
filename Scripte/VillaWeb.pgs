@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.23'
+  Global Dim sVillaVersion:         String    := '9.24'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -635,8 +635,8 @@ Proc MainMenue
 
   // Inhalt der Suche ************************************************************
   Append aPageMenue, '    <form autocomplete="off" enctype="utf-8">'
-  Append aPageMenue, '      <div class="autocomplete w3-margin-left w3-small w3-opacity">'
-  Append aPageMenue, '        <input class="w3-padding w3-text-sand w3-round-xxlarge modalbox" autocomplete="off" id="myInputSearch" type="search" name="ISearch" placeholder="Datenpunkt" style="color-scheme: dark; outline: none;width:calc(100% - 8px); height: 55px;">'
+  Append aPageMenue, '      <div class="autocomplete w3-margin-left w3-opacity">'
+  Append aPageMenue, '        <input class="FontRespo03 w3-padding w3-text-sand w3-round-xxlarge modalbox" autocomplete="off" id="myInputSearch" type="search" name="ISearch" placeholder="Datenpunkt" style="padding: 24px 0; color-scheme: dark; outline: none;width:calc(100% - 8px);">'
 
   Append aPageMenue, '        <div id="IDLastSearch" class="lastsearchIcon" onclick="Switch_Search()" ><i class="las la-history"></i></div>'
 
