@@ -147,9 +147,9 @@ Proc Main
 
 
       if (isHandle(ihandle)) Then
-        Append Page, '        <button class="el00">'
+        Append Page, '        <button class="el00 FontRespo03">'
       else
-        Append Page, '        <button class="el00" onclick="AjaxHandle=`' + aRes[iSchleife, 6] + '`; ajax_callarchiv(`#idmain`);">'
+        Append Page, '        <button class="el00 FontRespo03" onclick="AjaxHandle=`' + aRes[iSchleife, 6] + '`; ajax_callarchiv(`#idmain`);">'
       Endif
 
       Append Page, '          <div class="el01">' + TimeToStr(UtcDateTimeToLocalDateTime(rVal(aRes[iSchleife, 1]))) + '</div>'
