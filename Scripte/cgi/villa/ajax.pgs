@@ -660,6 +660,30 @@ Proc Main
     
     Append Page, '      colorPicker = document.getElementById(`IDColorPicker`);'
 
+    // Funktion zum Auslesen der aktuellen Hintergrundfarbe
+    Append Page, '      function getBackgroundColor(element) {'
+    Append Page, '        var bgColor = window.getComputedStyle(element).backgroundColor;'
+    Append Page, '        return rgbToHex(bgColor);'
+    Append Page, '      }'
+
+    // Funktion zur Umwandlung von RGB in Hex
+    Append Page, '      function rgbToHex(rgb) {'
+    Append Page, '        var rgbValues = rgb.match(/\d+/g);'
+    Append Page, '        if (rgbValues) {'
+    Append Page, '          return "#" + rgbValues.map(function(x) {'
+    Append Page, '            var hex = parseInt(x).toString(16);'
+    Append Page, '            return hex.length === 1 ? "0" + hex : hex;'
+    Append Page, '          }).join("");'
+    Append Page, '        }'
+    Append Page, '        return "#000000";'
+    Append Page, '      }'
+
+
+    Append Page, '      colorPicker.addEventListener(`click`, function(event) {'
+    Append Page, '        this.value = getBackgroundColor(colorPicker);'
+    Append Page, '      });'
+
+
     Append Page, '      colorPicker.addEventListener(`change`, function() {'
     Append Page, '        selectedColor = colorPicker.value;'
     Append Page, '        const red = selectedColor.substr(1, 2);'
@@ -784,60 +808,58 @@ Proc Main
     Append Page, '</script>'
 
 
+    if not (isana(ihandle)) then
 
+      Append Page, '    <script>'
 
-    Append Page, '    <script>'
+      Append Page, '        if (AjaxSummeArchiv.length > 0) {'
 
-    Append Page, '        if (AjaxSummeArchiv.length > 0) {'
+      Append Page, '            $("#myInput").hide();'
+      Append Page, '            $("#myPieChart").removeClass("w3-hide");'
 
-    Append Page, '            $("#myInput").hide();'
-    Append Page, '            $("#myPieChart").removeClass("w3-hide");'
+      Append Page, '            // Kontext des Canvas-Elements abrufen'
+      Append Page, '            var ctx = document.getElementById(`myPieChart`).getContext(`2d`);'
 
-    Append Page, '            // Kontext des Canvas-Elements abrufen'
-    Append Page, '            var ctx = document.getElementById(`myPieChart`).getContext(`2d`);'
+      Append Page, '            // Daten für das Pie Chart'
+      Append Page, '            var data = {'
+      Append Page, '                labels: AjaxSummeYear,'
+      Append Page, '                datasets: [{'
+      Append Page, '                    data: AjaxSummeArchiv,'
+    //  Append Page, '                    backgroundColor: AjaxSummeCol,'
+      Append Page, '                    borderWidth: 0'
+      Append Page, '                }]'
+      Append Page, '            };'
 
-    Append Page, '            // Daten für das Pie Chart'
-    Append Page, '            var data = {'
-    Append Page, '                labels: AjaxSummeYear,'
-    Append Page, '                datasets: [{'
-    Append Page, '                    data: AjaxSummeArchiv,'
-//    Append Page, '                    backgroundColor: AjaxSummeCol,'
-    Append Page, '                    borderWidth: 0'
-    Append Page, '                }]'
-    Append Page, '            };'
+      Append Page, '            // Konfiguration des Pie Charts'
+      Append Page, '            var config = {'
+      Append Page, '                type: `pie`,'
+      Append Page, '                data: data,'
+      Append Page, '                options: {'
+      Append Page, '                    responsive: true,'
+      Append Page, '                    plugins: {'
+      Append Page, '                        legend: {'
+      Append Page, '                            position: `top`,'
 
-    Append Page, '            // Konfiguration des Pie Charts'
-    Append Page, '            var config = {'
-    Append Page, '                type: `pie`,'
-    Append Page, '                data: data,'
-    Append Page, '                options: {'
-    Append Page, '                    responsive: true,'
-    Append Page, '                    plugins: {'
-    Append Page, '                        legend: {'
-    Append Page, '                            position: `top`,'
+      Append Page, '                            labels: {'
+      Append Page, '                              color: `#F5F5DC`,'
+      Append Page, '                            },'
 
-    Append Page, '                            labels: {'
-    Append Page, '                              color: `#F5F5DC`,'
-    Append Page, '                            },'
+      Append Page, '                        },'
+      Append Page, '                        title: {'
+      Append Page, '                            display: false,'
+      Append Page, '                            text: `Mein Pie Chart`'
+      Append Page, '                        }'
+      Append Page, '                    }'
+      Append Page, '                }'
+      Append Page, '            };'
+      Append Page, '        };'
 
+      Append Page, '            // Pie Chart erstellen'
 
-    Append Page, '                        },'
-    Append Page, '                        title: {'
-    Append Page, '                            display: false,'
-    Append Page, '                            text: `Mein Pie Chart`'
-    Append Page, '                        }'
-    Append Page, '                    }'
-    Append Page, '                }'
-    Append Page, '            };'
-    Append Page, '        };'
-
-    Append Page, '            // Pie Chart erstellen'
-
-
-    Append Page, '            var myPieChart = new Chart(ctx, config);'
-    Append Page, '    </script>'
-
-
+      Append Page, '            var myPieChart = new Chart(ctx, config);'
+      Append Page, '    </script>'
+    
+    endif
 
 
 

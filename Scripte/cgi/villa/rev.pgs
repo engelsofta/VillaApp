@@ -5,7 +5,8 @@ Proc Main
   Dim iSchleifeLine: int
   Dim sAktVersion: String
   Dim SNextVersion: String
-
+  
+  aREV[148] := ['9.26', 'color picker set to act color', 'workaround: JS error by opening calender']  
   aREV[147] := ['9.25', 'doubleclick on search will delete the input', 'show archiv color on settings', 'option to change archiv color']
   aREV[146] := ['9.24', 'high resolution responsive design (beta)']  
   aREV[145] := ['9.23', 'Github - Update latest', 'MinSwipeMenue set to 50', 'Fix: empty archiv data']  
