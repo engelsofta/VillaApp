@@ -657,10 +657,10 @@ function autocomplete(inp, arr) {
 
         $b.html(
           '<div class="CenterThings w3-margin-right" style="width:35px;"><span class="w3-large w3-text-white ' + TempIcon +
-            '"></span></div><div style="pointer-events: none; width: calc(100% - 105px)">' +
+            '"></span></div><div class="FontRespo03" style="pointer-events: none; width: calc(100% - 105px)">' +
             arr[i][0] +
             '</div>' + 
-            '<div class="CenterThings" style="text-align:center; margin-left:auto; font-size:12px; pointer-events: none; width:90px;" id="DIVCollect' + i + '" data-datapoint="' + arr[i][1] + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""><div class="w3-spin CenterThings" style="width:100%; height:100%;"><i class="las la-spinner w3-large gradient-text"></i></div></div>' +
+            '<div class="CenterThings FontRespo03" style="text-align:center; margin-left:auto; pointer-events: none; width:90px;" id="DIVCollect' + i + '" data-datapoint="' + arr[i][1] + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""><div class="w3-spin CenterThings" style="width:100%; height:100%;"><i class="las la-spinner w3-large gradient-text"></i></div></div>' +
             '<input type="hidden" name="' +
             arr[i][1] +
             '" value="' +
@@ -757,15 +757,13 @@ function Switch_Search(){
        b = document.createElement("DIV");
        b.setAttribute("class", "autocomplete-items-last-list CenterThings w3-hover-opacity");
 
-       b.innerHTML += '<div class="w3-margin-left" style="pointer-events: none; width: 100%; font-size: min(3vw, 14px);">' + LastDPSearch[i][1] + '</div>';
+       b.innerHTML += '<div class="w3-margin-left FontRespo03" style="pointer-events: none; width: 100%;">' + LastDPSearch[i][1] + '</div>';
 
 // checken was das ist       
 //       b.innerHTML += '<div class="w3-brown w3-large ' + LastDPSearch[i][2] + '" style="min-width:40px;"></div>';
 
-       b.innerHTML += '<div class="CenterThings" style="text-align:center; margin-left:auto; font-size:12px; pointer-events: none; width:90px;" id="' + 'DIVCollectSearchHistory' + LastDPSearch[i][0] + '" data-datapoint="' + LastDPSearch[i][0] + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""><div class="w3-spin CenterThings" style="width:100%; height:100%;"><i class="las la-spinner w3-large gradient-text"></i></div></div>'
+       b.innerHTML += '<div class="CenterThings FontRespo03" style="text-align:center; margin-left:auto; pointer-events: none; width:90px;" id="' + 'DIVCollectSearchHistory' + LastDPSearch[i][0] + '" data-datapoint="' + LastDPSearch[i][0] + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""><div class="w3-spin CenterThings" style="width:100%; height:100%;"><i class="las la-spinner w3-large gradient-text"></i></div></div>'
  
-
-
 
        b.setAttribute("onclick", 'AjaxHandle = ' + LastDPSearch[i][0] + '; search_kick(); ');
  

@@ -153,6 +153,7 @@ Proc Main
     Dim sTmpData:String         := 'disabled'
 
     Global Dim aPageEnd: array  := []
+    Global Dim sRGBArc: String  := ''
 
     Dim aPrioColorList:array    := StrToArray(GetMessageVar('PrioColorList'))
 
@@ -638,12 +639,39 @@ Proc Main
     Call Vorlagen.InfoBoxDetails 'Aktwertänderung', aGetDynInfo.LASTVALUEUPDATE
     Call Vorlagen.InfoBoxDetails 'Änderungen / Tag', sval(aGetDynInfo.CHANGESPERDAY)
 
+
+    call vorlagen.ColConfigtoHTML sHandle, 1
+
+    Append Page, '        <div class="w3-large w3-right-align la la-fill"></div>'
+    Append Page, '        <div class="w3-left-align">Archivfarbe</div>'
+    Append Page, '        <input id="IDColorPicker" type="color" class="w3-border-dark-grey b3-border w3-round w3-padding" style="height: 5px; width:40px; background-color:rgb(' + sRGBArc + ');"></input>'
+
+
+
     Append Page, '        <div class="w3-large w3-right-align w3-margin-top la la-code-fork"></div>'
     Append Page, '        <div class="clipboard w3-margin-top w3-left-align" style="grid-column: span 2;">' + sval(ArrayToVarArray(GetStatInfo(iHandle)).SCANNERINFO) + '</div>'
 
     Append Page, '    </div>'
 
     Append Page, '    </div>     <!-- settings01 -->'
+
+
+    Append Page, '    <script>'
+    
+    Append Page, '      colorPicker = document.getElementById(`IDColorPicker`);'
+
+    Append Page, '      colorPicker.addEventListener(`change`, function() {'
+    Append Page, '        selectedColor = colorPicker.value;'
+    Append Page, '        const red = selectedColor.substr(1, 2);'
+    Append Page, '        const green = selectedColor.substr(3, 2);'
+    Append Page, '        const blue = selectedColor.substr(5, 2);'
+    Append Page, '        document.getElementById("IDColorPicker").style.backgroundColor = selectedColor;'
+    Append Page, '        SendPost(this, `ArchivColor;$00` + blue + green + red + ``, ' +#39 + '4' + #39 +', ' + #39 + sHandle + #39 + ')'
+    Append Page, '      });'
+
+    Append Page, '    </script>'
+
+
 
 
     // *****************************************************************************
