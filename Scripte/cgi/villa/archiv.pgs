@@ -373,6 +373,8 @@ Proc Main
 
         Append Page, '              data: [' + sArcData +'],'
 
+// Hier noch was überlegen damit die eingestellten Farben in der Konfig verwedet werden können
+
 //        if (iCountHandles=1) Then
 //
 //          call vorlagen.ColConfigtoHTML aHandleList[1,1], iCountHandles       
@@ -546,6 +548,7 @@ Proc Main
       Dim sStepped:       String := 'true' 
 
       Dim sBitPasPrio:    String
+      Dim sDataCache:     String
 
       Dim sBitMelPrio1:   String
       Dim sBitMelPrio2:   String
@@ -752,24 +755,22 @@ Proc Main
         Append Page, '            label: `' + GetComment(ival(aHandleList[iCountHandles])) + '`,'
         Append Page, '            data: ['
 
+        sDataCache := '              '
+
         for iCountArcData = 1 to Count(aArchiv)
 
           FormatDateTime(sArcDate, 'yyyy-mm-dd', strtodatetime(aArchiv[iCountArcData,1]))
           FormatDateTime(sArcTime, 'hh:nn:ss', strtodatetime(aArchiv[iCountArcData,1]))
 
-          Append Page, '              { x: `' + sArcDate + 'T' + sArcTime + '`, y: ' + aArchiv[iCountArcData,2] + ' },'
+// kann entfernt werden wenn die Kombrimierung des Archives funktioniert
+//          Append Page, '              { x: `' + sArcDate + 'T' + sArcTime + '`, y: ' + aArchiv[iCountArcData,2] + ' },'
+          sDataCache := sDataCache + '{x:`' + sArcDate + 'T' + sArcTime + '`,y:' + aArchiv[iCountArcData,2] + '},'
 
         next
 
+        Append Page, sDataCache
+
         Append Page, '            ],'
-
-
-
-
-
-
-
-
 
 
 
@@ -784,13 +785,6 @@ Proc Main
       //  Append Page, '                return yValue < 32.0 ? `rgba(' + sRGBArc + ', 1)` : `red` ;'
       //  Append Page, '             }'
       //  Append Page, '            },'
-
-
-
-
-
-
-
 
 
 
@@ -825,16 +819,16 @@ Proc Main
       Append Page, '          scales: {'
     
       Append Page, '            x: {'
-      Append Page, '              type: `time`, // Setze den Typ der X-Achse auf `time`'
+      Append Page, '              type: `time`,' // Setze den Typ der X-Achse auf `time`
       Append Page, '              title: {'
       Append Page, '                display: false,'
       Append Page, '                text: `Uhrzeit`'
       Append Page, '              },'
       Append Page, '              time: {'
-      Append Page, '                unit: `minute`, // Einheit für die Zeitachse'
+      Append Page, '                unit: `minute`,' // Einheit für die Zeitachse
       Append Page, '                tooltipFormat: `HH:mm:ss`,'
       Append Page, '                displayFormats: {'
-      Append Page, '                  minute: `HH:mm` // Format für die Anzeige'
+      Append Page, '                  minute: `HH:mm`' // Format für die Anzeige
       Append Page, '                }'
       Append Page, '              },'  // End time
 
@@ -897,14 +891,14 @@ Proc Main
       Append Page, '              labels: {'
 
       Append Page, '                boxHeight: 2,'
-      Append Page, '                boxWidth: 15, // Breite der farbigen Box'
-      Append Page, '                borderWidth: 0, // Entfernt den Rahmen um die Boxen'
-      Append Page, '                color: `#EEE`, // Ändert die Schriftfarbe der Legende'
+      Append Page, '                boxWidth: 15,' // Breite der farbigen Box
+      Append Page, '                borderWidth: 0,' // Entfernt den Rahmen um die Boxen
+      Append Page, '                color: `#EEE`,' // Ändert die Schriftfarbe der Legende
 
       Append Page, '                font: {'
-      Append Page, '                  family: `Helvetica`, // Schriftart'
-      Append Page, '                  size: 12, // Schriftgröße'
-      Append Page, '                  style: `normal` // Schriftstil (normal, italic, bold, etc.)'
+      Append Page, '                  family: `Helvetica`,' // Schriftart
+      Append Page, '                  size: 12,' // Schriftgröße
+      Append Page, '                  style: `normal`' // Schriftstil (normal, italic, bold, etc.)
       Append Page, '                },'
       Append Page, '              },'
       Append Page, '            },'

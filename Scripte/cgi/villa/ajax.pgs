@@ -228,16 +228,27 @@ Proc Main
           Append Page, '    slider.value = this.value;'
           Append Page, '  }'
 
-          Append Page, '  $("body").on(`DOMSubtreeModified`, "#DIVCollectslidersetasglt", function(){'
-          Append Page, '    var DIVSliderASGLT = document.getElementById("DIVCollectslidersetasglt");'
 
+
+
+
+
+
+          Append Page, '  targetGLTNode = document.getElementById(`DIVCollectslidersetasglt`);'
+          Append Page, '  observer = new MutationObserver(handleDivChange);'
+          Append Page, '  observer.observe(targetGLTNode, { childList: true, subtree: true, characterData: true });'
+
+
+
+          Append Page, '  function handleDivChange() {'
+          Append Page, '    var DIVSliderASGLT = document.getElementById("DIVCollectslidersetasglt");'
           Append Page, '    if (DIVSliderASGLT.innerHTML.includes("checked") == true){'
           Append Page, '      $("#hideanasettings").show();'
           Append Page, '    } else {'
           Append Page, '      $("#hideanasettings").hide();'
           Append Page, '    };'
-  
-          Append Page, '  });'
+          Append Page, '  }'
+
           Append Page, '</script>'
 
           Append Page, ''
@@ -349,7 +360,7 @@ Proc Main
       // Zustand kein Grenzwert verletzt
       Call Vorlagen.SelectBox2 ihandle, 'PassivPrio', '11', 0, 31
 
-      Append Page, '      <div class="w3-display-container w3-margin-bottom" style="height:34px; display: flex; align-items: center;">'
+      Append Page, '      <div class="w3-display-container" style="margin-bottom:50px;  display: flex; align-items: center;">'
       GetExtVar sTmpKonfigData, ihandle, 'Meldetext4'
       Append Page, '        <input data-jsactiondata="4" data-jsextvarname="Meldetext4" type="text" value="' + sTmpKonfigData + '" class="InputNormal CheckAndSend w3-text-grey"></input>'
       Append Page, '      </div>'
@@ -359,7 +370,7 @@ Proc Main
       // Zustand Meßwert Störung
       Call Vorlagen.SelectBox2 ihandle, 'StoerPrio', '11', 64, 95
 
-      Append Page, '      <div class="w3-display-container" style="height:34px; display: flex; align-items: center;">'
+      Append Page, '      <div class="w3-display-container" style="margin-bottom:50px; display: flex; align-items: center;">'
       GetExtVar sTmpKonfigData, ihandle, 'Meldetext5'
       Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext5" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey"></input>'
       GetKonfigData sTmpKonfigData, ihandle, 'Delay0'
@@ -386,14 +397,12 @@ Proc Main
         endif         
 
 
-        Append Page, '      <div class="w3-margin-top" style="height:44px; display: flex; align-items: center; justify-content: center;">'
+        Append Page, '      <div class="" style="margin-top:50px; display: flex; align-items: center; justify-content: center;">'
 
         Call Vorlagen.SelectBox2 ihandle, 'MeldePrio' + sval(iSchleife), '11', 64, 95
 
         // SelectBox zur Auswahl > < - -
-
-        Append Page, '            <div class="CenterThings w3-border-bottom" style="margin-right:4px; width: 40px;"><button onclick="$(`#se05Main`).fadeOut(function() {$(`#seGW' + sval(iSchleife) + '`).fadeIn(); $(this).css(`display`, `none`);});" id="BtnGW' + sval(iSchleife) + '" class="dropdown-trigger FontRespo03" style="text-align: center;">' + sTempWirkung + '</button></div>'
-
+        Append Page, '            <div class="CenterThings " style="margin-right:14px;"><button onclick="$(`#se05Main`).fadeOut(function() {$(`#seGW' + sval(iSchleife) + '`).fadeIn(); $(this).css(`display`, `none`);});" id="BtnGW' + sval(iSchleife) + '" class="dropdown-trigger FontRespo03" style="text-align: center; padding: 5px 20px; border-radius: 5px; box-shadow: 0 1px 6px rgba(255, 255, 255, 0.5);">' + sTempWirkung + '</button></div>'
 
         // *************************************
         Append aPageEnd, '            <div id="seGW' + sval(iSchleife)  + '" class="w3-small" style="display:none;">'
@@ -416,7 +425,7 @@ Proc Main
 
         Append Page, '      </div>'
 
-        Append Page, '      <div class="w3-display-container" style="height:34px; display: flex; align-items: center;">'
+        Append Page, '      <div class="w3-display-container" style="display: flex; align-items: center;">'
 
           GetExtVar sTmpKonfigData, ihandle, 'Meldetext' + sval(iSchleife + 5)
           Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext' + sval(iSchleife + 5) + '" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey"></input>'
@@ -631,7 +640,7 @@ Proc Main
 
     Append Page, '        <div class="w3-large w3-right-align la la-info"></div>'
     Append Page, '        <div class="w3-left-align">Aktwert</div>'
-    Append Page, '        <div class="w3-left-align" onclick="ajax_callarchiv(`#idmain`);" id="DIVCollecthandlewert" data-datapoint="' + sval(ihandle) + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""></div>'
+    Append Page, '        <div class="w3-left-align" style="width:fit-content;" onclick="ajax_callarchiv(`#idmain`);" id="DIVCollecthandlewert" data-datapoint="' + sval(ihandle) + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""></div>'
 
     Call Vorlagen.InfoBoxDetails 'Handle', sHandle
     Call Vorlagen.InfoBoxDetails 'Anlage', aGetStatInfo.PLANT
@@ -659,6 +668,7 @@ Proc Main
     Append Page, '    <script>'
     
     Append Page, '      colorPicker = document.getElementById(`IDColorPicker`);'
+    Append Page, '      colorPicker.value = getBackgroundColor(colorPicker);'
 
     // Funktion zum Auslesen der aktuellen Hintergrundfarbe
     Append Page, '      function getBackgroundColor(element) {'
@@ -677,11 +687,6 @@ Proc Main
     Append Page, '        }'
     Append Page, '        return "#000000";'
     Append Page, '      }'
-
-
-    Append Page, '      colorPicker.addEventListener(`click`, function(event) {'
-    Append Page, '        this.value = getBackgroundColor(colorPicker);'
-    Append Page, '      });'
 
 
     Append Page, '      colorPicker.addEventListener(`change`, function() {'
