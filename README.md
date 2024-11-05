@@ -27,7 +27,7 @@ Usage
 - Data management interface
 - Built-in analytics tools
 - Configuration options
-The application will automatically check for updates and apply them when available.
+- The application will automatically check for updates and apply them when available.
 
 Contributing
 
