@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.27'
+  Global Dim sVillaVersion:         String    := '9.28'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -668,9 +668,9 @@ Proc MainMenue
   Append aPageMenue, '    </div>'
 
   // mitte
-  Append aPageMenue, '    <div class="w3-display-middle" style="height:100%;">'
+  Append aPageMenue, '    <div class="w3-display-middle FontRespo04" style="height:100%;">'
   Append aPageMenue, '      <div id="ArchivBack" class="w3-button la la-caret-left"></div>'
-  Append aPageMenue, '      <div id="IDAjaxDate" class="w3-button" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);" style="font-size: 9px;">...</div>'
+  Append aPageMenue, '      <div id="IDAjaxDate" class="w3-button" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);">...</div>'
   Append aPageMenue, '      <div id="ArchivNext" class="w3-button la la-caret-right"></div>'
   Append aPageMenue, '    </div>'
 
