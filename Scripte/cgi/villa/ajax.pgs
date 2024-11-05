@@ -180,7 +180,7 @@ Proc Main
 
     Append Page, '    </div>'
 
-    Append Page, '    <div style="max-width:600px; margin:auto;">'
+    Append Page, '    <div style="max-width:600px; margin: auto; margin-bottom:30px;">'
 
     // Settings03   Stellen und Schalten
     // Settings ICON nur wenn DP stellbar ist
@@ -229,11 +229,6 @@ Proc Main
           Append Page, '  }'
 
 
-
-
-
-
-
           Append Page, '  targetGLTNode = document.getElementById(`DIVCollectslidersetasglt`);'
           Append Page, '  observer = new MutationObserver(handleDivChange);'
           Append Page, '  observer.observe(targetGLTNode, { childList: true, subtree: true, characterData: true });'
@@ -276,8 +271,8 @@ Proc Main
               PositionToPrio iPrio, ihandle, X2
 
               Append Page, '     <button onclick="document.getElementById(`DIVCollectSetVal' + sval(X2) + '`).innerHTML = `<div class=\' + #39 + 'la la-spinner w3-spin\' + #39 + '></div>`;'     //'\
-              Append Page, '     SendPost(this, ' + #39 + sval(X2) + #39 + ', ' +#39 + '3' + #39 +', ' + #39 + sHandle + #39 + ');" class="CenterThings w3-margin-bottom w3-round-xlarge w3-button" style="height:50px; box-shadow: 0 0 1px 1px ' + aPrioColorList[iPrio + 1] + '; width:100%; max-width:500px;">'
-              Append Page, '       <div style="width:25px;" id="DIVCollectSetVal' + sval(X2) + '" data-datapoint="' + shandle + '" data-mode="1" data-pic="la-fingerprint" data-col00="' + sval(X2) + '" data-col01="check" data-col02="" data-animate=""><div class="la la-spinner w3-spin"></div></div>'
+              Append Page, '     SendPost(this, ' + #39 + sval(X2) + #39 + ', ' +#39 + '3' + #39 +', ' + #39 + sHandle + #39 + ');" class="CenterThings w3-margin-bottom w3-round-xlarge w3-button" style="height:50px; box-shadow: 0 0 2px 2px ' + aPrioColorList[iPrio + 1] + '; width:100%; max-width:500px;">'
+              Append Page, '       <div style="width:25px;" id="DIVCollectSetVal' + sval(X2) + '" data-datapoint="' + shandle + '" data-mode="1" data-pic="la-fingerprint" data-col00="' + sval(X2) + '" data-col01="check" data-col02="" data-animate=""><div class="la la-spinner w3-opacity-max w3-spin"></div></div>'
               Append Page, '       <div class="FontRespo03" style="width:100%; margin-right:25px;">' + PrioToString(iPrio) + '</div>'
               Append Page, '     </button>'
 
@@ -360,7 +355,7 @@ Proc Main
       // Zustand kein Grenzwert verletzt
       Call Vorlagen.SelectBox2 ihandle, 'PassivPrio', '11', 0, 31
 
-      Append Page, '      <div class="w3-display-container" style="margin-bottom:50px;  display: flex; align-items: center;">'
+      Append Page, '      <div class="w3-display-container" style="margin-bottom:35px;  display: flex; align-items: center;">'
       GetExtVar sTmpKonfigData, ihandle, 'Meldetext4'
       Append Page, '        <input data-jsactiondata="4" data-jsextvarname="Meldetext4" type="text" value="' + sTmpKonfigData + '" class="InputNormal CheckAndSend w3-text-grey"></input>'
       Append Page, '      </div>'
@@ -370,7 +365,7 @@ Proc Main
       // Zustand Meßwert Störung
       Call Vorlagen.SelectBox2 ihandle, 'StoerPrio', '11', 64, 95
 
-      Append Page, '      <div class="w3-display-container" style="margin-bottom:50px; display: flex; align-items: center;">'
+      Append Page, '      <div class="w3-display-container" style="margin-bottom:35px; display: flex; align-items: center;">'
       GetExtVar sTmpKonfigData, ihandle, 'Meldetext5'
       Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext5" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey"></input>'
       GetKonfigData sTmpKonfigData, ihandle, 'Delay0'
@@ -397,7 +392,7 @@ Proc Main
         endif         
 
 
-        Append Page, '      <div class="" style="margin-top:50px; display: flex; align-items: center; justify-content: center;">'
+        Append Page, '      <div class="" style="margin-top:35px; display: flex; align-items: center; justify-content: center;">'
 
         Call Vorlagen.SelectBox2 ihandle, 'MeldePrio' + sval(iSchleife), '11', 64, 95
 
@@ -653,7 +648,7 @@ Proc Main
 
     Append Page, '        <div class="w3-large w3-right-align la la-fill"></div>'
     Append Page, '        <div class="w3-left-align">Archivfarbe</div>'
-    Append Page, '        <input id="IDColorPicker" type="color" class="w3-border-dark-grey b3-border w3-round w3-padding" style="height: 5px; width:40px; background-color:rgb(' + sRGBArc + ');"></input>'
+    Append Page, '        <input id="IDColorPicker" type="color" class="w3-border-dark-grey b3-border w3-round" style="height: 8px; width:60px; background-color:rgb(' + sRGBArc + ');"></input>'
 
 
 
@@ -805,64 +800,65 @@ Proc Main
     Append Page, '  let SelectMonth = datumselect.slice(5, 7);'
     Append Page, '  let SelectYear = datumselect.slice(0, 4);'
 
-    Append Page, '   datum = new Date (datumselect.slice(0, 4), (datumselect.slice(5, 7) -1), datumselect.slice(8, 10));'
+    Append Page, '  datum = new Date (datumselect.slice(0, 4), (datumselect.slice(5, 7) -1), datumselect.slice(8, 10));'
 
-    Append Page, '    ajax_callarchiv(`#idmain`);'
+    Append Page, '  ajax_callarchiv(`#idmain`);'
 
     Append Page, '}'
+
     Append Page, '</script>'
 
 
-    if not (isana(ihandle)) then
+    if (isana(ihandle)) then
 
-      Append Page, '    <script>'
+      Append Page, '<script>'
 
-      Append Page, '        if (AjaxSummeArchiv.length > 0) {'
+      Append Page, '  if (AjaxSummeArchiv.length > 0) {'
 
-      Append Page, '            $("#myInput").hide();'
-      Append Page, '            $("#myPieChart").removeClass("w3-hide");'
+      Append Page, '    $("#myInput").hide();'
+      Append Page, '    $("#myPieChart").removeClass("w3-hide");'
 
-      Append Page, '            // Kontext des Canvas-Elements abrufen'
-      Append Page, '            var ctx = document.getElementById(`myPieChart`).getContext(`2d`);'
+      Append Page, '    // Kontext des Canvas-Elements abrufen'
+      Append Page, '    var ctx = document.getElementById(`myPieChart`).getContext(`2d`);'
 
-      Append Page, '            // Daten für das Pie Chart'
-      Append Page, '            var data = {'
-      Append Page, '                labels: AjaxSummeYear,'
-      Append Page, '                datasets: [{'
-      Append Page, '                    data: AjaxSummeArchiv,'
-    //  Append Page, '                    backgroundColor: AjaxSummeCol,'
-      Append Page, '                    borderWidth: 0'
-      Append Page, '                }]'
-      Append Page, '            };'
+      Append Page, '    // Daten für das Pie Chart'
+      Append Page, '    var data = {'
+      Append Page, '      labels: AjaxSummeYear,'
+      Append Page, '      datasets: [{'
+      Append Page, '        data: AjaxSummeArchiv,'
+    //  Append Page, '        backgroundColor: AjaxSummeCol,'
+      Append Page, '        borderWidth: 0'
+      Append Page, '      }]'
+      Append Page, '    };'
 
-      Append Page, '            // Konfiguration des Pie Charts'
-      Append Page, '            var config = {'
-      Append Page, '                type: `pie`,'
-      Append Page, '                data: data,'
-      Append Page, '                options: {'
-      Append Page, '                    responsive: true,'
-      Append Page, '                    plugins: {'
-      Append Page, '                        legend: {'
-      Append Page, '                            position: `top`,'
+      Append Page, '    // Konfiguration des Pie Charts'
+      Append Page, '    var config = {'
+      Append Page, '      type: `pie`,'
+      Append Page, '      data: data,'
+      Append Page, '      options: {'
+      Append Page, '        responsive: true,'
+      Append Page, '        plugins: {'
+      Append Page, '          legend: {'
+      Append Page, '            position: `top`,'
 
-      Append Page, '                            labels: {'
-      Append Page, '                              color: `#F5F5DC`,'
-      Append Page, '                            },'
+      Append Page, '            labels: {'
+      Append Page, '              color: `#F5F5DC`,'
+      Append Page, '            },'
 
-      Append Page, '                        },'
-      Append Page, '                        title: {'
-      Append Page, '                            display: false,'
-      Append Page, '                            text: `Mein Pie Chart`'
-      Append Page, '                        }'
-      Append Page, '                    }'
-      Append Page, '                }'
-      Append Page, '            };'
-      Append Page, '        };'
+      Append Page, '          },'
+      Append Page, '          title: {'
+      Append Page, '            display: false,'
+      Append Page, '            text: `Mein Pie Chart`'
+      Append Page, '          }'
+      Append Page, '        }'
+      Append Page, '      }'
+      Append Page, '    };'
 
-      Append Page, '            // Pie Chart erstellen'
+      Append Page, '    // Pie Chart erstellen'
+      Append Page, '    var myPieChart = new Chart(ctx, config);'
+      Append Page, '  };'
 
-      Append Page, '            var myPieChart = new Chart(ctx, config);'
-      Append Page, '    </script>'
+      Append Page, '</script>'
     
     endif
 

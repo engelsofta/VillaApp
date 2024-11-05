@@ -577,8 +577,6 @@ Proc Main
 
         call vorlagen.ColConfigtoHTML aHandleList[iCountHandles,1], iCountHandles
 
-//        logbook '--->   ' + sRGBArc
-
         // --> analoger Datenpunkt
         if (isAna(ival(aHandleList[iCountHandles]))) and (ExistFile(ProPath + '\Archiv\A_Event_' + sTempMGRDate + sFileExtension)) Then
 
@@ -658,7 +656,6 @@ Proc Main
           Append aArchiv, aArchiv[count(aArchiv)] 
           aArchiv[count(aArchiv), 1] := sFillArcDate
           aArchiv[count(aArchiv), 2] := aArchiv[(count(aArchiv)-1), 2]
-
 
           sBitPasPrio := aKonfigDataPrio.PassivPrio
           sBitMelPrio1 := aKonfigDataPrio.MeldePrio1
@@ -753,6 +750,12 @@ Proc Main
         // Begin einzelner Graphen
         Append Page, '          {'
         Append Page, '            label: `' + GetComment(ival(aHandleList[iCountHandles])) + '`,'
+
+
+// Unit noch in Tooltip einbauen ....
+//        Append Page, '            unit: `' + GetAnaUnit(ival(aHandleList[iCountHandles])) + '`,'
+
+
         Append Page, '            data: ['
 
         sDataCache := '              '
@@ -762,9 +765,7 @@ Proc Main
           FormatDateTime(sArcDate, 'yyyy-mm-dd', strtodatetime(aArchiv[iCountArcData,1]))
           FormatDateTime(sArcTime, 'hh:nn:ss', strtodatetime(aArchiv[iCountArcData,1]))
 
-// kann entfernt werden wenn die Kombrimierung des Archives funktioniert
-//          Append Page, '              { x: `' + sArcDate + 'T' + sArcTime + '`, y: ' + aArchiv[iCountArcData,2] + ' },'
-          sDataCache := sDataCache + '{x:`' + sArcDate + 'T' + sArcTime + '`,y:' + aArchiv[iCountArcData,2] + '},'
+          sDataCache += '{x:`' + sArcDate + 'T' + sArcTime + '`,y:' + aArchiv[iCountArcData,2] + '},'
 
         next
 
@@ -785,9 +786,6 @@ Proc Main
       //  Append Page, '                return yValue < 32.0 ? `rgba(' + sRGBArc + ', 1)` : `red` ;'
       //  Append Page, '             }'
       //  Append Page, '            },'
-
-
-
 
 
 
@@ -921,6 +919,7 @@ Proc Main
         Append Page, '            }'  // END tooltip
 
       EndIf
+
 
       Append Page, '          }'  // End plugins
       Append Page, '        }' // End options

@@ -7,6 +7,7 @@ Proc Main
   Dim SNextVersion: String
 
 
+  aREV[150] := ['9.28', 'code optimization', 'settings style (prio)']  
   aREV[149] := ['9.27', 'fix: color picker set act color', 'compress archiv data / loads even faster now']    
   aREV[148] := ['9.26', 'color picker set to act color', 'workaround: JS error by opening calender']  
   aREV[147] := ['9.25', 'doubleclick on search will delete the input', 'show archiv color on settings', 'option to change archiv color']
