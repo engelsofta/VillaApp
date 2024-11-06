@@ -379,7 +379,7 @@ function modalklick(modalid) {
 //  $("[id*='element']").hide();
 
   $('#myVillaSideBar, #myOverlay').hide();
-  //$('#myVillaSideBar, #idmain').css('filter', 'blur(6px)');
+  $('#myVillaSideBar, #idmain').css('filter', 'blur(6px)');
   blurry(true);
   
   isSwipeEnable = false;

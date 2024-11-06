@@ -990,8 +990,8 @@ Proc Main
       else
         Append Page, '      $("#ArchivNext").attr("onclick","");'
       endif
-
-      Append Page, '      $(`#IDAjaxDate`).html(("0" + datum.getDate()).slice(-2) + `.` + ("0" + (datum.getMonth()+1)).slice(-2) + `<br>` + datum.getFullYear());'
+ 
+      Append Page, '      $(`#IDAjaxDate`).html(("0" + datum.getDate()).slice(-2) + `.` + ("0" + (datum.getMonth()+1)).slice(-2) + `<br><div class="w3-text-blue">` + datum.getFullYear() + `</div>`);'
       Append Page, '    </script>'
 
     EndIf
