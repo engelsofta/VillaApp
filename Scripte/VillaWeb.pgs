@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.28'
+  Global Dim sVillaVersion:         String    := '9.50'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -504,7 +504,7 @@ Proc MainMenue
 
 
 
-  Append aPageMenue, '<div class="w3-text-white w3-top w3-large" style="height: var(--TopMenueHeight); display: flex; align-items: center; background-image: linear-gradient(55deg, rgba(0,0,0,0.8), rgba(0,0,0,0.5)); border-radius: 0px 0px 15px 15px; z-index:4">'
+  Append aPageMenue, '<div class="w3-text-white w3-top w3-large" style="height: var(--TopMenueHeight); display: flex; align-items: center; background-image: linear-gradient(55deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5)); border-radius: 0px 0px 15px 15px; z-index:4">'
 
   Append aPageMenue, '  <div onclick="ajax_menu(`villa`);" id="IDMainName" class="w3-padding-small w3-margin-left gradient-text">' + sConfigJsonProName + '</div>'
 
@@ -670,7 +670,7 @@ Proc MainMenue
   // mitte
   Append aPageMenue, '    <div class="w3-display-middle FontRespo04" style="height:100%;">'
   Append aPageMenue, '      <div id="ArchivBack" class="w3-button la la-caret-left"></div>'
-  Append aPageMenue, '      <div id="IDAjaxDate" class="w3-button" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);">...</div>'
+  Append aPageMenue, '      <div id="IDAjaxDate" class="w3-button w3-round-large" style="background-image: linear-gradient(55deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1));" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);">...</div>'
   Append aPageMenue, '      <div id="ArchivNext" class="w3-button la la-caret-right"></div>'
   Append aPageMenue, '    </div>'
 
