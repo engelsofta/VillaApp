@@ -160,7 +160,7 @@ Proc Main
     GetKonfigData sOnlyGLT, ihandle, 'Flags'   
 
 
-    Append Page, '  <div id="IDSettings" class="w3-padding w3-text-sand w3-round-xxlarge modalbox modalAlign" style="width: 90%; max-width:800px; min-height: 560px;">'
+    Append Page, '  <div id="IDSettings" class="w3-padding w3-text-sand w3-round-xxlarge modalbox modalAlign" style="width: 90%; max-width:800px; min-height: 560px; background-image: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.2));">'
 
     // Inhalt der InfoBox ***********************************************************
     Append Page, '    <div class="w3-text-sand CenterThings" style="padding: 20px;">'
@@ -397,14 +397,14 @@ Proc Main
         Call Vorlagen.SelectBox2 ihandle, 'MeldePrio' + sval(iSchleife), '11', 64, 95
 
         // SelectBox zur Auswahl > < - -
-        Append Page, '            <div class="CenterThings " style="margin-right:14px;"><button onclick="$(`#se05Main`).fadeOut(function() {$(`#seGW' + sval(iSchleife) + '`).fadeIn(); $(this).css(`display`, `none`);});" id="BtnGW' + sval(iSchleife) + '" class="dropdown-trigger FontRespo03" style="text-align: center; padding: 5px 20px; border-radius: 5px; box-shadow: 0 1px 6px rgba(255, 255, 255, 0.5);">' + sTempWirkung + '</button></div>'
+        Append Page, '            <div class="CenterThings" style="margin-right:14px;"><button onclick="$(`#se05Main`).fadeOut(function() {$(`#seGW' + sval(iSchleife) + '`).fadeIn(); $(this).css(`display`, `none`);});" id="BtnGW' + sval(iSchleife) + '" class="dropdown-trigger FontRespo03" style="text-align: center; padding: 5px 20px; border-radius: 5px; box-shadow: 0 1px 6px rgba(255, 255, 255, 0.5);">' + sTempWirkung + '</button></div>'
 
         // *************************************
-        Append aPageEnd, '            <div id="seGW' + sval(iSchleife)  + '" class="w3-small" style="display:none;">'
+        Append aPageEnd, '            <div id="seGW' + sval(iSchleife)  + '">'
 
-        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value=">" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);"><div class="w3-round-large w3-margin FontRespo03" style=""><div class="w3-text-black w3-round-large las la-greater-than w3-margin-right w3-padding a3-back-green" style="display:inline;"></div>größer als...</div></div>'
-        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="<" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);"><div class="w3-round-large w3-margin FontRespo03" style=""><div class="w3-text-black w3-round-large las la-less-than w3-margin-right w3-padding a3-back-green" style="display:inline;"></div>kleiner als...</div></div>'
-        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="-" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);"><div class="w3-round-large w3-margin FontRespo03" style=""><div class="w3-text-black w3-round-large las la-minus w3-margin-right w3-padding a3-back-yellow" style="display:inline;"></div>GW löschen</div></div>'
+        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value=">" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-greater-than w3-large a3-green w3-margin-right w3-padding"></div>   <div class="FontRespo03">Grösser als...</div>  </div>'
+        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="<" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-less-than w3-large a3-green w3-margin-right w3-padding"></div>   <div class="FontRespo03">Kleiner als...</div>  </div>'
+        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="-" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-minus w3-large a3-yellow w3-margin-right w3-padding"></div>   <div class="FontRespo03">GW löschen</div>  </div>'
 
         Append aPageEnd, '            </div>'
         // *************************************
