@@ -6,8 +6,8 @@ Proc Main
   Dim sAktVersion: String
   Dim SNextVersion: String
 
-
-  aREV[151] := ['9.50', 'class design optimization']  
+  aREV[152] := ['9.51', 'design of limits', 'design of modal background', 'added GIT changelog', 'chart.js 4.4.6', 'new chart buttons']
+  aREV[151] := ['9.50', 'GIT RELEASE',  'class design optimization']  
   aREV[150] := ['9.28', 'code optimization', 'settings style (prio)']  
   aREV[149] := ['9.27', 'fix: color picker set act color', 'compress archiv data / loads even faster now']    
   aREV[148] := ['9.26', 'color picker set to act color', 'workaround: JS error by opening calender']  
