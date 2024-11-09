@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.50'
+  Global Dim sVillaVersion:         String    := '9.51'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -151,9 +151,11 @@ Proc CheckUpdate
     if (bIsBeta) then
       sVersionOnline := aVersionJson.versionBeta
       sUpdateURL := sUpdateURL + 'archive/refs/heads/main.zip'
+      logbook 'BETA Version wird verwendet'
     else
       sVersionOnline := aVersionJson.version
       sUpdateURL := sUpdateURL + 'archive/refs/tags/latest.zip'
+      logbook 'offizielle Version wird verwendet'
     endif
 
 
@@ -170,20 +172,12 @@ Proc CheckUpdate
       // Update aus dem Internet laden
       ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sUpdateURL + ' -L --max-time 10 -o ' + sOutput + 'VillaWeb.zip')
 
-
       if not bOK then
-
-          logbook 'VillaWeb: Fehler beim laden der ZIP Datei aus dem Internet ' + sVersionOnline
-
+        logbook 'VillaWeb: Fehler beim laden der ZIP Datei aus dem Internet ' + sVersionOnline
       else 
 
         // Extrahieren
-//        if (bIsBeta) then
-          ExecRedirectEx(bOK, iExitCode, aData, aErr, 'tar.exe -xf ' + sOutput + 'VillaWeb.zip --strip-components=1 -C ' + ProPath + '\') //'
-//        else
-//          ExecRedirectEx(bOK, iExitCode, aData, aErr, 'tar.exe -xf ' + sOutput + 'VillaApp-latest.zip --strip-components=1 -C ' + ProPath + '\') //'
-//        endif
-
+        ExecRedirectEx(bOK, iExitCode, aData, aErr, 'tar.exe -xf ' + sOutput + 'VillaWeb.zip --strip-components=1 -C ' + ProPath + '\') //'
 
         if not bOK then
           logbook 'VillaWeb: Fehler beim einspielen des Updates auf Version ' + sVersionOnline
@@ -330,10 +324,6 @@ Proc GenVarList
 
     endif
 
-
-
-
-
     sTempComment := a[x,3]
     StrReplace sTempComment, '`', '"'  
     Append aHandleList, '[`' +  sTempComment + '`,`' +  a[x, 1] + '`,`' +  a[x, 4] + '`,`' +  sRGBArc + '`],'
@@ -349,12 +339,7 @@ Proc GenVarList
   aFileList := GetFileList(ProPath + '\konfig.psq*')
   SetMessageVar 'sFileExtension', FileExt(ProPath + '\' + aFileList[1])   // '\
 
-
-
 EndProc
-
-
-
 
 
 
@@ -654,34 +639,63 @@ Proc MainMenue
   Append aPageMenue, '<!-- Menü unten -->'
   Append aPageMenue, '<div id="bottommenue" class="w3-bottom w3-hide" style="height:60px;">'
   Append aPageMenue, '  <div id="DivArchivRight" class="w3-hide-small w3-hide-medium" style="width:264px; min-height:40px; float:right;"></div>'
-  Append aPageMenue, '  <div class="w3-card-2 w3-display-container w3-text-white w3-rest w3-large w3-padding-small" style="border-radius: 15px 15px 0px 0px; height:60px; margin-left:4px; margin-right:4px;">'
+  Append aPageMenue, '  <div class="w3-card-2 w3-display-container w3-text-white w3-rest w3-large" style="border-radius: 15px 15px 0px 0px; height:60px; margin-left:4px; margin-right:4px;">'
 
-  // links
-  Append aPageMenue, '    <div class="w3-display-left" style="padding-left:8px">'
-
-//  Append aPageMenue, '      <div onclick="AjaxArchivMode=`1`; Para02=``; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-list-ul" id="btnResetArcChanceViewtoList"></div>'
-
-  Append aPageMenue, '      <div onclick="AjaxArchivMode=`3`; Para02=``; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-list-ul" id="btnResetArcChanceViewtoList"></div>'
-
-
-  Append aPageMenue, '      <div onclick="AjaxArchivMode=`50`; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-chart-line" id="btnResetArcChanceViewtoChart"></div>'
+  //links
+  Append aPageMenue, '    <div class="w3-display-left" style="">'
+  Append aPageMenue, '      <div onclick="" id="btnResetArcCalenderPlus" class="ArchivButton w3-round-large w3-hide w3-button CenterThings" style="margin-left:8px;"> <div class="la la-poll"></div> </div>'
   Append aPageMenue, '    </div>'
 
+
   // mitte
-  Append aPageMenue, '    <div class="w3-display-middle FontRespo04" style="height:100%;">'
-  Append aPageMenue, '      <div id="ArchivBack" class="w3-button la la-caret-left"></div>'
-  Append aPageMenue, '      <div id="IDAjaxDate" class="w3-button w3-round-large" style="background-image: linear-gradient(55deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1));" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);">...</div>'
-  Append aPageMenue, '      <div id="ArchivNext" class="w3-button la la-caret-right"></div>'
+  Append aPageMenue, '    <div class="CenterThings FontRespo04" style="height:100%;">'
+  Append aPageMenue, '      <div id="ArchivBack" class="ArchivButton w3-button w3-round-large CenterThings" style="margin-right:4px"> <div class="la la-caret-left"></div> </div>'
+  Append aPageMenue, '      <div id="IDAjaxDate" class="ArchivButton w3-button w3-round-large" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);">...</div>'
+  Append aPageMenue, '      <div id="ArchivNext" class="ArchivButton w3-button w3-round-large CenterThings" style="margin-left:4px"> <div class="la la-caret-right"></div> </div>'
   Append aPageMenue, '    </div>'
 
   // rechts
-  Append aPageMenue, '    <div class="w3-display-right" style="padding-right:8px">'
-  Append aPageMenue, '      <div onclick="" id="btnResetArcfilter" class="w3-padding-16 w3-button la la-filter"></div>'
-  Append aPageMenue, '      <div onclick="" id="btnResetArcCalenderPlus" class="w3-hide w3-padding-16 w3-button la la-poll"></div>'
-  Append aPageMenue, '      <div onclick="AjaxArchivMode = `50`; ajax_callarchiv(`#idmain`);" id="btnResetArcarcyearzaehler" class="w3-hide w3-padding-16 w3-button la la-search-minus"></div>'
-  Append aPageMenue, '      <div onclick="" id="btnResetArcarcchance" class="w3-hide w3-padding-16 w3-button la la-search-plus"></div>'
-  Append aPageMenue, '      <div onclick="" id="btnResetArcResetArcTabDay" class="w3-hide w3-padding-16 w3-button la la-search-plus"></div>'
+  Append aPageMenue, '    <div class="w3-display-right CenterThings" style="">'
+  Append aPageMenue, '      <div onclick="" id="btnResetArcfilter" class="ArchivButton w3-round-large w3-button CenterThings" style="margin-right:8px;"> <div class="la la-filter"></div> </div>'
+
+  Append aPageMenue, '      <div onclick="AjaxArchivMode=`3`; Para02=``; ajax_callarchiv(`#idmain`);" class="ArchivButton w3-round-large w3-button CenterThings" id="btnResetArcChanceViewtoList" style="margin-right:8px;"> <div class="la la-list-ul"></div> </div>'
+  Append aPageMenue, '      <div onclick="AjaxArchivMode=`50`; ajax_callarchiv(`#idmain`);" class="ArchivButton w3-round-large w3-button CenterThings" id="btnResetArcChanceViewtoChart" style="margin-right:8px;"> <div class="la la-chart-line"></div> </div>'
+
+  Append aPageMenue, '      <div onclick="AjaxArchivMode = `50`; ajax_callarchiv(`#idmain`);" id="btnResetArcarcyearzaehler" class="ArchivButton w3-hide w3-round-large w3-button CenterThings" style="margin-right:8px;"> <div class="la la-search-minus"></div> </div>'
+  Append aPageMenue, '      <div onclick="" id="btnResetArcarcchance" class="ArchivButton w3-hide w3-round-large w3-button CenterThings" style="margin-right:8px;"> <div class="la la-search-plus"></div> </div>'
+  Append aPageMenue, '      <div onclick="" id="btnResetArcResetArcTabDay" class="ArchivButton w3-hide w3-button CenterThings" > <div class="la la-search-plus"></div> </div>'
   Append aPageMenue, '    </div>'
+
+
+
+
+
+  // links
+  //Append aPageMenue, '    <div class="w3-display-left" style="padding-left:8px">'
+
+//  Append aPageMenue, '      <div onclick="AjaxArchivMode=`1`; Para02=``; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-list-ul" id="btnResetArcChanceViewtoList"></div>'
+
+  //Append aPageMenue, '      <div onclick="AjaxArchivMode=`3`; Para02=``; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-list-ul" id="btnResetArcChanceViewtoList"></div>'
+
+
+  //Append aPageMenue, '      <div onclick="AjaxArchivMode=`50`; ajax_callarchiv(`#idmain`);" class="w3-padding-16 w3-button la la-chart-line" id="btnResetArcChanceViewtoChart"></div>'
+  //Append aPageMenue, '    </div>'
+
+  // mitte
+  //Append aPageMenue, '    <div class="w3-display-middle FontRespo04" style="height:100%;">'
+  //Append aPageMenue, '      <div id="ArchivBack" class="w3-button la la-caret-left"></div>'
+  //Append aPageMenue, '      <div id="IDAjaxDate" class="w3-button w3-round-large" style="background-image: linear-gradient(55deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1));" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);">...</div>'
+  //Append aPageMenue, '      <div id="ArchivNext" class="w3-button la la-caret-right"></div>'
+  //Append aPageMenue, '    </div>'
+
+  // rechts
+  //Append aPageMenue, '    <div class="w3-display-right" style="padding-right:8px">'
+  //Append aPageMenue, '      <div onclick="" id="btnResetArcfilter" class="w3-padding-16 w3-button la la-filter"></div>'
+  //Append aPageMenue, '      <div onclick="" id="btnResetArcCalenderPlus" class="w3-hide w3-padding-16 w3-button la la-poll"></div>'
+  //Append aPageMenue, '      <div onclick="AjaxArchivMode = `50`; ajax_callarchiv(`#idmain`);" id="btnResetArcarcyearzaehler" class="w3-hide w3-padding-16 w3-button la la-search-minus"></div>'
+  //Append aPageMenue, '      <div onclick="" id="btnResetArcarcchance" class="w3-hide w3-padding-16 w3-button la la-search-plus"></div>'
+  //Append aPageMenue, '      <div onclick="" id="btnResetArcResetArcTabDay" class="w3-hide w3-padding-16 w3-button la la-search-plus"></div>'
+  //Append aPageMenue, '    </div>'
 
 
   Append aPageMenue, '  </div>'
@@ -798,8 +812,6 @@ Proc Content
 
   If (sConfigJsonMode = '2') Then
 
-//    Append aContent, '  <div class="w3-green w3-left w3-container w3-hide-medium w3-hide-small" style="width:2%"></div>'
-//    Append aContent, '  <div class="w3-green w3-right w3-container w3-hide-medium w3-hide-small" style="width:2%"></div>'
     Append aContent, '  <div class="wrapper">'
 
   EndIf
@@ -909,7 +921,7 @@ Proc Content
 
           If Count(aGroupData) = iSchleifeLines Then 
             Break
-                Endif
+          Endif
 
         EndIf
 
@@ -1335,10 +1347,6 @@ Proc Content
 
 
 
-
-
-
-
             Append aContent, '              // Initialisiere das Chart'
             Append aContent, '              initChart' + sDIVVariable + '();'
 
@@ -1396,11 +1404,7 @@ Proc Content
 
 
 
-
-
-
-
-                  // ZEICHNE  ->  MultiArchiv  (8)
+          // ZEICHNE  ->  MultiArchiv  (8)
           Case '8'
 
             If (isana(ival(sConfigJsonCont03))) then //and isana(ival(sConfigJsonCont04))) then
@@ -1964,8 +1968,7 @@ Proc Content
       Append aContent, '      </table>'
 
         If (sConfigJsonMode = '2') Then
-        Append aContent, '      </div>'
-//        Append aContent, '    </div>'
+          Append aContent, '      </div>'
         EndIf
 
     EndIf
