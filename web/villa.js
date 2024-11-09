@@ -148,8 +148,6 @@ $(document).ready(function() {
 
   $(window).on('resize', debounce(refreshHandler));
 
-
-
 });
 
 
@@ -181,11 +179,6 @@ $("[id*='element']").click(function(event){
 
 // data-datapoint="" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""
 // Livewerte vom ProGraf holen
-
-// ToDo  *******************************************************
-// Alle CollectDataNew() mal checken ob alle nötig
-
-
 
 function CollectDataNew(par) { 
   
@@ -309,7 +302,6 @@ function SendPost(elmnt, page, aktion, handle) {
         alert(`${error}${errorMessage}`);
         $.get(`/menue/${StartPage}.html`, function(data) {
           $('#idmain').html(data);
-          //CollectDataNew();
         });
       }
     },
@@ -792,12 +784,10 @@ $(document).on('click', '.dropdown-item', function(event) {
   $(`div[id^="seSet"]`).css(`display`, `none`);
   $(`#se05Main`).css(`display`, `block`);
 
-
   const $this = $(this);
   const JSVcontition = $this.attr('value');
   const JSVSendMode = $this.data('sendmode');
   const JSVFieldName = $this.data('fieldname');
-  
   
   SendPost(this,JSVFieldName+';'+JSVcontition, JSVSendMode, AjaxHandle);
 
@@ -806,19 +796,11 @@ $(document).on('click', '.dropdown-item', function(event) {
 
 
 
-
-
-
-
-
 /* Check if fade text available */
 $("#idmain").on("click", ".HelpClick", function(event) {
-  const $this = $(this);
-  const $title = $this.find(".title");
-  const $HToggle = $this.find(".HelpToggle");
+  const $HToggle = $(this).find(".HelpToggle");
   $HToggle.fadeToggle();
 });
-
 
 
 
@@ -833,6 +815,7 @@ $("#idmain").on("click", ".more_info", function(event) {
     $title.remove();
   }
 });
+
 
 
 // Copy to Clipboard
