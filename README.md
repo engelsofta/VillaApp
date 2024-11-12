@@ -15,8 +15,7 @@ Features
 - Automatic Updates: Seamlessly fetches and applies the latest updates from GitHub
 - Information Archiving: Automatically archives important data points for future reference
 
-Prerequisites
-To run VillaApp, you'll need:
+Prerequisites to run VillaApp, you'll need:
 - Software ProGrafNT (WebServer)
 
 Installation

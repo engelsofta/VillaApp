@@ -495,7 +495,7 @@ Proc Main
 
         Append Page, '      $("#ArchivBack").attr("onclick","datum.setDate(datum.getDate()-365); ajax_callarchiv(`#idmain`);");'
         Append Page, '      $("#ArchivNext").attr("onclick","datum.setDate(datum.getDate()+365); ajax_callarchiv(`#idmain`);");'
-        Append Page, '      $("#IDAjaxDate").html(`<i class="w3-large las la-chart-pie"></i>`);'
+        Append Page, '      $("#IDAjaxDate").html(`<div class="w3-large las la-chart-pie"></div>`);'
 
       endif
 

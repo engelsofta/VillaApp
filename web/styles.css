@@ -284,12 +284,10 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 
 
-
 .gradient-text {
 
   background-image: linear-gradient(
     to right, 
-
     var(--ColorYellow),
     var(--ColorBlue),
     var(--ColorGreen),
@@ -344,9 +342,6 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .a3-border-yellow{border-color:var(--ColorYellow)!important}
 
 
-/*.wandy-panel{margin-left:5px;margin-right:5px;margin-bottom:8px} */
-
-
 .panelCenter {margin-left:4px; margin-right:4px; text-align:center;}
 .panelCenterSmall {height: calc(100vh - 68px - var(--TopMenueHeight));}
 .panelCenterLarge {height: calc(100vh - 8px - var(--TopMenueHeight));}
@@ -359,40 +354,33 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .a3-eventlist-bar{height: 100%; background: linear-gradient(to right, rgba(40, 154, 251, 0.2), rgba(255, 201, 30, 0.2)); border-radius: 5px; position: relative;}
 .a3-eventlist-txt{position: absolute; width: 100%; text-align: center; line-height: 30px; color: white;}
 
-.CenterThings {
 
+.CenterThings {
   display: flex; 
   /* flex-direction: column!important; */
   justify-content: center; 
   align-items: center;
-
 }
 
 
-/*  .ListView{height: 25px; display: flex; justify-content: center; align-items: center; font-size: min(2.8vw, 14px);}   */
 
 .PSettings {
-  
   scrollbar-width: thin; 
   scrollbar-color: #ffffe0 transparent; 
   overflow-y: overlay; 
   max-height: calc(80vh - 80px);
   padding-bottom: 20px!important;
-
 }
 
 
 .Scrollbar {
-
   scrollbar-width: thin; 
   scrollbar-color: #1212122f transparent;
   overflow-y: overlay; 
-
 }
 
 
 .ArchivButton {
-
   background-image: linear-gradient(55deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1));
   height:50px;
 }
@@ -400,17 +388,38 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 
 
+.ArcRight, .ArcLeft, .ArcCenter {
+  justify-content: center;
+  display: flex; 
+  align-items: center; 
+  flex-basis: 0; 
+  margin-left:4px; 
+  margin-right:4px; 
+  flex-grow: 1;
+}
+
+
+/* Anpassungen Auflösung */
+@media screen and (min-width: 768px) {    /* For larger screens */
+  .ArcRight {
+    justify-content: right; 
+  }
+  .ArcLeft {
+    justify-content: left;
+  }
+}
+
+
+
+
 
 .touchbox {
-
   position: absolute; 
   min-height: 100%;
   height:auto !important;
   height:100%;
   width:100%;
-
   -webkit-overflow-scrolling: touch;
-
 }
 
 
@@ -478,7 +487,6 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
   margin-bottom: 5px;
   cursor: pointer;
   background-image: var(--background-modal-select);
-/*  height: 50px;  */
   color:rgb(255, 255, 255);
   vertical-align:middle;
   width:calc(100% - 8px);
@@ -617,14 +625,11 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 
 .modalAlign {
-
   position: absolute; 
   transform: translate(-50%, -50%);
   left: 50%;
   top:50%; 
-
 }
-
 
 
 
@@ -743,10 +748,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 
 
-
-
 /* Organisation der GRIDs auf dem Dashboard */
-
 .wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 3fr));
@@ -754,8 +756,6 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
   grid-auto-flow: dense;
   padding: 0 5px 0 5px; /* Innenabstand für den Container */
 }
-
-
 
 
 
