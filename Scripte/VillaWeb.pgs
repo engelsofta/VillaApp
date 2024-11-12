@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.52'
+  Global Dim sVillaVersion:         String    := '9.53'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -644,25 +644,28 @@ Proc MainMenue
 
 
   //links
-  Append aPageMenue, '    <div class="" style="display: flex; justify-content: left; align-items: center; flex-basis: 0; margin-left:6px; margin-right:4px; flex-grow: 1;">'
-  Append aPageMenue, '      <div onclick="" id="btnResetArcCalenderPlus" class="ArchivButton w3-round-large w3-hide w3-button CenterThings" style="margin-left:8px;"> <div class="la la-poll"></div> </div>'
+  Append aPageMenue, '    <div class="ArcLeft">'
   Append aPageMenue, '    </div>'
 
   // mitte
-  Append aPageMenue, '    <div class="CenterThings FontRespo04" style="display: flex; justify-content: center; align-items: center; flex-basis: 0; flex-grow: 1;">'
-  Append aPageMenue, '      <div id="ArchivBack" class="ArchivButton w3-button w3-round-large CenterThings" style="margin-right:4px"> <div class="la la-caret-left"></div> </div>'
-  Append aPageMenue, '      <div id="IDAjaxDate" class="ArchivButton w3-button w3-round-large" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);">...</div>'
-  Append aPageMenue, '      <div id="ArchivNext" class="ArchivButton w3-button w3-round-large CenterThings" style="margin-left:4px"> <div class="la la-caret-right"></div> </div>'
+  Append aPageMenue, '    <div class="CenterThings FontRespo04 ArcCenter">'
+  Append aPageMenue, '      <div id="ArchivBack" class="ArchivButton w3-button w3-round-large CenterThings" style="margin-right:4px"> <div class="w3-normal la la-caret-left"></div> </div>'
+  Append aPageMenue, '      <div id="IDAjaxDate" class="ArchivButton w3-button w3-round-large CenterThings" style="flex-direction: column;" onclick="ajax_arcmodal(`#IDelementglobal`, `ajax_kalender`);">...</div>'
+  Append aPageMenue, '      <div id="ArchivNext" class="ArchivButton w3-button w3-round-large CenterThings" style="margin-left:4px"> <div class="w3-normal la la-caret-right"></div> </div>'
   Append aPageMenue, '    </div>'
 
   // rechts
-  Append aPageMenue, '    <div class="CenterThings" style="display: flex; justify-content: right; align-items: center; flex-basis: 0; margin-left:4px; margin-right:6px; flex-grow: 1;">'
+  Append aPageMenue, '    <div class="CenterThings ArcRight w3-padding-small">'
   Append aPageMenue, '      <div onclick="" id="btnResetArcfilter" class="ArchivButton w3-round-large w3-button CenterThings" style="margin-right:4px;"> <div class="la la-filter"></div> </div>'
   Append aPageMenue, '      <div onclick="AjaxArchivMode=`3`; Para02=``; ajax_callarchiv(`#idmain`);" class="ArchivButton w3-round-large w3-button CenterThings" id="btnResetArcChanceViewtoList" style=""> <div class="la la-list-ul"></div> </div>'
   Append aPageMenue, '      <div onclick="AjaxArchivMode=`50`; ajax_callarchiv(`#idmain`);" class="ArchivButton w3-round-large w3-button CenterThings" id="btnResetArcChanceViewtoChart" style="margin-right:4px;"> <div class="la la-chart-line"></div> </div>'
   Append aPageMenue, '      <div onclick="AjaxArchivMode = `50`; ajax_callarchiv(`#idmain`);" id="btnResetArcarcyearzaehler" class="ArchivButton w3-hide w3-round-large w3-button CenterThings" style="margin-right:4px;"> <div class="la la-search-minus"></div> </div>'
   Append aPageMenue, '      <div onclick="" id="btnResetArcarcchance" class="ArchivButton w3-hide w3-round-large w3-button CenterThings" style="margin-right:4px;"> <div class="la la-search-plus"></div> </div>'
   Append aPageMenue, '      <div onclick="" id="btnResetArcResetArcTabDay" class="ArchivButton w3-hide w3-button CenterThings" > <div class="la la-search-plus"></div> </div>'
+
+  Append aPageMenue, '      <div onclick="" id="btnResetArcCalenderPlus" class="ArchivButton w3-round-large w3-hide w3-button CenterThings" style=""> <div class="la la-poll"></div> </div>'
+
+
   Append aPageMenue, '    </div>'
 
 
