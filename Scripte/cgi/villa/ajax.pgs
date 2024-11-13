@@ -160,7 +160,7 @@ Proc Main
     GetKonfigData sOnlyGLT, ihandle, 'Flags'   
 
 
-    Append Page, '  <div id="IDSettings" class="w3-padding w3-text-sand w3-round-xxlarge modalbox modalAlign" style="width: 90%; max-width:800px; min-height: 560px; background-image: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.2));">'
+    Append Page, '  <div id="IDSettings" class="w3-padding w3-text-sand w3-round-xxlarge modalbox modalAlign" style="width: 90%; max-width:800px; min-height: 560px; background-image: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.3));">'
 
     // Inhalt der InfoBox ***********************************************************
     Append Page, '    <div class="w3-text-sand CenterThings" style="padding: 20px;">'
