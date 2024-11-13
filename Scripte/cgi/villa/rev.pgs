@@ -6,6 +6,7 @@ Proc Main
   Dim sAktVersion: String
   Dim SNextVersion: String
 
+  aREV[155] := ['9.54', '@media for mobile devices', 'code optimization (class/css)']  
   aREV[154] := ['9.53', 'new buttons archiv chart (update)']  
   aREV[153] := ['9.52', 'new buttons archiv chart']  
   aREV[152] := ['9.51', 'design of limits', 'design of modal background', 'added GIT changelog', 'chart.js 4.4.6', 'new chart buttons']
@@ -25,7 +26,7 @@ Proc Main
   aREV[138] := ['9.03', 'style of animated icons', 'manuel revised', 'styles var', 'manual (hover details)', 'style flex added', 'css of touch help and check page'] 
   aREV[137] := ['9.02', 'touchsupport page-back optimized', 'test new getvalue css faults', 'gradient main name']  
   aREV[136] := ['9.01', 'chart.js 4.4.4 (local)', 'zooming chart by wheel and pinch', 'removed button for analog filtering and + month zooming', 'add x-scale zoom by clicking', 'added min swipe distance to menu', 'no line break in menu']
-  aREV[135] := ['9.00', 'CHART.JS in the house &nbsp; <i class="las la-chart-bar w3-text-green w3-large"></i>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> PalarArea Charts</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> Doughnut Charts</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> dynamic chart views</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> individual data can be hidden</div>',  '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> compare monthly archives possible</div>', 'some fixes in table analog', 'Refresh of chart data optimized', 'new chart colors', 'chart legend optimized', 'event-search width optimized']
+  aREV[135] := ['9.00', 'CHART.JS in the house &nbsp; <i class="las la-chart-line gradient-text w3-xlarge"></i>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> PalarArea Charts</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> Doughnut Charts</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> dynamic chart views</div>', '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> individual data can be hidden</div>',  '<div class="w3-margin-left"><i class="w3-large w3-text-green las la-paperclip"></i> compare monthly archives possible</div>', 'some fixes in table analog', 'Refresh of chart data optimized', 'new chart colors', 'chart legend optimized', 'event-search width optimized']
   aREV[134] := ['8.03', 'search size / events css']  
   aREV[133] := ['8.02', 'some changes in modal search', 'set autocomplete to off']  
   aREV[132] := ['8.01', 'size of searchbox', 'new calculation "TimeBetween"', 'New style of the fault report list']  
@@ -37,7 +38,7 @@ Proc Main
   aREV[126] := ['7.23', 'uniform background settings']  
   aREV[125] := ['7.22', 'first step of icon and design update']  
   aREV[124] := ['7.21', 'the current state is visible upon selection', 'IOS18 dark icon', 'FIX: name in settings']  
-  aREV[123] := ['7.20', 'ProGraf 9 ready &nbsp; <i class="las la-cogs w3-text-indigo w3-spin w3-large"></i>']  
+  aREV[123] := ['7.20', 'ProGraf 9 ready &nbsp; <i class="las la-cogs a3-blue w3-spin w3-large"></i>']  
   aREV[122] := ['7.11', 'name in settings', 'design optimized']  
   aREV[121] := ['7.10', 'Fix: z-index ui close', 'FIX: settings style']
   aREV[120] := ['7.09', 'new close ui elements 2', 'Progress bar smart slide']  
