@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.5323'
+  Global Dim sVillaVersion:         String    := '9.54'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -664,7 +664,6 @@ Proc MainMenue
   Append aPageMenue, '      <div onclick="" id="btnResetArcResetArcTabDay" class="ArchivButton w3-hide w3-button CenterThings" > <div class="la la-search-plus"></div> </div>'
 
   Append aPageMenue, '      <div onclick="" id="btnResetArcCalenderPlus" class="ArchivButton w3-hide w3-button CenterThings" style=""> <div class="la la-poll"></div> </div>'
-
 
   Append aPageMenue, '    </div>'
 
