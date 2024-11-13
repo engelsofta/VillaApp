@@ -383,6 +383,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .ArchivButton {
   background-image: linear-gradient(55deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1));
   height:50px;
+  border-radius:8px;
 }
 
 
@@ -408,6 +409,14 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
     justify-content: left;
   }
 }
+
+
+@media screen and (max-width: 768px) {    /* For smaller screens */
+  .ArcCenter {
+    margin-bottom:10px;
+  }
+}
+
 
 
 
