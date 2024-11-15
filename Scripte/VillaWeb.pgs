@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.54'
+  Global Dim sVillaVersion:         String    := '9.55'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -644,7 +644,7 @@ Proc MainMenue
 
 
   //links
-  Append aPageMenue, '    <div class="ArcLeft">'
+  Append aPageMenue, '    <div class="ArcLeft" style="margin-right:4px; margin-left:10px;">'
   Append aPageMenue, '    </div>'
 
   // mitte
@@ -655,7 +655,7 @@ Proc MainMenue
   Append aPageMenue, '    </div>'
 
   // rechts
-  Append aPageMenue, '    <div class="CenterThings ArcRight w3-padding-small">'
+  Append aPageMenue, '    <div class="CenterThings ArcRight" style="margin-right:10px; margin-left:4px;">'
   Append aPageMenue, '      <div onclick="" id="btnResetArcfilter" class="ArchivButton w3-button CenterThings" style="margin-right:4px;"> <div class="la la-filter"></div> </div>'
   Append aPageMenue, '      <div onclick="AjaxArchivMode=`3`; Para02=``; ajax_callarchiv(`#idmain`);" class="ArchivButton w3-button CenterThings" id="btnResetArcChanceViewtoList" style=""> <div class="la la-list-ul"></div> </div>'
   Append aPageMenue, '      <div onclick="AjaxArchivMode=`50`; ajax_callarchiv(`#idmain`);" class="ArchivButton w3-button CenterThings" id="btnResetArcChanceViewtoChart" style="margin-right:4px;"> <div class="la la-chart-line"></div> </div>'

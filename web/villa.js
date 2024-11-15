@@ -569,14 +569,16 @@ function ajax_callarchiv(DestElement) {
 
   // Anpassung Buttons
   
-  $('[id^=btnResetArc]').addClass("w3-hide");
+  
   $('#btnfilter, #btnCalenderPlus').removeClass("w3-text-blue").addClass("w3-text-white");
   $('#IDelementglobal').fadeOut();
 
+  
   var TempLink = 'villa.htm?page=ajax_archiv&handle=' + AjaxHandle + '&aktion=10&pagepara= ' + datum.toLocaleDateString('de-DE') + ',' + Para02 + ',' + AjaxFilter + ',' + AjaxHandle2 + ',' + AjaxArchivMode + ',,';
 
   $.get(TempLink, function(data) {
     RemoveOverlay();
+    $('[id^=btnResetArc]').addClass("w3-hide");
     $(DestElement).html(data);
     $('#DIVloader').fadeOut();
     $("#bottommenue").removeClass("w3-hide");

@@ -46,7 +46,7 @@ Proc Main
   Global Dim aData:arr
   Global Dim Page:arr
   Global Dim aKonfig:arr
-//  Global Dim aGroupList:arr
+
 
   // Integer
   Global Dim iCountResults:int
@@ -301,14 +301,8 @@ Proc Main
       if (scol02 = '4')  then
 
         Dim aGroupList:arr          := GetGroupList (NameToHandle(scol01))
-        Dim bIsInGroup:boolean      := false
-        Dim iSchleifeCheckGroup:int
 
-        for iSchleifeCheckGroup = 1 to count(aGroupList)
-          if sval(ihandle) = aGroupList[iSchleifeCheckGroup] then bIsInGroup = true
-        next
-
-        if (bIsInGroup) Then
+        if (sval(ihandle) in aGroupList) Then
 
           sChecked := ' checked'
           sThisName := 'click 0'

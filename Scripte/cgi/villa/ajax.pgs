@@ -203,13 +203,15 @@ Proc Main
 
           Append Page, '        <div class="w3-animate-opacity" style="margin-top:50px; width:100%;" ID="hideanasettings">'
 
+
+          Append Page, '          <input class="InputNormal FontRespo01 a3-green" type="number" id="manInput" name="manInputName" value="' + GetRealActValueAsString(ihandle) + '" style="margin-bottom:30px; width:130px; background-color:transparent;"></input>'
+
           if (iVal(GetMaxValue(ihandle)) - iVal(GetMinValue(ihandle)) < 30) Then
             Append Page, '          <input type="range" step="0.1" min="' + sVal(iVal(GetMinValue(ihandle))) + '" max="' + sVal(iVal(GetMaxValue(ihandle))) + '" value="' + sVal(GetRealActValue(ihandle)) + '" class="sliderlong" id="myRange"></input>'
           else
             Append Page, '          <input type="range" step="1.0" min="' + sVal(iVal(GetMinValue(ihandle))) + '" max="' + sVal(iVal(GetMaxValue(ihandle))) + '" value="' + sVal(GetRealActValue(ihandle)) + '" class="sliderlong" id="myRange"></input>'
           EndIf
 
-          Append Page, '          <input class="InputNormal w3-margin-top w3-margin-bottom FontRespo01 a3-green" type="number" id="manInput" name="manInputName" value="' + GetRealActValueAsString(ihandle) + '" style="width:130px; background-color:transparent;"></input>'
 
           Append Page, '          <button onclick="SendPost(this, $(' +#39 + '#myRange' +#39 + ').val(), ' +#39 + '7' + #39 +', ' + #39 + sHandle + #39 + ')" class="las la-share w3-text-green w3-large w3-button w3-round w3-border w3-border-dark-grey w3-margin" style="min-width:80px"></button>'
           Append Page, '        </div>'
@@ -295,8 +297,6 @@ Proc Main
 
     Append Page, '    <div class="PSettings FontRespo03" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: center;" id="settings02">'
 
-    aGroupListDP := GetGroupList(iHandle)
-
     sSQL := 'Select Handle, Name, Meldeliste From %n Where DP_Typ = %i and not Name Like %s and not Name Like %s and not Name Like %s and not Name Like %s and not Name Like %s and Handle > 32999'
 
     if isAna(iHandle) then
@@ -306,19 +306,6 @@ Proc Main
     endif
 
     SQL bOK, aGroupListAll, ProAlias, sSQL
-
-
-    for iSchleife01 = 1 to Count(aGroupListDP)
-
-      for iSchleife02 = 2 to Count(aGroupListAll)
-
-        if (aGroupListDP[iSchleife01] = aGroupListAll[iSchleife02, 1]) Then
-          aGroupListAll[iSchleife02, 4]  := 'true'
-        EndIf
-
-      Next
-
-    Next
 
 
     for iSchleife01 = 2 to Count(aGroupListAll)
@@ -336,6 +323,11 @@ Proc Main
     Next
 
     Append Page, '    </div>   <!-- settings02 -->'
+
+
+
+
+
 
 
 

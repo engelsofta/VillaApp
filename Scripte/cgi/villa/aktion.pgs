@@ -432,36 +432,33 @@ Proc Main
 
 
 
+
+
+
+
     Case '8'
   
       Dim aGroupListAll:    array := []
       sResult := 'Datenpunkt "' + GetComment(iHandle) + '" Fehler Gruppenzuordnung ' + sPage
       aGroupListAll := GetGroupList(ival(sPage)) 
    
-      for iSchleife=1 to count(aGroupListAll)
-   
-        if aGroupListAll[iSchleife, 1] = sval(iHandle) then
-        
-          RemoveDPFromGroup  bOk, iHandle, ival(sPage)
-          sResult := 'check0815'
-          sResultPic := 'las la-calendar-minus'
+      if (sval(iHandle) in aGroupListAll) then
 
-          // Spezielle Konfiguration (Konfig Page 04)
-          if (NameToHandle('VILLA-ARCHIV-CURVE') = ival(sPage)) then
-            sResult := sResult + '<span>echtes Event Archiv</span>'
-          else
-            sResult := sResult + '<span>aus Gruppe <span class="w3-text-khaki">' + GetName(ival(sPage)) + '</span> entfernt</span>'		
-          endif
+        RemoveDPFromGroup  bOk, iHandle, ival(sPage)
+        sResult := 'check0815'
+        sResultPic := 'las la-calendar-minus'
 
-          sResultColor := 'brown'
-          break
-			   
+        // Spezielle Konfiguration (Konfig Page 04)
+        if (NameToHandle('VILLA-ARCHIV-CURVE') = ival(sPage)) then
+          sResult := sResult + '<span>echtes Event Archiv</span>'
+        else
+          sResult := sResult + '<span>aus Gruppe <span class="w3-text-khaki">' + GetName(ival(sPage)) + '</span> entfernt</span>'		
         endif
- 
-      Next
 
-      if not bOk then
-      
+        sResultColor := 'brown'
+
+      else
+
         AddDPToGroup  bOk, iHandle, ival(sPage)	  
 
         if bOk then
@@ -479,7 +476,8 @@ Proc Main
           
         Endif
 
-      Endif
+      endif
+
 
 
     // SetMessageVar
