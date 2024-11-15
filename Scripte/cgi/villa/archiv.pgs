@@ -599,9 +599,9 @@ Proc Main
 
 
           if (iFilterPos > 0) Then
-            sSQL := 'SELECT DateTimeStr(LT("DateTime")), VAL FROM "A_Event_' + sTempMGRDate + '" where (Handle = %i) and ("DateTime" >= %x And "DateTime" <= %x)'
+            sSQL := 'SELECT DateTimeStr(LT("DateTime")), VAL FROM "A_Event_' + sTempMGRDate + '" where (Handle = %i) and ("DateTime" >= %x And "DateTime" <= %x) order by "DateTime"'
           else
-            sSQL := 'SELECT DateTimeStr(LT("DateTime")), VAL FROM "A_Event_' + sTempMGRDate + '" where (Handle = %i)'
+            sSQL := 'SELECT DateTimeStr(LT("DateTime")), VAL FROM "A_Event_' + sTempMGRDate + '" where (Handle = %i) order by "DateTime"'
           endif
   
           SqlFormat sSQL, [ival(aHandleList[iCountHandles]), LocalDateTimeToUtcDateTime(StrToDateTime(Datum + ' ' + sFilterStart + ':00:00')), LocalDateTimeToUtcDateTime(StrToDateTime(Datum + ' '  + sFilterEnd + ':00:00'))]

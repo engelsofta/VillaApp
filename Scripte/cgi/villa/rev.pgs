@@ -6,6 +6,7 @@ Proc Main
   Dim sAktVersion: String
   Dim SNextVersion: String
 
+  aREV[156] := ['9.55', 'code: for -> in', 'buttons archiv chart (update 2)', 'set value style update', 'add "order by" for UST archive']  
   aREV[155] := ['9.54', '@media for mobile devices', 'code optimization (class/css)']  
   aREV[154] := ['9.53', 'new buttons archiv chart (update)']  
   aREV[153] := ['9.52', 'new buttons archiv chart']  
