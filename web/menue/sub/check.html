@@ -83,8 +83,7 @@
                       changelogDiv.appendChild(releaseDiv);
                   });
               } catch (error) {
-                  console.error('Error fetching changelog:', error);
-                  document.getElementById('changelog').innerHTML = 'Error loading changelog. Please try again later.';
+                  document.getElementById('changelog').innerHTML = 'aktuell keine Verbindung zur Github API.';
               }
           }
   
