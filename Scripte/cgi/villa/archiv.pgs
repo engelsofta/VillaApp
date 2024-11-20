@@ -325,9 +325,12 @@ Proc Main
               sArcData := sArcData + '{x:' + sval(iSchleifeDay) + ', y:0},'
             else
               sArcData := sArcData + '{x:' + sval(iSchleifeDay) + ', y:' + aMonthVal[iSchleifeDay] + '},'
+              rSummeArchiv := rSummeArchiv + rval(aMonthVal[iSchleifeDay])
             endif
 
           next
+
+          sArcToJSYear := sArcToJSYear + sval(DateMonth(StrToDate(sSchleifeDate))) + '.' + sval(DateYear(StrToDate(sSchleifeDate))) + ','
 
         else
 
@@ -368,6 +371,8 @@ Proc Main
 
           next
 
+          sArcToJSYear := sArcToJSYear + sval(DateYear(StrToDate(sSchleifeDate))) + ','
+
         endif
 
 
@@ -389,7 +394,6 @@ Proc Main
 
 
         sArcToJS := sArcToJS + sval(rSummeArchiv) + ','
-        sArcToJSYear := sArcToJSYear + sval(DateYear(StrToDate(sSchleifeDate))) + ','
         sArcToJSCol := sArcToJSCol + '`rgba(' +  sRGBArc + ')`,'
 
       next
@@ -489,7 +493,7 @@ Proc Main
         Append Page, '      $("#ArchivBack").attr("onclick","datum.setMonth(datum.getMonth() - 1); AjaxArchivMode = `55`; ajax_callarchiv(`#idmain`);");'
         Append Page, '      $("#ArchivNext").attr("onclick","datum.setMonth(datum.getMonth() + 1); AjaxArchivMode = `55`; ajax_callarchiv(`#idmain`);");'
         Append Page, '      $("#btnResetArcarcyearzaehler").removeClass("w3-hide");'
-        Append Page, '      $("#IDAjaxDate").html(`<i class=""></i>`);'
+        Append Page, '      $("#IDAjaxDate").html(`<div class="w3-large las la-chart-pie"></div>`);'
         
       else
 
