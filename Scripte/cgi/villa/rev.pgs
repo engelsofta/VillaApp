@@ -6,6 +6,7 @@ Proc Main
   Dim sAktVersion: String
   Dim SNextVersion: String
 
+  aREV[158] := ['9.58', 'cURL removed from git - now using system cURL']
   aREV[158] := ['9.57', 'added month analysis on chart', 'new Github-REV design']
   aREV[157] := ['9.56', 'added backdrop blur on top menue']
   aREV[156] := ['9.55', 'code: for -> in', 'buttons archiv chart (update 2)', 'set value style update', 'add "order by" for UST archive']  

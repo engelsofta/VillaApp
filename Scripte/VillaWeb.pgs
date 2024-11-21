@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.57'
+  Global Dim sVillaVersion:         String    := '9.58'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -119,13 +119,16 @@ Proc CheckUpdate
 
   Dim bIsBeta: boolean             := bval(GetMessageVar('bIsBeta'))
 
-  Dim sOutput:string               := ProPath + '\Update\' // '\
-  
+//  Dim sOutput:string               := ProPath + '\Update\' // '\
+
+  Dim sOutput:string               := ProPath + '\web\update\' // '\
+
+
   Dim sUpdateURL:string            := 'app.haisla.de/' 
   Dim sVersionUrl:string           := 'appversion.haisla.de'
   Dim sVersionOnline:string        := ''
   Dim sVersionOffline:string       := GetMessageVar('VersionVilla')
-  Dim sCurl:string                 := sOutput + 'curl.exe'
+//  Dim sCurl:string                 := sOutput + 'curl.exe'
 
   Dim aErr: array
   Dim bOK: boolean
@@ -135,7 +138,7 @@ Proc CheckUpdate
 
 
   // Check for Updates
-  ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sVersionUrl + ' -L --max-time 10 -o ' + sOutput + 'version.json')
+  ExecRedirectEx(bOK, iExitCode, aData, aErr, 'curl ' + sVersionUrl + ' -L --max-time 10 --create-dirs -o ' + sOutput + 'version.json')
 
   // Fehlerauswertung
   if not bOK then
@@ -170,7 +173,7 @@ Proc CheckUpdate
       Logbook 'VillaWeb: Update ist verfügbar - Starte Update (' + sVersionOffline + ') -> (' + sVersionOnline + ')'
 
       // Update aus dem Internet laden
-      ExecRedirectEx(bOK, iExitCode, aData, aErr, sCurl + ' ' + sUpdateURL + ' -L --max-time 10 -o ' + sOutput + 'VillaWeb.zip')
+      ExecRedirectEx(bOK, iExitCode, aData, aErr, 'curl ' + sUpdateURL + ' -L --max-time 10 -o ' + sOutput + 'VillaWeb.zip')
 
       if not bOK then
         logbook 'VillaWeb: Fehler beim laden der ZIP Datei aus dem Internet ' + sVersionOnline
