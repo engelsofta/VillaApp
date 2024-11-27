@@ -63,91 +63,80 @@
 </div>
 
 
+<script>
+  owner = 'engelsofta';
+  repo = 'villaapp';
 
+  async function fetchChangelog() {
+    try {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const releases = await response.json();
+      displayChangelog(releases);
+    } catch (error) {
+      console.error('Error fetching changelog:', error);
+      document.getElementById('changelog').innerHTML = '<p style="color: red;">Error fetching changelog. Please try again later.</p>';
+    }
+  }
 
-
-      <script>
-        owner = 'engelsofta';
-        repo = 'villaapp';
-
-        async function fetchChangelog() {
-            try {
-                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const releases = await response.json();
-                displayChangelog(releases);
-            } catch (error) {
-                console.error('Error fetching changelog:', error);
-                document.getElementById('changelog').innerHTML = '<p style="color: red;">Error fetching changelog. Please try again later.</p>';
-            }
-        }
-
-
-        function displayChangelog(releases) {
+  function displayChangelog(releases) {
     const changelogElement = document.getElementById('changelog');
     changelogElement.innerHTML = '';
 
     function convertLinksToButtons(text) {
-        const linkRegex = /(.+?)(https?:\/\/[^\s]+)/g;
-        return text.replace(linkRegex, (match, beforeText, url) => {
-            // Entferne das letzte "in" aus beforeText
-            const trimmedText = beforeText.trim();
-            const buttonText = trimmedText.endsWith('in') ? trimmedText.slice(0, -2).trim() : trimmedText || 'Link';
-            return `<button class="w3-button w3-transparent w3-text-blue FontRespo03" onclick="window.open('${url}', '_blank')">${buttonText}</button> `;
-        });
+      const linkRegex = /(.+?)(https?:\/\/[^\s]+)/g;
+      return text.replace(linkRegex, (match, beforeText, url) => {
+        // Entferne das letzte "in" aus beforeText
+        const trimmedText = beforeText.trim();
+        const buttonText = trimmedText.endsWith('in') ? trimmedText.slice(0, -2).trim() : trimmedText || 'Link';
+        return `<button class="w3-button w3-transparent w3-text-blue FontRespo03" onclick="window.open('${url}', '_blank')">${buttonText}</button> `;
+      });
     }
 
     releases.forEach((release, index) => {
-        const releaseElement = document.createElement('div');
-        releaseElement.className = 'w3-card-4 w3-round w3-padding';
-        releaseElement.style.animationDelay = `${index * 0.1}s`;
+      const releaseElement = document.createElement('div');
+      releaseElement.className = 'w3-card-4 w3-round w3-padding';
+      releaseElement.style.animationDelay = `${index * 0.1}s`;
 
-        const releaseDate = new Date(release.published_at);
-        const formattedDate = releaseDate.toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' });
+      const releaseDate = new Date(release.published_at);
+      const formattedDate = releaseDate.toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' });
 
-        const titleElement = document.createElement('a');
-        titleElement.href = release.html_url;
-        titleElement.target = '_blank';
-        titleElement.className = 'w3-text-blue FontRespo01';
-        titleElement.textContent = `🚀 Release ${release.name || release.tag_name}`;
+      const titleElement = document.createElement('a');
+      titleElement.href = release.html_url;
+      titleElement.target = '_blank';
+      titleElement.className = 'w3-text-blue FontRespo01';
+      titleElement.textContent = `🚀 Release ${release.name || release.tag_name}`;
 
-        const dateElement = document.createElement('div');
-        dateElement.className = 'w3-text-grey w3-padding';
-        dateElement.textContent = `Veröffentlicht am: ${formattedDate}`;
+      const dateElement = document.createElement('div');
+      dateElement.className = 'w3-text-grey w3-padding';
+      dateElement.textContent = `Veröffentlicht am: ${formattedDate}`;
 
-        const bodyElement = document.createElement('div');
-        bodyElement.className = 'FontRespo04';
-        bodyElement.style.whiteSpace = 'pre-wrap';
+      const bodyElement = document.createElement('div');
+      bodyElement.className = 'FontRespo04';
+      bodyElement.style.whiteSpace = 'pre-wrap';
 
-        // Konvertiere Links zu Buttons im Body-Text
-        const modifiedBody = convertLinksToButtons(release.body || 'Keine Beschreibung verfügbar.');
-        bodyElement.innerHTML = modifiedBody;
+      // Konvertiere Links zu Buttons im Body-Text
+      const modifiedBody = convertLinksToButtons(release.body || 'Keine Beschreibung verfügbar.');
+      bodyElement.innerHTML = modifiedBody;
 
-        releaseElement.appendChild(titleElement);
-        releaseElement.appendChild(dateElement);
-        releaseElement.appendChild(bodyElement);
-
-        changelogElement.appendChild(releaseElement);
+      releaseElement.appendChild(titleElement);
+      releaseElement.appendChild(dateElement);
+      releaseElement.appendChild(bodyElement);
+      changelogElement.appendChild(releaseElement);
     });
 
     if (releases.length === 0) {
         changelogElement.innerHTML = '<p>Keine Releases gefunden.</p>';
     }
-}
+  }
 
+  fetchChangelog();
 
+       
 
-
-        fetchChangelog();
-
-
-
-
-
-        
-
+  
   statusElement = document.getElementById('IDChartJS');
        
   if (typeof Chart !== 'undefined') {
