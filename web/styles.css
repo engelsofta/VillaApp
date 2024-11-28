@@ -14,6 +14,11 @@
 }
 
 
+.checkCSS::before {
+  content: "1.0.0";
+}
+
+
 html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}
 body{margin:0; background-color: #3CB371;}
 
@@ -858,6 +863,52 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 .dropdown-item:hover {
   opacity: 0.8;
+}
+
+
+
+
+
+
+
+
+.burncard{
+  background: #1c1f2b;
+  border-radius: 10px;
+  position: relative;
+}
+
+@property --angle{
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.burncard::after, .burncard::before{
+  content: '';
+  position: absolute;
+  height: calc(100% + 4px);
+  width: calc(100% + 4px);
+  background-image: conic-gradient(from var(--angle), var(--ColorYellow), var(--ColorBlue), var(--ColorGreen), var(--ColorYellow));
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  border-radius: 10px;
+  animation: 3s newsrotate linear infinite;
+}
+.burncard::before{
+  filter: blur(0.5rem);
+  opacity: 1.0;
+}
+
+@keyframes newsrotate{
+  from{
+    --angle: 0deg;
+  }
+  to{
+    --angle: 360deg;
+  }
 }
 
 
