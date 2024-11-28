@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.59'
+  Global Dim sVillaVersion:         String    := '9.60'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -166,6 +166,9 @@ Proc CheckUpdate
     else  
 
       Logbook 'VillaWeb: Update ist verfügbar - Starte Update (' + sVersionOffline + ') -> (' + sVersionOnline + ')'
+
+      // Update News werden aktiviert
+      SetMessageVar 'sShowUpdateNews', 'true'
 
       // Update aus dem Internet laden
       ExecRedirectEx(bOK, iExitCode, aData, aErr, 'curl ' + sUpdateURL + ' -L --max-time 10 -o ' + sOutput + 'VillaWeb.zip')
