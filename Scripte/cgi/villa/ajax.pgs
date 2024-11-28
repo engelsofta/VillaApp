@@ -105,12 +105,22 @@ Proc Main
     Append Page, '      <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusEvents" data-datapoint="0" data-mode="10" data-pic="" data-col00="sCountEvents" data-col01="" data-col02="" data-animate="">---</div>'
     Append Page, '    </div>'
 
+
     // Info unten
-    Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-hover-opacity w3-round-xlarge w3-text-grey modalbox" style="padding: 12px 0 12px 0; margin-top: 40px; cursor: pointer; width:100%;">'
-    Append Page, '      <div class="w3-small w3-margin-left" style="margin-right: auto; width:75px">Version</div>'
+
+    // Update News anzeigen 
+    if (GetMessageVar('sShowUpdateNews') = 'true') then
+      Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-text-grey burncard" style="padding: 12px 0 12px 0; margin-top: 40px; cursor: pointer; width:100%;">'
+      Append Page, '      <div class="w3-small w3-margin-left gradient-text" style="margin-right: auto; width:75px">NEW Version</div>'
+    else
+      Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-hover-opacity w3-text-grey w3-round-xlarge modalbox" style="padding: 18px 0 18px 0; margin-top: 40px; cursor: pointer; width:100%;">'
+      Append Page, '      <div class="w3-small w3-margin-left" style="margin-right: auto; width:75px">Version</div>'
+    endif
+
     Append Page, '      <div class="w3-small" id="DIVCollectAjaxStatusUnten" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionHTML" data-col01="" data-col02="" data-animate="">---</div>'
     Append Page, '      <div class="w3-margin-right w3-small" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusVersion" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionVilla" data-col01="" data-col02="" data-animate="">---</div>'
     Append Page, '    </div>'
+
 
     Append Page, '  </div>'
 
