@@ -26,7 +26,7 @@
   <div class="CenterThings w3-padding-small w3-border w3-border-dark-grey w3-margin-top" style="width:100%">
     <div class="w3-margin" style="margin-right:auto; width:100px;">Line Awesome</div>
     <div style="color: rgba(255, 0, 0, 0.7); width:100%;">
-      <div class="w3-normal las la-dot-circle a3-green w3-xxlarge" style=""></div>
+      <div class="w3-normal las la-dot-circle a3-green w3-xxlarge"></div>
     </div>
   </div>
 
@@ -88,10 +88,19 @@
     function convertLinksToButtons(text) {
       const linkRegex = /(.+?)(https?:\/\/[^\s]+)/g;
       return text.replace(linkRegex, (match, beforeText, url) => {
-        // Entferne das letzte "in" aus beforeText
+
+        // Entferne das letzte "die Textstellen by ...." aus beforeText
         const trimmedText = beforeText.trim();
-        const buttonText = trimmedText.endsWith('in') ? trimmedText.slice(0, -2).trim() : trimmedText || 'Link';
-        return `<button class="w3-button w3-transparent w3-text-blue FontRespo03" onclick="window.open('${url}', '_blank')">${buttonText}</button> `;
+        const atIndex = trimmedText.indexOf('by');
+
+        if (atIndex !== -1) {
+          buttonText = trimmedText.slice(0, atIndex);
+        } else {
+          buttonText = trimmedText
+        }
+
+        return `<button class="w3-button w3-transparent w3-text-blue FontRespo03" onclick="window.open('${url}', '_blank')">${buttonText}</button> `;        
+
       });
     }
 
