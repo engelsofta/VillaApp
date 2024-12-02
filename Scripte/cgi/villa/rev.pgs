@@ -9,6 +9,7 @@ Proc Main
   // Variable News wurden gelesen
   SetMessageVar 'sShowUpdateNews', 'false'
 
+  aREV[162] := ['9.61', 'Release', 'check.html update']
   aREV[161] := ['9.60', 'news updates on first login', 'new version of check CSS']
   aREV[160] := ['9.59', 'code optimizations', 'first test update with no cURL']
   aREV[159] := ['9.58', 'cURL removed from git - now using system cURL']
