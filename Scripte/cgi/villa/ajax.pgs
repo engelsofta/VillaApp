@@ -159,6 +159,7 @@ Proc Main
     Dim sCountIniData:String    := ''
 
     Dim sOnlyGLT:String         := ''
+    Dim sTmpColor:String        := ''
 
     Dim sTmpData:String         := 'disabled'
 
@@ -211,56 +212,92 @@ Proc Main
           Append Page, '      <div class="slidecontainer CenterThings" style="flex-direction: column; width:90%;">'
           Append Page, '        <div class="FontRespo01 w3-padding" style="max-width:150px;" id="DIVCollectworkhandle" data-datapoint="' + sval(ihandle) + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""></div>'
 
+          // DIV welches unten ausgeblendet werden kann
           Append Page, '        <div class="w3-animate-opacity" style="margin-top:50px; width:100%;" ID="hideanasettings">'
 
+          // Unit of Ana-IP = RGB
+          if (GetAnaUnit(iHandle) = 'RGB') then
 
-          Append Page, '          <input class="InputNormal FontRespo01 a3-green" type="number" id="manInput" name="manInputName" value="' + GetRealActValueAsString(ihandle) + '" style="margin-bottom:30px; width:130px; background-color:transparent;"></input>'
+            sTmpColor := sval(ColorToStr(GetActValue(iHandle)))
+            StrCopy sTmpColor,sTmpColor,4,len(sTmpColor)
+            Append Page, '        <input id="IDColorPickerRGB" type="color" class="w3-round-large" style="width: 150px; height:40px; background-color: #' + sTmpColor + ';"></input>'
 
-          if (iVal(GetMaxValue(ihandle)) - iVal(GetMinValue(ihandle)) < 30) Then
-            Append Page, '          <input type="range" step="0.1" min="' + sVal(iVal(GetMinValue(ihandle))) + '" max="' + sVal(iVal(GetMaxValue(ihandle))) + '" value="' + sVal(GetRealActValue(ihandle)) + '" class="sliderlong" id="myRange"></input>'
+            Append Page, '    <script>'
+    
+            Append Page, '      colorPickerRGB = document.getElementById(`IDColorPickerRGB`);'
+            Append Page, '      colorPickerRGB.value = getBackgroundColor(IDColorPickerRGB);'
+
+            Append Page, '      colorPickerRGB.addEventListener(`change`, function() {'
+
+            Append Page, '        selectedColor = colorPickerRGB.value;'
+    
+            Append Page, '        const red = selectedColor.substr(1, 2);'
+            Append Page, '        const green = selectedColor.substr(3, 2);'
+            Append Page, '        const blue = selectedColor.substr(5, 2);'
+            Append Page, '        document.getElementById("IDColorPickerRGB").style.backgroundColor = selectedColor;'
+
+            Append Page, '        selectedColor = selectedColor.slice(1);'
+            Append Page, '        selectedColor = parseInt(selectedColor, 16);'
+
+            Append Page, '        SendPost(this, selectedColor, ' +#39 + '7' + #39 +', ' + #39 + sHandle + #39 + ')'
+            Append Page, '      });'
+
+            Append Page, '    </script>'
+
+          // Unit of Ana-Unit <> RGB
           else
-            Append Page, '          <input type="range" step="1.0" min="' + sVal(iVal(GetMinValue(ihandle))) + '" max="' + sVal(iVal(GetMaxValue(ihandle))) + '" value="' + sVal(GetRealActValue(ihandle)) + '" class="sliderlong" id="myRange"></input>'
-          EndIf
+            
+
+            Append Page, '          <input class="InputNormal FontRespo01 a3-green" type="number" id="manInput" name="manInputName" value="' + GetRealActValueAsString(ihandle) + '" style="margin-bottom:30px; width:130px; background-color:transparent;"></input>'
+
+            if (iVal(GetMaxValue(ihandle)) - iVal(GetMinValue(ihandle)) < 30) Then
+              Append Page, '          <input type="range" step="0.1" min="' + sVal(iVal(GetMinValue(ihandle))) + '" max="' + sVal(iVal(GetMaxValue(ihandle))) + '" value="' + sVal(GetRealActValue(ihandle)) + '" class="sliderlong" id="myRange"></input>'
+            else
+              Append Page, '          <input type="range" step="1.0" min="' + sVal(iVal(GetMinValue(ihandle))) + '" max="' + sVal(iVal(GetMaxValue(ihandle))) + '" value="' + sVal(GetRealActValue(ihandle)) + '" class="sliderlong" id="myRange"></input>'
+            EndIf
 
 
-          Append Page, '          <button onclick="SendPost(this, $(' +#39 + '#myRange' +#39 + ').val(), ' +#39 + '7' + #39 +', ' + #39 + sHandle + #39 + ')" class="las la-share w3-text-green w3-large w3-button w3-round w3-border w3-border-dark-grey w3-margin" style="min-width:80px"></button>'
+            Append Page, '          <button onclick="SendPost(this, $(' +#39 + '#myRange' +#39 + ').val(), ' +#39 + '7' + #39 +', ' + #39 + sHandle + #39 + ')" class="las la-share w3-text-green w3-large w3-button w3-round w3-border w3-border-dark-grey w3-margin" style="min-width:80px"></button>'
+        
+
+            Append Page, '<script>'
+            Append Page, '  var slider = document.getElementById("myRange");'
+            Append Page, '  var maninput = document.getElementById("manInput");'
+            Append Page, '  var DIVTouch = document.getElementById("touchbox");'
+            Append Page, '  slider.oninput = function() {'
+            Append Page, '    maninput.value = this.value;'
+            Append Page, '  }'
+            Append Page, '  maninput.oninput = function() {'
+            Append Page, '    slider.value = this.value;'
+            Append Page, '  }'
+
+            Append Page, '</script>'
+
+          endif
+
           Append Page, '        </div>'
           Append Page, '      </div>'
-
-          Append Page, ''
-
-          Append Page, '<script>'
-          Append Page, '  var slider = document.getElementById("myRange");'
-          Append Page, '  var maninput = document.getElementById("manInput");'
-          Append Page, '  var DIVTouch = document.getElementById("touchbox");'
-          Append Page, '  slider.oninput = function() {'
-          Append Page, '    maninput.value = this.value;'
-          Append Page, '  }'
-          Append Page, '  maninput.oninput = function() {'
-          Append Page, '    slider.value = this.value;'
-          Append Page, '  }'
-
-
-          Append Page, '  targetGLTNode = document.getElementById(`DIVCollectslidersetasglt`);'
-          Append Page, '  observer = new MutationObserver(handleDivChange);'
-          Append Page, '  observer.observe(targetGLTNode, { childList: true, subtree: true, characterData: true });'
-
-
-
-          Append Page, '  function handleDivChange() {'
-          Append Page, '    var DIVSliderASGLT = document.getElementById("DIVCollectslidersetasglt");'
-          Append Page, '    if (DIVSliderASGLT.innerHTML.includes("checked") == true){'
-          Append Page, '      $("#hideanasettings").show();'
-          Append Page, '    } else {'
-          Append Page, '      $("#hideanasettings").hide();'
-          Append Page, '    };'
-          Append Page, '  }'
-
-          Append Page, '</script>'
-
-          Append Page, ''
       
-        EndIf
+        endIf
+
+
+
+        Append Page, '<script>'
+        Append Page, '  targetGLTNode = document.getElementById(`DIVCollectslidersetasglt`);'
+        Append Page, '  observer = new MutationObserver(handleDivChange);'
+        Append Page, '  observer.observe(targetGLTNode, { childList: true, subtree: true, characterData: true });'
+
+        Append Page, '  function handleDivChange() {'
+        Append Page, '    var DIVSliderASGLT = document.getElementById("DIVCollectslidersetasglt");'
+        Append Page, '    if (DIVSliderASGLT.innerHTML.includes("checked") == true){'
+        Append Page, '      $("#hideanasettings").show();'
+        Append Page, '    } else {'
+        Append Page, '      $("#hideanasettings").hide();'
+        Append Page, '    };'
+        Append Page, '  }'
+        Append Page, '</script>'
+
+        Append Page, ''
 
 
         if (isDigWord(ihandle)) Then
@@ -288,15 +325,15 @@ Proc Main
               Append Page, '       <div class="FontRespo03" style="width:100%; margin-right:25px;">' + PrioToString(iPrio) + '</div>'
               Append Page, '     </button>'
 
-          Next
+          next
 
-        EndIf
+        endIf
 
       else
 
       EndIf
 
-        Append Page, '    </div>  <!-- settings03 -->'
+      Append Page, '    </div>  <!-- settings03 -->'
 
     EndIf
 
@@ -667,24 +704,13 @@ Proc Main
     Append Page, '      colorPicker = document.getElementById(`IDColorPicker`);'
     Append Page, '      colorPicker.value = getBackgroundColor(colorPicker);'
 
+
+// -> ausgelagert in villa.js
     // Funktion zum Auslesen der aktuellen Hintergrundfarbe
-    Append Page, '      function getBackgroundColor(element) {'
-    Append Page, '        var bgColor = window.getComputedStyle(element).backgroundColor;'
-    Append Page, '        return rgbToHex(bgColor);'
-    Append Page, '      }'
-
-    // Funktion zur Umwandlung von RGB in Hex
-    Append Page, '      function rgbToHex(rgb) {'
-    Append Page, '        var rgbValues = rgb.match(/\d+/g);'
-    Append Page, '        if (rgbValues) {'
-    Append Page, '          return "#" + rgbValues.map(function(x) {'
-    Append Page, '            var hex = parseInt(x).toString(16);'
-    Append Page, '            return hex.length === 1 ? "0" + hex : hex;'
-    Append Page, '          }).join("");'
-    Append Page, '        }'
-    Append Page, '        return "#000000";'
-    Append Page, '      }'
-
+//    Append Page, '      function getBackgroundColor(element) {'
+//    Append Page, '        var bgColor = window.getComputedStyle(element).backgroundColor;'
+//    Append Page, '        return rgbToHex(bgColor);'
+//    Append Page, '      }'
 
     Append Page, '      colorPicker.addEventListener(`change`, function() {'
     Append Page, '        selectedColor = colorPicker.value;'
@@ -710,10 +736,9 @@ Proc Main
     Append Page, '<script>'
     
     Append Page, '  $(`[id^=settings]`).hide();'
-
-
+logbook sOnlyGLT
     // wenn Dauer-GLT
-    if (sOnlyGLT = '4') then
+    if (sOnlyGLT = '4') or (sOnlyGLT = '12') then
       Append Page, '  $("#settings03").show();'  
       Append Page, '  $(`[id^=setmenu]`).removeClass("a3-blue");'
       Append Page, '  $("#setmenu03").addClass("a3-blue");'

@@ -889,7 +889,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
   position: absolute;
   height: calc(100% + 4px);
   width: calc(100% + 4px);
-  background-image: conic-gradient(from var(--angle), var(--ColorYellow), var(--ColorBlue), var(--ColorGreen), var(--ColorYellow));
+  background-image: conic-gradient(from var(--angle), var(--ColorYellow), var(--ColorBlue), var(--ColorGreen), var(--ColorYellow,));
   top: 50%;
   left: 50%;
   translate: -50% -50%;

@@ -95,11 +95,12 @@
 
         if (atIndex !== -1) {
           buttonText = trimmedText.slice(0, atIndex);
+          buttonText = buttonText.replaceAll(/\* /g, '');
         } else {
           buttonText = trimmedText
         }
 
-        return `<button class="w3-button w3-transparent w3-text-blue FontRespo03" onclick="window.open('${url}', '_blank')">${buttonText}</button> `;        
+        return `<button class="w3-button w3-card-4 w3-margin-top w3-transparent w3-text-blue FontRespo03" style="white-space: normal; width: 100%;" onclick="window.open('${url}', '_blank')">${buttonText}</button> `;        
 
       });
     }
@@ -145,6 +146,8 @@
 
        
 
+
+  
   
   statusElement = document.getElementById('IDChartJS');
        
