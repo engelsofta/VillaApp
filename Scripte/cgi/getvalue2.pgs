@@ -453,13 +453,25 @@ Proc Main
 
       // analoger Handle
       if (isAna(iHandle) = True) Then
-        sResultCon := sVal(GetRealActValueAsString(iHandle)) + ' ' + GetAnaUnit(iHandle)
+        
+        // RGB Farbe
+        if (GetAnaUnit(iHandle) = 'RGB') then 
+
+          TmpColor := sval(ColorToStr(GetActValue(iHandle)))
+          StrCopy TmpColor,TmpColor,4,len(TmpColor)
+          sResultStyle := 'color: #' + TmpColor + ';'
+          sResultCon := '<div class="w3-padding-small w3-badge las la-fill-drip" style="background-color: #' + TmpColor + ';" ></div>'
+
+        // keine RGB Farbe
+        else
+          sResultCon := sVal(GetRealActValueAsString(iHandle)) + ' ' + GetAnaUnit(iHandle)
+        endif
+
+
       // digitaler Handle
       else
         sResultCon :=  PrioToString(GetActPrio(iHandle))
       EndIf
-
-
 
   EndSelect
 
