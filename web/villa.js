@@ -614,7 +614,24 @@ function CopyClipboard(sTextToCopy) {
 
 
 
+function rgbToHex(rgb) {
+  var rgbValues = rgb.match(/\d+/g);
+  if (rgbValues) {
+    return "#" + rgbValues.map(function(x) {
+      var hex = parseInt(x).toString(16);
+      return hex.length === 1 ? "0" + hex : hex;
+    }).join("");
+  }
+  return "#000000";
+}
 
+
+
+// Funktion zum Auslesen der aktuellen Hintergrundfarbe
+function getBackgroundColor(element) {
+  var bgColor = window.getComputedStyle(element).backgroundColor;
+  return rgbToHex(bgColor);
+}
 
 
 
