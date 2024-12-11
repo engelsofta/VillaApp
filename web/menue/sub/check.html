@@ -37,9 +37,16 @@
   
 
   <div class="CenterThings w3-padding-small w3-border w3-border-dark-grey w3-margin-top w3-margin-bottom" style="width:100%">
-    <div class="w3-margin w3-text-orange" style="margin-right:auto; width:100px;">Beta Kanal</div>
-    <div class="w3-normal a3-blue" id="DIVCollectGetBetaStatus" data-datapoint="0" data-mode="10" data-pic="" data-col00="bIsBeta" data-col01="" data-col02="" data-animate="" style="width:100%;">Working...</div>
+    <div class="w3-margin" style="margin-right:auto; width:100px;">Beta channel</div>
+    <div class="w3-normal a3-blue" id="DIVCollectGetBetaStatus" data-datapoint="0" data-mode="10" data-pic="" data-col00="bIsBeta" data-col01="" data-col02="" data-animate="" style="width:100%;">Wait...</div>
   </div>
+
+
+  <div class="CenterThings w3-padding-small w3-border w3-border-dark-grey w3-margin-top w3-margin-bottom" style="width:100%">
+    <div class="w3-margin" style="margin-right:auto; width:100px;">File extension</div>
+    <div class="w3-normal a3-green" id="DIVCollectGetBetaStatus" data-datapoint="0" data-mode="10" data-pic="" data-col00="sFileExtension" data-col01="" data-col02="" data-animate="" style="width:100%;">Wait...</div>
+  </div>
+
 
 </div>
 
@@ -50,11 +57,12 @@
 
   <div style="font-size: clamp(12px, 1.0vw, 14px);">
 
-    <br>Der Quellcode ist auf GitHub verfügbar:<br><br>
-    <div class="a3-blue w3-margin" onclick="window.open('https://github.com/engelsofta/VillaApp', '_blank')">Übersicht der GitHub Seite</div>
-    <div class="a3-blue w3-margin" onclick="window.open('https://github.com/engelsofta/VillaApp/issues', '_blank')">Hier finden Sie eine Übersicht über aktuelle Probleme und geplante Verbesserungen</div>
-    <div class="a3-blue w3-margin" onclick="window.open('https://github.com/engelsofta/VillaApp/releases', '_blank')">aktuelle Release Version</div>
-    <div class="a3-yellow w3-margin" onclick="window.open('https://github.com/engelsofta/VillaApp/issues/new', '_blank')">einen neuen Fehler oder Verbesserungsvorschlag melden</div>
+    <div class="w3-card-4 w3-hover-opacity w3-margin w3-padding w3-round ">Der Quellcode ist auf GitHub verfügbar:</div>
+
+    <div class="w3-card-4 w3-hover-opacity  a3-blue w3-margin w3-padding w3-round" onclick="window.open('https://github.com/engelsofta/VillaApp', '_blank')">Übersicht der GitHub Seite</div>
+    <div class="w3-card-4 w3-hover-opacity a3-blue w3-margin w3-padding w3-round" onclick="window.open('https://github.com/engelsofta/VillaApp/issues', '_blank')">Probleme und geplante Verbesserungen</div>
+    <div class="w3-card-4 w3-hover-opacity a3-blue w3-margin w3-padding w3-round" onclick="window.open('https://github.com/engelsofta/VillaApp/releases', '_blank')">aktuelle Release Version</div>
+    <div class="w3-card-4 w3-hover-opacity a3-yellow w3-margin w3-padding w3-round" onclick="window.open('https://github.com/engelsofta/VillaApp/issues/new', '_blank')">Fehler oder Verbesserungsvorschlag melden</div>
 
     <div id="changelog" style="margin-top:50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
 
