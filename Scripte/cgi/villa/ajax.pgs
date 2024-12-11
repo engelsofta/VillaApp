@@ -33,13 +33,13 @@ Proc Main
     SQL bOK, aGroupList, ProAlias, sSQL
 
 
-    Append Page, '  <div class="w3-text-sand modalAlign w3-animate-opacity" style="min-width:380px;width:40vw;max-width: 700px;">'
+    Append Page, '  <div class="w3-text-sand modalAlign w3-animate-opacity" style="width:80%; max-width: 500px;">'
 
     // Inhalt der Meldegruppenbox *********************
     for iSchleife = 2 to count(aGroupList)
 
       Append Page, '    <div onclick="Para02=`' + aGroupList[iSchleife,2] + '_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings modalbox w3-padding w3-margin-top w3-round-large w3-hover-opacity w3-text-sand" style="cursor: pointer; display:flex">'
-		  Append Page, '      <div class="FontRespo03">' + aGroupList[iSchleife,2] + '</div>'
+		  Append Page, '      <div class="FontRespo04">' + aGroupList[iSchleife,2] + '</div>'
 		  Append Page, '    </div>'
 
 		Next
@@ -71,7 +71,7 @@ Proc Main
 
     Dim aConvert: Array           := []
     
-    Append Page, '  <div class="w3-text-sand modalAlign CenterThings" style="flex-direction: column; min-width:380px;width:40vw;max-width: 700px;">'
+    Append Page, '  <div class="w3-text-sand modalAlign CenterThings" style="flex-direction: column; width:80%; max-width: 600px;">'
 
     // Schleife in PGNT Settings wandeln
     aConvert[1] := [12,'Offline', 'la-eye-slash']
@@ -92,7 +92,7 @@ Proc Main
         Append Page, '        <div onclick="" class="CenterThings w3-hover-opacity w3-margin-top w3-round-xlarge w3-text-sand modalbox" style="padding: 14px 0 14px 0; width:100%;">'
       EndIf
 
-		  Append Page, '      <div class="la ' + aConvert[iSchleife, 3] + '" style="margin-right: auto; width:75px; font-size: clamp(20px, 1vw + 10px, 32px)"></div>'
+		  Append Page, '      <div class="la ' + aConvert[iSchleife, 3] + ' FontRespo01" style="margin-right: auto; width:75px;"></div>'
 		  Append Page, '      <div class="FontRespo03" style="">' + aConvert[iSchleife, 2] + '</div>'
 		  Append Page, '      <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;">' + sVal(Count(aGroupListStatus)) + '</div>'
 		  Append Page, '    </div>'
@@ -110,15 +110,15 @@ Proc Main
 
     // Update News anzeigen 
     if (GetMessageVar('sShowUpdateNews') = 'true') then
-      Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-text-grey burncard" style="padding: 12px 0 12px 0; margin-top: 40px; cursor: pointer; width:100%;">'
-      Append Page, '      <div class="w3-small w3-margin-left gradient-text" style="margin-right: auto; width:75px">NEW Version</div>'
+      Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-text-grey burncard" style="padding: 12px 0 12px 0; margin-top: 40px; cursor: pointer; width:100%; text-align: center;">'
+      Append Page, '      <div class="FontRespo03 w3-margin-left gradient-text" style="margin-right: auto; width:75px">NEW Version</div>'
     else
       Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-hover-opacity w3-text-grey w3-round-xlarge modalbox" style="padding: 18px 0 18px 0; margin-top: 40px; cursor: pointer; width:100%;">'
-      Append Page, '      <div class="w3-small w3-margin-left" style="margin-right: auto; width:75px">Version</div>'
+      Append Page, '      <div class="FontRespo03 w3-margin-left" style="margin-right: auto; width:75px">Version</div>'
     endif
 
-    Append Page, '      <div class="w3-small" id="DIVCollectAjaxStatusUnten" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionHTML" data-col01="" data-col02="" data-animate="">---</div>'
-    Append Page, '      <div class="w3-margin-right w3-small" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusVersion" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionVilla" data-col01="" data-col02="" data-animate="">---</div>'
+    Append Page, '      <div class="FontRespo03" id="DIVCollectAjaxStatusUnten" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionHTML" data-col01="" data-col02="" data-animate="">---</div>'
+    Append Page, '      <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusVersion" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionVilla" data-col01="" data-col02="" data-animate="">---</div>'
     Append Page, '    </div>'
 
 
@@ -736,7 +736,7 @@ Proc Main
     Append Page, '<script>'
     
     Append Page, '  $(`[id^=settings]`).hide();'
-logbook sOnlyGLT
+
     // wenn Dauer-GLT
     if (sOnlyGLT = '4') or (sOnlyGLT = '12') then
       Append Page, '  $("#settings03").show();'  
@@ -961,7 +961,7 @@ logbook sOnlyGLT
         sDivText := GetActPrioText(ival(aGroupListStatus[iSchleife]))
       endif
 
-      Append Page, '        <div class="CenterThings" style="height:100%;"><div class="las la-square" style="color: ' + aPrioColorList[GetActPrio(ival(aGroupListStatus[iSchleife])) + 1] + ';width:35px;"></div></div>'
+      Append Page, '        <div class="CenterThings" style="height:100%;"><div class="las la-square FontRespo01" style="color: ' + aPrioColorList[GetActPrio(ival(aGroupListStatus[iSchleife])) + 1] + ';width:35px;"></div></div>'
 
       Append Page, '        <div class="CenterThings w3-margin-right w3-margin-left FontRespo03" style="white-space: normal; height:100%; width:90px;">' + sDivText + '</div>'
  

@@ -112,10 +112,10 @@ Proc Main
     Append Page, ' <div class="CenterThings" style="height:50px">'
 
     Append Page, '  <div id="IDEventSearch" onfocus="this.style.width=`65%`;" class="w3-card-2 w3-round-xlarge" style="width:110px; margin-right:auto; margin-left:10px;">'
-    Append Page, '     <input autocomplete="off" ondblclick="this.value=``;" onblur="IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`110px`;" onfocus="IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`60%`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal" style="border-bottom:0px; height:36px;" type="search" placeholder="search..."></input>'
+    Append Page, '     <input autocomplete="off" ondblclick="this.value=``;" onblur="IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`110px`;" onfocus="IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`60%`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="search..."></input>'
     Append Page, '   </div>'
 
-    Append Page, '  <div class="CenterThings w3-card-2 w3-round-xlarge" style="margin-right:10px; height:36px; width:110px;" onclick="ajax_default(`#IDelementglobal`, `ajax_selectgroup`); modalklick(`IDelementglobal`)"><div class="la la-list w3-large"></div></div>'
+    Append Page, '  <div class="CenterThings w3-card-2 w3-round-xlarge" style="margin-right:10px; height:36px; width:110px;" onclick="ajax_default(`#IDelementglobal`, `ajax_selectgroup`); modalklick(`IDelementglobal`)"><div class="la la-list FontRespo01"></div></div>'
 
     Append Page, ' </div>'
 
@@ -152,13 +152,13 @@ Proc Main
         Append Page, '        <button class="el00 FontRespo03" onclick="AjaxHandle=`' + aRes[iSchleife, 6] + '`; ajax_callarchiv(`#idmain`);">'
       Endif
 
-      Append Page, '          <div class="el01">' + TimeToStr(UtcDateTimeToLocalDateTime(rVal(aRes[iSchleife, 1]))) + '</div>'
-      Append Page, '          <div class="el03">' + aRes[iSchleife, 5] + '</div>'
-      Append Page, '          <div class="el04" style="background-image: linear-gradient(35deg, ' + aPrioColorList[ival(aRes[iSchleife, 7])+1,1] +  ' -100%,rgba(48,48,48,0.2) 75%, rgba(48,48,48,0.2) 20%, ' 
+      Append Page, '          <div class="el01 FontRespo04">' + TimeToStr(UtcDateTimeToLocalDateTime(rVal(aRes[iSchleife, 1]))) + '</div>'
+      Append Page, '          <div class="el03 FontRespo04">' + aRes[iSchleife, 5] + '</div>'
+      Append Page, '          <div class="el04 FontRespo04" style="background-image: linear-gradient(35deg, ' + aPrioColorList[ival(aRes[iSchleife, 7])+1,1] +  ' -100%,rgba(48,48,48,0.2) 75%, rgba(48,48,48,0.2) 20%, ' 
       Append Page, '         ' +  aPrioColorList[ival(aRes[iSchleife, 8])+1,1] + ' 80%)">' + PrioToString(iVal(aRes[iSchleife, 8])) + '</div>'
 
       if (isHandle(ihandle)) Then
-        Append Page, '          <div class="el05" style="background-image: linear-gradient(90deg, #299FFF ' + sval(rWertBetween) + '%, black ' + sval(rWertBetween) + '%)"></div>'
+        Append Page, '          <div class="el05" style="background-image: linear-gradient(90deg, var(--ColorGreen) ' + sval(rWertBetween) + '%, rgba(0, 0, 0, 0.2) ' + sval(rWertBetween) + '%)"></div>'
       Endif
 
       Append Page, '        </button>'
