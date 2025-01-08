@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.63'
+  Global Dim sVillaVersion:         String    := '9.64'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -19,7 +19,7 @@ Proc Main
   Repeat
 
     // Pause bei Initialisierung
-    if (bInit) then pause 300
+    if (bInit) then pause 30000
 
     // Freigabe einmal täglich
     if (hour<2 and GetMessageVar('sOnceADay') = 'true') then
