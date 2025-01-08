@@ -103,7 +103,7 @@ $(document).ready(function() {
   gtag('config', 'G-Q5Z5LQ6NH8');
 
 
-
+  
 
   //  NoAdminUserMode
   if (NoAdminUserMode) {
@@ -354,7 +354,7 @@ function ShowSnack() {
       $("#IDMainName").fadeOut(100);
       x.addClass("show").html('<table style="width:100%;height:100%;text-align:center"><tr><td style="width:40px"><span class="w3-xlarge  w3-text-' + asnackjoblist[0][1] + ' ' + asnackjoblist[0][0] + '"></span></td><td class="w3-text-white w3-tiny">' + asnackjoblist[0][2] + '</td></tr></table>');
 
-      if ($('#IDSettingsIconOben').not('.w3-hide') && screen.width < 993) {
+      if ($('#IDSettingsIconOben').not('.w3-hide') && screen.width < 500) {
         $("#DIVCollectMainHandle").fadeOut(500);
       }
     }
