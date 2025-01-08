@@ -1,0 +1,245 @@
+
+// bFullScreen = Volle Höhe (ohne Menü Archive)
+// bCardBackground = Hintergrund CARD oder durchsichtig
+// bFullWidth = Bei grösserer Auflösung -> Breiterer Rand
+
+Proc HeadSinglePanelPage bFullScreen:boolean, bCardBackground:boolean, bFullWidth:boolean
+
+
+  Dim sClassExtension:String
+
+  if (bFullScreen) then 
+    sClassExtension := ' panelCenterLarge'
+    
+  else
+    sClassExtension := ' panelCenterSmall'
+    sClassExtension := sClassExtension + ' panelCenter'
+
+  endif
+ 
+  if (bCardBackground) then 
+    sClassExtension := sClassExtension + ' w3-card-2'
+  endif
+
+
+  if (bFullWidth) then
+    Append Page, '  <div class="w3-left w3-col w3-hide-medium w3-hide-small" style="width:4px; height:20px"></div>'
+    Append Page, '  <div class="w3-right w3-col w3-hide-medium w3-hide-small" style="width:4px; height:20px"></div>'
+
+  else
+    Append Page, '  <div class="w3-left w3-col w3-hide-medium w3-hide-small" style="width:15%; height:20px"></div>'
+    Append Page, '  <div class="w3-right w3-col w3-hide-medium w3-hide-small" style="width:15%; height:20px"></div>'
+   
+  endif
+
+
+  Append Page, '  <div class=" ' + sClassExtension +  ' w3-rest w3-text-white w3-center w3-round-xlarge w3-padding Scrollbar">'
+
+  Append Page, '    <!-- HeadSinglePanelPage -->'
+
+EndProc  
+
+
+
+
+Proc FooterSinglePanelPage
+  Append Page, '  </div> <!-- FooterSinglePanelPage -->'
+EndProc
+
+
+
+
+
+
+
+
+
+
+
+
+Proc SelectBox2 iAktHandle:Int, sAktPrio:string, sSendMode:string, iStartPrio:Int, iEndPrio:Int
+    
+  Dim sAktMeldePrio:string      := ''
+  Dim iAktSchleife02:int
+  Dim aPrioColorList:array      := StrToArray(GetMessageVar('PrioColorList'))
+  Dim sAktID:string             := ''
+  Dim sAktClassSet:string       := ''
+    
+  GetKonfigData sAktMeldePrio, iAktHandle, sAktPrio
+
+
+  if (sAktMeldePrio = '-1') then
+    Append Page, '        <button onclick="$(`#se05Main`).fadeOut(function() {$(`#seSet' + sAktMeldePrio + '`).fadeIn(); $(this).css(`display`, `none`);});" id="Btn' + sAktPrio + '" class="dropdown-trigger FontRespo03"><div class="las la-square w3-margin-right" style="display:inline; color:rgba(255, 255, 255, 0.3);"></div>--</button>'
+  else
+    Append Page, '        <button onclick="$(`#se05Main`).fadeOut(function() {$(`#seSet' + sAktMeldePrio + '`).fadeIn(); $(this).css(`display`, `none`);});" id="Btn' + sAktPrio + '" class="dropdown-trigger FontRespo03"><div class="las la-square w3-margin-right" style="display:inline; color:' + aPrioColorList[ival(sAktMeldePrio) + 1] + ';"></div>' + PrioToString(ival(sAktMeldePrio)) + '</button>'
+  endif
+
+  Append aPageEnd, '        <div id="seSet' + sAktMeldePrio  + '" class="w3-animate-top">'
+
+  for iAktSchleife02 = iStartPrio to iEndPrio
+
+    if (len(PrioToString(iAktSchleife02)) > 1) then
+      
+      sAktID := sAktPrio + 'PrioSelect' + sval(iAktSchleife02)
+
+      if (sAktMeldePrio = sval(iAktSchleife02)) then
+        sAktClassSet := 'w3-border-left w3-border-khaki'
+      else
+        sAktClassSet := ''
+      endif
+
+      Append aPageEnd, '          <div id="' + sAktID + '" data-fieldname="' + sAktPrio + '" data-sendmode="' + sSendMode + '" value="' + sval(iAktSchleife02) + '"' 
+      Append aPageEnd, '            onclick="document.getElementById(`Btn' + sAktPrio + '`).innerHTML = this.innerHTML; '
+      Append aPageEnd, '            $(`div[id^=' +#39 + sAktPrio +#39 + ']`).removeClass(`w3-border-left w3-border-khaki`); '
+      Append aPageEnd, '            $(this).addClass(`w3-border-left w3-border-khaki`);" class="' + sAktClassSet + ' w3-padding w3-left-align FontRespo03 dropdown-item" style="max-width:310px; margin:auto;"><div class="las la-square w3-margin-right" style="display:inline; color:' + aPrioColorList[iAktSchleife02 + 1] + ';"></div>' + PrioToString(iAktSchleife02)
+      Append aPageEnd, '          </div>'
+
+    endif
+
+  next
+
+  Append aPageEnd, '        </div>'
+
+EndProc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Proc InfoBoxDetails sFuncText:string, sFuncValue:string
+
+    Append Page, '      <div class="w3-large w3-right-align la la-share-alt"></div>'
+    Append Page, '      <div class="w3-left-align">' + sFuncText + '</div>'
+    Append Page, '      <div class="w3-left-align clipboard">' + sFuncValue + '</div>'
+
+EndProc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// *************************************************************************************************************
+
+
+
+Proc ManualMenu
+
+
+  Call Vorlagen.HeadSinglePanelPage true, true, false
+
+  Append Page, '        <div class="CenterThings FontRespo01">'
+  Append Page, '          <div id="IDManual01" dataPage="villa.htm?page=ajax_rev&aktion=10" onclick="" class="w3-padding a3-blue">rev</div>'
+  Append Page, '          <div id="IDManual02" dataPage="/menue/sub/manual.html" onclick="" class="w3-padding" style="cursor: pointer">manual</div>'
+  Append Page, '          <div id="IDManual03" dataPage="/menue/sub/touch.html" onclick="" class="w3-padding las la-fingerprint"></div>'
+  Append Page, '          <div id="IDManual04" dataPage="/menue/sub/check.html" onclick="" class="w3-padding las la-check-double"></div>'
+  Append Page, '        </div>'
+ 
+  Append Page, '        <div id="IDContentManual" class="w3-margin-top">'
+  Append Page, '        </div>'
+
+
+  Call vorlagen.FooterSinglePanelPage
+
+  Append Page, '<script>'
+
+  Append Page, '  isSwipeEnable = true;'
+
+  Append Page, '  $(`#IDContentManual`).load("villa.htm?page=ajax_rev&aktion=10");' 
+
+  Append Page, '  $(document).ready(function(){'
+
+  Append Page, '    $(`[id^=IDManual]`).click(function(){'
+  Append Page, '      $(`[id^="IDManual"]`).removeClass(`a3-blue`);'
+  Append Page, '      $(this).addClass(`a3-blue`);'
+  Append Page, '      var AktData = $(this).attr(`dataPage`);'
+  Append Page, '      $(`#IDContentManual`).load(AktData);' 
+  Append Page, '    });'
+
+  Append Page, '  });'
+
+  Append Page, '</script>'
+
+
+EndProc
+
+
+
+
+
+
+Proc ColConfigtoHTML sTempHandle:String, iCountDP:int
+
+  Dim sColConfig: string
+  Dim sRGBTMP: string
+
+  GetExtVar sColConfig, ival(sTempHandle), 'ArchivColor'  
+
+  if (len(sColConfig) > 1 ) then
+
+    // Farbe fängt mit c an
+    if (sColConfig[1] = 'c') Then
+      sColConfig := '$' +  HexInt(ival(StrToColor(sColConfig)))
+    endif
+
+    sRGBTMP := sColConfig[8] + sColConfig[9]
+    sRGBTMP := ival('$' + sRGBTMP)
+    sRGBArc := sRGBTMP
+
+    sRGBTMP := sColConfig[6] + sColConfig[7]
+    sRGBTMP := ival('$' + sRGBTMP)
+    sRGBArc := sRGBArc + ', ' + sRGBTMP
+            
+    sRGBTMP := sColConfig[4] + sColConfig[5]
+    sRGBTMP := ival('$' + sRGBTMP)
+    sRGBArc := sRGBArc + ', ' + sRGBTMP
+
+  else
+
+    Select iCountDP
+
+      Case 1
+        sRGBArc := '255, 202, 44'
+      Case 2
+        sRGBArc := '66, 208, 106'
+      Case 3
+        sRGBArc := '41, 159, 255'
+      Case 4
+        sRGBArc := '255, 99, 132'
+      Case 5
+        sRGBArc := '153, 102, 255'
+      Case 6
+        sRGBArc := '255, 165, 0'
+      Case 7
+        sRGBArc := '0, 128, 128'
+      Case 8
+        sRGBArc := '255, 20, 147'
+      Case 9
+        sRGBArc := '255, 204, 0'
+      Case 10
+        sRGBArc := '128, 0, 128'
+
+    EndSelect
+
+  endIf
+
+EndProc

@@ -1,0 +1,1047 @@
+
+// page=
+
+//    ajax_selectgroup
+//    ajax_status
+//    ajax_settings
+//    ajax_statuspage
+//    ajax_rev
+//    ajax_anleitung
+//    ajax_eventarchiv
+//    ajax_selectcountevents
+//    ajax_kalender
+//    ajax_selectanahour
+//    ajax_selectyear
+
+
+Proc Main
+
+  Select sPage
+
+
+
+  Case 'ajax_selectgroup'
+    
+    Dim sSQL:str
+    Dim SQLFormat:str
+    Dim bOK:boolean
+
+    Dim aGroupList:array
+
+    sSQL := 'Select Handle, Name, Meldeliste From %n Where DP_Typ = %i and not Name Like %s and Handle > 32999 and Meldeliste = TRUE'
+    SQLFormat sSQL, ['Konfig', 5, '']
+    SQL bOK, aGroupList, ProAlias, sSQL
+
+
+    Append Page, '  <div class="w3-text-sand modalAlign w3-animate-opacity" style="width:80%; max-width: 500px;">'
+
+    // Inhalt der Meldegruppenbox *********************
+    for iSchleife = 2 to count(aGroupList)
+
+      Append Page, '    <div onclick="Para02=`' + aGroupList[iSchleife,2] + '_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings modalbox w3-margin-top w3-round-large w3-hover-opacity w3-text-sand" style="padding: 12px 0 12px 0; cursor: pointer; display:flex">'
+		  Append Page, '      <div class="FontRespo04">' + aGroupList[iSchleife,2] + '</div>'
+		  Append Page, '    </div>'
+
+		Next
+
+    Append Page, '  </div>'
+
+
+
+
+
+
+
+
+
+
+
+
+  Case 'ajax_status'
+
+    Dim aGroupListStatus: Array   := []
+    Dim sSQLMonth: String         := ''
+    Dim sSQLDay: String           := ''
+    Dim sSQLLastdate: String      := ''
+    Dim sSQLLastYear: String      := ''
+    Dim sSQLLastMonth: String     := ''
+    Dim sSQLLastDay: String       := ''
+    Dim sSQL: String              := ''
+    Dim aResGesamt: Array         := []
+
+    Dim aConvert: Array           := []
+    
+    Append Page, '  <div class="w3-text-sand modalAlign CenterThings" style="flex-direction: column; width:80%; max-width: 600px;">'
+
+    // Schleife in PGNT Settings wandeln
+    aConvert[1] := [12,'Offline', 'la-eye-slash']
+    aConvert[2] := [9,'Wartung', 'la-wrench']
+    aConvert[3] := [6,'örtlich', 'la-hand-spock']
+    aConvert[4] := [5,'Auto', 'la-calculator']
+    aConvert[5] := [10,'GLT', 'la-laptop']
+
+
+    // Inhalt der StatusBOX ***********************************************************
+    for iSchleife = 1 to 5
+  
+      GetReportHandles aGroupListStatus, 0, ival(aConvert[iSchleife, 1])
+
+      if (Count(aGroupListStatus) > 0) Then
+        Append Page, '    <div onclick="AjaxArchivMode=`50`; ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,' + aConvert[iSchleife, 1] + '`);" class="CenterThings w3-hover-opacity w3-margin-top w3-round-xlarge w3-text-sand modalbox" style="padding: 14px 0 14px 0; cursor: pointer; width:100%;">'
+			else
+        Append Page, '    <div onclick="" class="CenterThings w3-hover-opacity w3-margin-top w3-round-xlarge w3-text-sand modalbox" style="padding: 14px 0 14px 0; width:100%;">'
+      EndIf
+
+		  Append Page, '    <div class="la ' + aConvert[iSchleife, 3] + ' FontRespo01" style="margin-right: auto; width:75px;"></div>'
+		  Append Page, '    <div class="FontRespo03" style="">' + aConvert[iSchleife, 2] + '</div>'
+		  Append Page, '    <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;">' + sVal(Count(aGroupListStatus)) + '</div>'
+		  Append Page, '  </div>'
+
+		Next
+
+    Append Page, '  <div onclick="Para02=`DIGITAL-ARCHIV_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings w3-hover-opacity w3-round-xlarge w3-margin-top modalbox" style="padding: 14px 0 14px 0; cursor: pointer; width:100%;">'
+    Append Page, '    <div class="la la-stack-overflow" style="margin-right: auto; width:75px; font-size: clamp(20px, 1vw + 10px, 32px)"></div>'
+    Append Page, '    <div class="FontRespo03" style="">Events</div>'
+    Append Page, '    <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusEvents" data-datapoint="0" data-mode="10" data-pic="" data-col00="sCountEvents" data-col01="" data-col02="" data-animate="">---</div>'
+    Append Page, '  </div>'
+
+
+    // Info unten
+
+    // Update News anzeigen 
+    if (GetMessageVar('sShowUpdateNews') = 'true') then
+      Append Page, '  <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-text-grey burncard" style="padding: 12px 0 12px 0; margin-top: 40px; cursor: pointer; width:100%; text-align: center;">'
+      Append Page, '    <div class="FontRespo03 w3-margin-left gradient-text" style="margin-right: auto; width:75px">NEW Version</div>'
+    else
+      Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-hover-opacity w3-text-grey w3-round-xlarge modalbox" style="padding: 18px 0 18px 0; margin-top: 40px; cursor: pointer; width:100%;">'
+      Append Page, '      <div class="FontRespo03 w3-margin-left" style="margin-right: auto; width:75px">Version</div>'
+    endif
+
+    Append Page, '      <div class="FontRespo03" id="DIVCollectAjaxStatusUnten" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionHTML" data-col01="" data-col02="" data-animate="">---</div>'
+    Append Page, '      <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusVersion" data-datapoint="0" data-mode="10" data-pic="" data-col00="VersionVilla" data-col01="" data-col02="" data-animate="">---</div>'
+    Append Page, '    </div>'
+
+
+    Append Page, '  </div>'
+
+
+
+
+
+
+
+
+
+  Case  'ajax_settings'
+
+    Dim iSchleife01: Int        := 0
+    Dim iSchleife02: Int        := 0
+    Dim iPrio: Int              := 0
+
+    Dim aGroupListDP: Array     := []
+    Dim aGroupListAll: Array    := []
+
+    Dim sTempWirkung: Str       := ''
+    Dim sTempWert: Str          := ''
+    Dim sFaktor:Str             := ''
+    Dim aGetStatInfo: arr       := []
+    Dim aGetDynInfo: arr        := []
+
+    Dim sSQL: String            := ''
+    Dim sKonfigData:String
+    Dim bIsZaehler:Boolean
+
+    Dim sTmpKonfigData:String   := ''
+    Dim sTmpLoopData:String     := ''
+    Dim sTmpMeldePrio:String    := ''
+
+    Dim sIniData:String         := ''
+    Dim sCountIniData:String    := ''
+
+    Dim sOnlyGLT:String         := ''
+    Dim sTmpColor:String        := ''
+
+    Dim sTmpData:String         := 'disabled'
+
+    Global Dim aPageEnd: array  := []
+    Global Dim sRGBArc: String  := ''
+
+    Dim aPrioColorList:array    := StrToArray(GetMessageVar('PrioColorList'))
+
+    GetKonfigData sOnlyGLT, ihandle, 'Flags'   
+
+
+    Append Page, '  <div id="IDSettings" class="w3-padding w3-text-sand w3-round-xxlarge modalbox modalAlign" style="width: 90%; max-width:800px; min-height: 560px; background-image: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.3));">'
+
+    // Inhalt der InfoBox ***********************************************************
+    Append Page, '    <div class="w3-text-sand CenterThings" style="padding: 20px;">'
+    Append Page, '      <input data-jsactiondata="11" data-jsextvarname="Kommentar" type="text" id="IDComment" name="fname" value="' + GetComment(ihandle) + '" class="CheckAndSend w3-text-white InputNormal FontRespo01" style="border:none"></input>'
+    Append Page, '    </div>'
+
+    Append Page, '    <div class="CenterThings" style="font-size: clamp(24px, 1vw + 14px, 42px); justify-content: space-between; max-width:500px; padding: 0 40px 30px 40px; margin:auto">'
+
+    Append Page, '      <a class="w3-hover-opacity a3-blue" id="setmenu01" dataID="01" href="#"><i class="la la-info" style=""></i></a>'
+    Append Page, '      <a class="w3-hover-opacity" id="setmenu02" dataID="02" href="#"><i class="la la-list" style="rotate: 180deg"></i></a>'	
+    Append Page, '      <a onclick="$(`#se05Main`).css(`display`, `block`);" class="w3-hover-opacity" id="setmenu05" dataID="05" href="#"><i class="la la-layer-group" style=""></i></a>'	
+    Append Page, '      <a class="w3-hover-opacity" id="setmenu04" dataID="04" href="#"><i class="la la-comment" style=""></i></a>'	
+
+    if ((isBit11(GetBmpFlags(ihandle))) or (isBit12(GetBmpFlags(ihandle)))) Then
+      Append Page, '      <a class="w3-hover-opacity" id="setmenu03" dataID="03" href="#"><i class="la la-exchange-alt" style=""></i></a>'
+    EndIf
+
+    Append Page, '    </div>'
+
+    Append Page, '    <div style="max-width:600px; margin: auto; margin-bottom:30px;">'
+
+    // Settings03   Stellen und Schalten
+    // Settings ICON nur wenn DP stellbar ist
+    if ((isBit11(GetBmpFlags(ihandle))) or (isBit12(GetBmpFlags(ihandle)))) Then
+  
+      Append Page, '    <div class="PSettings w3-padding CenterThings" id="settings03" style="flex-direction: column">'
+
+      if ((isBit11(GetBmpFlags(ihandle))) or (isBit12(GetBmpFlags(ihandle)))) Then
+
+        if (isAna(ihandle)) then
+
+          Append Page, '      <div class="FontRespo01 w3-padding CenterThings" style="">'
+          Append Page, '        <div style="width:50px;">AS</div>'
+          Append Page, '        <div class="w3-margin" id="DIVCollectslidersetasglt" data-datapoint="' + sval(ihandle) + '" data-mode="3" data-pic="" data-col00="" data-col01="" data-col02="3" data-animate=""> </div>'
+          Append Page, '        <div style="width:50px;">GLT</div>'
+          Append Page, '      </div>'
+
+          Append Page, '      <div class="slidecontainer CenterThings" style="flex-direction: column; width:90%;">'
+          Append Page, '        <div class="FontRespo01 w3-padding" style="max-width:150px;" id="DIVCollectworkhandle" data-datapoint="' + sval(ihandle) + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""></div>'
+
+          // DIV welches unten ausgeblendet werden kann
+          Append Page, '        <div class="w3-animate-opacity" style="margin-top:50px; width:100%;" ID="hideanasettings">'
+
+          // Unit of Ana-IP = RGB
+          if (GetAnaUnit(iHandle) = 'RGB') then
+
+            sTmpColor := sval(ColorToStr(GetActValue(iHandle)))
+            StrCopy sTmpColor,sTmpColor,4,len(sTmpColor)
+            Append Page, '        <input id="IDColorPickerRGB" type="color" class="w3-round-large" style="width: 150px; height:40px; background-color: #' + sTmpColor + ';"></input>'
+
+            Append Page, '    <script>'
+    
+            Append Page, '      colorPickerRGB = document.getElementById(`IDColorPickerRGB`);'
+            Append Page, '      colorPickerRGB.value = getBackgroundColor(IDColorPickerRGB);'
+
+            Append Page, '      colorPickerRGB.addEventListener(`change`, function() {'
+
+            Append Page, '        selectedColor = colorPickerRGB.value;'
+    
+            Append Page, '        const red = selectedColor.substr(1, 2);'
+            Append Page, '        const green = selectedColor.substr(3, 2);'
+            Append Page, '        const blue = selectedColor.substr(5, 2);'
+            Append Page, '        document.getElementById("IDColorPickerRGB").style.backgroundColor = selectedColor;'
+
+            Append Page, '        selectedColor = selectedColor.slice(1);'
+            Append Page, '        selectedColor = parseInt(selectedColor, 16);'
+
+            Append Page, '        SendPost(this, selectedColor, ' +#39 + '7' + #39 +', ' + #39 + sHandle + #39 + ')'
+            Append Page, '      });'
+
+            Append Page, '    </script>'
+
+          // Unit of Ana-Unit <> RGB
+          else
+            
+
+            Append Page, '          <input class="InputNormal FontRespo01 a3-green" type="number" id="manInput" name="manInputName" value="' + GetRealActValueAsString(ihandle) + '" style="margin-bottom:30px; width:130px; background-color:transparent;"></input>'
+
+            if (iVal(GetMaxValue(ihandle)) - iVal(GetMinValue(ihandle)) < 30) Then
+              Append Page, '          <input type="range" step="0.1" min="' + sVal(iVal(GetMinValue(ihandle))) + '" max="' + sVal(iVal(GetMaxValue(ihandle))) + '" value="' + sVal(GetRealActValue(ihandle)) + '" class="sliderlong" id="myRange"></input>'
+            else
+              Append Page, '          <input type="range" step="1.0" min="' + sVal(iVal(GetMinValue(ihandle))) + '" max="' + sVal(iVal(GetMaxValue(ihandle))) + '" value="' + sVal(GetRealActValue(ihandle)) + '" class="sliderlong" id="myRange"></input>'
+            EndIf
+
+
+            Append Page, '          <button onclick="SendPost(this, $(' +#39 + '#myRange' +#39 + ').val(), ' +#39 + '7' + #39 +', ' + #39 + sHandle + #39 + ')" class="las la-share w3-text-green w3-large w3-button w3-round w3-border w3-border-dark-grey w3-margin" style="min-width:80px"></button>'
+        
+
+            Append Page, '<script>'
+            Append Page, '  var slider = document.getElementById("myRange");'
+            Append Page, '  var maninput = document.getElementById("manInput");'
+            Append Page, '  var DIVTouch = document.getElementById("touchbox");'
+            Append Page, '  slider.oninput = function() {'
+            Append Page, '    maninput.value = this.value;'
+            Append Page, '  }'
+            Append Page, '  maninput.oninput = function() {'
+            Append Page, '    slider.value = this.value;'
+            Append Page, '  }'
+
+            Append Page, '</script>'
+
+          endif
+
+          Append Page, '        </div>'
+          Append Page, '      </div>'
+      
+        endIf
+
+
+
+        Append Page, '<script>'
+        Append Page, '  targetGLTNode = document.getElementById(`DIVCollectslidersetasglt`);'
+        Append Page, '  observer = new MutationObserver(handleDivChange);'
+        Append Page, '  observer.observe(targetGLTNode, { childList: true, subtree: true, characterData: true });'
+
+        Append Page, '  function handleDivChange() {'
+        Append Page, '    var DIVSliderASGLT = document.getElementById("DIVCollectslidersetasglt");'
+        Append Page, '    if (DIVSliderASGLT.innerHTML.includes("checked") == true){'
+        Append Page, '      $("#hideanasettings").show();'
+        Append Page, '    } else {'
+        Append Page, '      $("#hideanasettings").hide();'
+        Append Page, '    };'
+        Append Page, '  }'
+        Append Page, '</script>'
+
+        Append Page, ''
+
+
+        if (isDigWord(ihandle)) Then
+
+          if (sOnlyGLT <> '4') then
+
+            Append Page, '      <div class="FontRespo01 w3-padding CenterThings">'
+            Append Page, '        <div>AS</div>'
+            Append Page, '        <div class="w3-margin" id="DIVCollectslidersetasglt" data-datapoint="' + sval(ihandle) + '" data-mode="3" data-pic="" data-col00="" data-col01="" data-col02="3" data-animate=""> </div>'
+            Append Page, '        <div>GLT</div>'
+            Append Page, '      </div>'
+          else
+
+            Append Page, '      <div style="margin-top:50px;"></div>'
+
+          endif
+
+          for X2 = 0 to GetMaxPosition(ihandle)
+
+              PositionToPrio iPrio, ihandle, X2
+
+              Append Page, '     <button onclick="document.getElementById(`DIVCollectSetVal' + sval(X2) + '`).innerHTML = `<div class=\' + #39 + 'la la-spinner w3-spin\' + #39 + '></div>`;'     //'\
+              Append Page, '     SendPost(this, ' + #39 + sval(X2) + #39 + ', ' +#39 + '3' + #39 +', ' + #39 + sHandle + #39 + ');" class="CenterThings w3-margin-bottom w3-round-xlarge w3-button" style="height:50px; box-shadow: 0 0 2px 2px ' + aPrioColorList[iPrio + 1] + '; width:100%; max-width:500px;">'
+              Append Page, '       <div style="width:25px;" id="DIVCollectSetVal' + sval(X2) + '" data-datapoint="' + shandle + '" data-mode="1" data-pic="la-fingerprint" data-col00="' + sval(X2) + '" data-col01="check" data-col02="" data-animate=""><div class="la la-spinner w3-opacity-max w3-spin"></div></div>'
+              Append Page, '       <div class="FontRespo03" style="width:100%; margin-right:25px;">' + PrioToString(iPrio) + '</div>'
+              Append Page, '     </button>'
+
+          next
+
+        endIf
+
+      else
+
+      EndIf
+
+      Append Page, '    </div>  <!-- settings03 -->'
+
+    EndIf
+
+
+
+
+    // Settings02   Gruppenzuweisung
+
+    Append Page, '    <div class="PSettings FontRespo03" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: center;" id="settings02">'
+
+    sSQL := 'Select Handle, Name, Meldeliste From %n Where DP_Typ = %i and not Name Like %s and not Name Like %s and not Name Like %s and not Name Like %s and not Name Like %s and Handle > 32999'
+
+    if isAna(iHandle) then
+      SQLFormat sSQL, ['Konfig', 5, 'VILLA-*', 'MINUTEN-ARCHIV', 'VIERTELSTUNDEN-ARCHIV', 'STUNDEN-ARCHIV', '']
+    else
+      SQLFormat sSQL, ['Konfig', 5, 'VILLA-*', 'MINUTEN-ARCHIV', 'VIERTELSTUNDEN-ARCHIV', 'STUNDEN-ARCHIV', 'ANALOG-ARCHIV']
+    endif
+
+    SQL bOK, aGroupListAll, ProAlias, sSQL
+
+
+    for iSchleife01 = 2 to Count(aGroupListAll)
+
+      // Gruppe ist eine Meldegruppe
+      if (aGroupListAll[iSchleife01, 3] = 'TRUE') then
+        Append Page, '      <div class="w3-large las la-comment-dots" title="Meldegruppe"></div>'
+      else
+        Append Page, '      <div class="w3-large las la-comment-alt" title="keine Meldegruppe"></div>'
+      Endif
+
+      Append Page, '      <div onclick="AjaxArchivMode=`50`; ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,' + sval(NameToHandle(aGroupListAll[iSchleife01, 2])) + '`);" class="">'+ aGroupListAll[iSchleife01, 2] + '</div>'
+      Append Page, '      <div class="" style="display:inline-block" id="' + 'DIVCollect_Set03_' + sval(iSchleife01) + '" data-datapoint="' + shandle + '" data-mode="3" data-pic="" data-col00="" data-col01="' + aGroupListAll[iSchleife01, 2] + '" data-col02="" data-animate="1"> </div>'
+
+    Next
+
+    Append Page, '    </div>   <!-- settings02 -->'
+
+
+
+
+
+
+
+
+
+   // Settings05    Grenzwerte und Zustände definieren
+  
+    Append Page, '    <div class="PSettings w3-padding FontRespo03" id="settings05">'
+
+
+    // Div zum ausblenden
+    Append Page, '      <div id="se05Main" class="" style="">'
+
+    if (isana(ihandle)) then
+
+      GetKonfigData sFaktor, ihandle, 'Faktor'
+
+      // Zustand kein Grenzwert verletzt
+      Call Vorlagen.SelectBox2 ihandle, 'PassivPrio', '11', 0, 31
+
+      Append Page, '      <div class="w3-display-container" style="margin-bottom:35px;  display: flex; align-items: center;">'
+      GetExtVar sTmpKonfigData, ihandle, 'Meldetext4'
+      Append Page, '        <input data-jsactiondata="4" data-jsextvarname="Meldetext4" type="text" value="' + sTmpKonfigData + '" class="InputNormal CheckAndSend w3-text-grey"></input>'
+      Append Page, '      </div>'
+
+
+
+      // Zustand Meßwert Störung
+      Call Vorlagen.SelectBox2 ihandle, 'StoerPrio', '11', 64, 95
+
+      Append Page, '      <div class="w3-display-container" style="margin-bottom:35px; display: flex; align-items: center;">'
+      GetExtVar sTmpKonfigData, ihandle, 'Meldetext5'
+      Append Page, '        <input data-jsactiondata="4" data-jsextvarname="Meldetext5" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey"></input>'
+      GetKonfigData sTmpKonfigData, ihandle, 'Delay0'
+      Append Page, '        <input data-jsactiondata="11" data-jsextvarname="Delay0" type="text" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey" style="margin-left: 8px; width: 70px;"></input>'
+      Append Page, '      </div>'
+
+
+
+
+      // Zustand Grenzwert 1-4
+      For iSchleife = 1 to 4
+        
+        GetKonfigData sTempWirkung, ihandle, 'Wirkung' + sval(iSchleife)
+        GetKonfigData sTempWert, ihandle, 'Grenze' + sval(iSchleife)
+
+        sTempWert := sval(rval(sTempWert) * rval(sFaktor))
+
+        GetKonfigData sTmpMeldePrio, ihandle, 'MeldePrio' + sval(iSchleife)  
+
+        if (sTmpMeldePrio = '-1') then
+          sTmpKonfigData := '-'
+        else
+          sTmpKonfigData := PrioToString(ival(sTmpMeldePrio))
+        endif         
+
+
+        Append Page, '      <div class="" style="margin-top:35px; display: flex; align-items: center; justify-content: center;">'
+
+        Call Vorlagen.SelectBox2 ihandle, 'MeldePrio' + sval(iSchleife), '11', 64, 95
+
+        // SelectBox zur Auswahl > < - -
+        Append Page, '        <div class="CenterThings" style="margin-right:14px;"><button onclick="$(`#se05Main`).fadeOut(function() {$(`#seGW' + sval(iSchleife) + '`).fadeIn(); $(this).css(`display`, `none`);});" id="BtnGW' + sval(iSchleife) + '" class="dropdown-trigger FontRespo03" style="text-align: center; padding: 5px 20px; border-radius: 5px; box-shadow: 0 1px 6px rgba(255, 255, 255, 0.5);">' + sTempWirkung + '</button></div>'
+
+        // *************************************
+        Append aPageEnd, '        <div id="seGW' + sval(iSchleife)  + '">'
+
+        Append aPageEnd, '          <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value=">" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-greater-than w3-large a3-green w3-margin-right w3-padding"></div>   <div class="FontRespo03">Grösser als...</div>  </div>'
+        Append aPageEnd, '          <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="<" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-less-than w3-large a3-green w3-margin-right w3-padding"></div>   <div class="FontRespo03">Kleiner als...</div>  </div>'
+        Append aPageEnd, '          <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="-" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-minus w3-large a3-yellow w3-margin-right w3-padding"></div>   <div class="FontRespo03">GW löschen</div>  </div>'
+
+        Append aPageEnd, '        </div>'
+        // *************************************
+
+
+
+
+        if (sTempWirkung = '>') and (GetRealActValue(ihandle) > rval(sTempWert)) or (sTempWirkung = '<') and (GetRealActValue(ihandle) < rval(sTempWert)) then 
+          Append Page, '        <input data-jsactiondata="11" data-jsextvarname="Grenze' + sval(iSchleife) + '" type="text" name="fname" value="' + sTempWert + '" class="InputNormal CheckAndSend w3-text-deep-orange FontRespo03" style="width: 70px;"></input>'
+        else
+          Append Page, '        <input data-jsactiondata="11" data-jsextvarname="Grenze' + sval(iSchleife) + '" type="text" name="fname" value="' + sTempWert + '" class="InputNormal CheckAndSend w3-text-white FontRespo03" style="width: 70px;"></input>'
+        endif
+
+        Append Page, '      </div>'
+
+        Append Page, '      <div class="w3-display-container" style="display: flex; align-items: center;">'
+
+          GetExtVar sTmpKonfigData, ihandle, 'Meldetext' + sval(iSchleife + 5)
+          Append Page, '        <input data-jsactiondata="4" data-jsextvarname="Meldetext' + sval(iSchleife + 5) + '" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey"></input>'
+
+          GetKonfigData sTmpKonfigData, ihandle, 'Delay' + sval(iSchleife)
+          Append Page, '        <input data-jsactiondata="11" data-jsextvarname="Delay' + sval(iSchleife) + '" type="text" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey" style="margin-left: 8px; width: 70px;"></input>'
+
+        Append Page, '      </div>'
+
+      next
+   
+    endif
+
+
+
+
+
+    // Bit Datenpunkt
+    if (isDigBit(ihandle)) then
+
+
+      // Zustand 0 / passiv
+
+      Call Vorlagen.SelectBox2 ihandle, 'PassivPrio', '11', 0, 31
+      Append Page, '          <div class="w3-display-container w3-margin-bottom" style="height:34px; display: flex; align-items: center;">'
+      GetExtVar sTmpKonfigData, ihandle, 'Meldetext4'
+      Append Page, '            <input data-jsactiondata="4" data-jsextvarname="Meldetext4" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey w3-left-align"></input>'
+      Append Page, '          </div>'
+
+
+
+      // Zustand Meßwert Störung
+      GetKonfigData sTmpMeldePrio, ihandle, 'MeldePrio1'
+
+      if (sTmpMeldePrio = '-1') then
+        GetKonfigData sTmpMeldePrio, ihandle, 'StoerPrio'
+
+        if (sTmpMeldePrio <> '-1') then
+          sTmpData := 'enabled'
+          sTmpKonfigData := 'StoerPrio'
+        endif
+
+      else
+
+        sTmpKonfigData := 'MeldePrio1'
+
+      endif
+
+
+      Call Vorlagen.SelectBox2 ihandle, sTmpKonfigData, '11', 32, 95
+
+
+      Append Page, '      <div class="w3-display-container" style="height:34px; display: flex; align-items: center;">'
+
+      GetExtVar sTmpKonfigData, ihandle, 'Meldetext5'
+      Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext5" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey w3-left-align"></input>'
+
+      GetKonfigData sTmpKonfigData, ihandle, 'Delay0'
+      Append Page, '           <input ' + sTmpData + ' data-jsactiondata="11" data-jsextvarname="Delay0" type="text" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey" style="margin-left: 8px; width: 70px;"></input>'
+
+      Append Page, '      </div>'
+
+    endif
+
+
+
+
+
+
+
+    // Schaltbefehl
+    if (isDigWord(ihandle)) then
+
+      // Zustand kein Grenzwert verletzt
+      Call Vorlagen.SelectBox2 ihandle, 'PassivPrio', '11', 0, 31
+
+      Append Page, '      <div class="w3-display-container w3-margin-bottom" style="height:34px; display: flex; align-items: center;">'
+      GetExtVar sTmpKonfigData, ihandle, 'Meldetext4'
+      Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext4" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey w3-left-align"></input>'
+      Append Page, '      </div>'
+
+
+
+      // Zustand Meßwert Störung
+
+      Call Vorlagen.SelectBox2 ihandle, 'StoerPrio', '11', 64, 95
+
+      Append Page, '      <div class="w3-display-container w3-margin-bottom" style="height:34px; display: flex; align-items: center;">'
+      GetExtVar sTmpKonfigData, ihandle, 'Meldetext5'
+      Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext5" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey w3-left-align"></input>'
+      GetKonfigData sTmpKonfigData, ihandle, 'Delay0'
+      Append Page, '           <input data-jsactiondata="11" data-jsextvarname="Delay0" type="text" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey" style="margin-left: 8px; width: 70px;"></input>'
+      Append Page, '      </div>'
+
+
+      // Stufe 1-4
+      For iSchleife = 1 to GetMaxPosition(ihandle)
+    
+        Call Vorlagen.SelectBox2 ihandle, 'MeldePrio' + sval(iSchleife), '11', 32, 63
+
+        Append Page, '      <div class="w3-display-container w3-margin-bottom" style="height:34px; display: flex; align-items: center;">'
+        GetExtVar sTmpKonfigData, ihandle, 'Meldetext' + sval(iSchleife + 5)
+        Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext' + sval(iSchleife + 5) + '" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey w3-left-align"></input>'
+        Append Page, '      </div>'
+
+      next
+   
+    endif
+
+    Append Page, '      </div>   <!-- sett05Main -->'
+
+
+    Append Page, '      <div class="">'
+
+    // Elemente ausserhalb von SettingsTAB werden hinzugeügt damit sie eingeblendet werden können
+    Append Page, aPageEnd
+    
+    Append Page, '      </div>'
+
+
+    Append Page, '    </div>   <!-- settings05 -->'
+
+
+
+
+
+
+
+
+    // Settings04   Archiv glätten und Sondertexte
+    Append Page, '    <div class="PSettings w3-padding" id="settings04">'
+
+    aGroupListDP := GetGroupList(iHandle)
+
+    sSQL := 'Select Name, Handle, Kommentar From %n Where DP_Typ = %i and Name Like %s'
+    SQLFormat sSQL, ['Konfig', 5, 'VILLA-*']
+    SQL bOK, aGroupListAll, ProAlias, sSQL
+
+    aGroupListAll[1, 4] := 'IsInGroup'
+    aGroupListAll[1, 5] := 'IsConfig'
+
+    GetKonfigData sKonfigData, ihandle, 'Flags'
+    bIsZaehler := isBit14(iVal(sKonfigData))
+
+    for iSchleife01 = 2 to Count(aGroupListAll)
+     
+      // Hier die Bedingungen wann eine Gruppe angezeigt werden soll
+      if (aGroupListAll[iSchleife01, 1] = 'VILLA-ARCHIV-CURVE') and ((isana(ihandle)) and (not bIsZaehler)) Then aGroupListAll[iSchleife01, 5]  := 'true'
+
+      for iSchleife02 = 1 to Count(aGroupListDP)
+
+        if (aGroupListAll[iSchleife01, 2] = aGroupListDP[iSchleife02]) Then
+          aGroupListAll[iSchleife01, 4]  := 'true'
+        endIf
+
+      next
+    next
+
+
+
+    for iSchleife01 = 2 to Count(aGroupListAll)
+
+      if (aGroupListAll[iSchleife01, 5] = 'true') then
+
+        Append Page, '      <div class="FontRespo03 w3-margin CenterThings" style="height:36px;">'
+        Append Page, '        <div class="w3-margin">'+ aGroupListAll[iSchleife01, 3] + '</div>'
+        Append Page, '        <div class="w3-margin" id="' + 'DIVCollect_Set04_' + sval(iSchleife01) + '" data-datapoint="' + shandle + '" data-mode="3" data-pic="" data-col00="" data-col01="' + GetName(ival(aGroupListAll[iSchleife01, 2])) + '" data-col02="" data-animate="1"> </div>'
+        Append Page, '      </div>'
+
+      Endif
+
+    Next
+
+
+    // Sondertexte 
+
+    ReadIniData sCountIniData, ProPath + '\Projekt.ini', 'PG_KONFIG.SONDERTEXTE', 'LC'
+
+    for iSchleife01 = 1 to ival(sCountIniData)
+
+      GetExtVar sTmpKonfigData, iHandle, 'Sonder' + sval(iSchleife01)
+
+      ReadIniData sIniData, ProPath + '\Projekt.ini', 'PG_KONFIG.SONDERTEXTE', 'L' + sval(iSchleife01 - 1) 
+
+      StrReplaceEx sIniData, '|', ''  
+
+      sTmpLoopData := ' + document.getElementById(' + #39 + 'IDSonder' + sval(iSchleife01) + #39 + ').value'
+
+      Append Page, '      <div class="w3-display-container w3-margin FontRespo03" style="background-color:transparent; height:50px;">'
+      Append Page, '        <div class="w3-text-grey">' + sIniData + '</div>'
+      Append Page, '        <input data-jsactiondata="4" data-jsextvarname="Sonder' + sval(iSchleife01) + '" value="' + sTmpKonfigData + '" type="text" id="IDSonder' + sval(iSchleife01) +'" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-white" style=""></input>'
+      Append Page, '      </div>'
+
+    Next
+
+
+    Append Page, '    </div>   <!-- settings04 -->'
+
+
+
+
+
+    // Settings01  allgemeine Informationen
+
+    aGetStatInfo := ArrayToVarArray(GetStatInfo(iHandle))
+    aGetDynInfo := ArrayToVarArray(GetDynInfo(iHandle))
+
+    Append Page, '    <div class="PSettings FontRespo03" style="display: grid; grid-template-columns: max(20px, 10%) 1fr 1fr; gap: 10px; align-items: center;" id="settings01" >'
+
+    Append Page, '      <div class="w3-large w3-right-align lab la-neos"></div>'
+    Append Page, '      <div class="w3-left-align clipboard" style="grid-column: span 2;">' + GetName(ihandle) + '</div>'
+
+    Append Page, '      <div class="w3-large w3-right-align la la-info"></div>'
+    Append Page, '      <div class="w3-left-align">Aktwert</div>'
+    Append Page, '      <div class="w3-left-align" style="width:fit-content;" onclick="ajax_callarchiv(`#idmain`);" id="DIVCollecthandlewert" data-datapoint="' + sval(ihandle) + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""></div>'
+
+    Call Vorlagen.InfoBoxDetails 'Handle', sHandle
+    Call Vorlagen.InfoBoxDetails 'Anlage', aGetStatInfo.PLANT
+    Call Vorlagen.InfoBoxDetails 'Zustandsänderung', aGetDynInfo.LASTCONDITIONCHANGE
+    Call Vorlagen.InfoBoxDetails 'Aktwertänderung', aGetDynInfo.LASTVALUEUPDATE
+    Call Vorlagen.InfoBoxDetails 'Änderungen / Tag', sval(aGetDynInfo.CHANGESPERDAY)
+
+
+    call vorlagen.ColConfigtoHTML sHandle, 1
+
+    Append Page, '      <div class="w3-large w3-right-align la la-fill"></div>'
+    Append Page, '      <div class="w3-left-align">Archivfarbe</div>'
+    Append Page, '      <input id="IDColorPicker" type="color" class="w3-border-dark-grey b3-border w3-round" style="height: 8px; width:60px; background-color:rgb(' + sRGBArc + ');"></input>'
+
+
+
+    Append Page, '      <div class="w3-large w3-right-align w3-margin-top la la-code-fork"></div>'
+    Append Page, '      <div class="clipboard w3-margin-top w3-left-align" style="grid-column: span 2;">' + sval(ArrayToVarArray(GetStatInfo(iHandle)).SCANNERINFO) + '</div>'
+
+    Append Page, '    </div>'
+
+    Append Page, '  </div>     <!-- settings01 -->'
+
+
+    Append Page, '    <script>'
+    
+    Append Page, '      colorPicker = document.getElementById(`IDColorPicker`);'
+    Append Page, '      colorPicker.value = getBackgroundColor(colorPicker);'
+
+
+// -> ausgelagert in villa.js
+    // Funktion zum Auslesen der aktuellen Hintergrundfarbe
+//    Append Page, '      function getBackgroundColor(element) {'
+//    Append Page, '        var bgColor = window.getComputedStyle(element).backgroundColor;'
+//    Append Page, '        return rgbToHex(bgColor);'
+//    Append Page, '      }'
+
+    Append Page, '      colorPicker.addEventListener(`change`, function() {'
+    Append Page, '        selectedColor = colorPicker.value;'
+    Append Page, '        const red = selectedColor.substr(1, 2);'
+    Append Page, '        const green = selectedColor.substr(3, 2);'
+    Append Page, '        const blue = selectedColor.substr(5, 2);'
+    Append Page, '        document.getElementById("IDColorPicker").style.backgroundColor = selectedColor;'
+    Append Page, '        SendPost(this, `ArchivColor;$00` + blue + green + red + ``, ' +#39 + '4' + #39 +', ' + #39 + sHandle + #39 + ')'
+    Append Page, '      });'
+
+    Append Page, '    </script>'
+
+
+
+
+    // *****************************************************************************
+
+    Append Page, '  </div>'
+
+
+    // Script für Switch Reiter oben + INIT InitCheckAndSend  ************************
+    Append Page, ''
+    Append Page, '<script>'
+    
+    Append Page, '  $(`[id^=settings]`).hide();'
+
+    // wenn Dauer-GLT
+    if (sOnlyGLT = '4') or (sOnlyGLT = '12') then
+      Append Page, '  $("#settings03").show();'  
+      Append Page, '  $(`[id^=setmenu]`).removeClass("a3-blue");'
+      Append Page, '  $("#setmenu03").addClass("a3-blue");'
+    else
+      Append Page, '  $("#settings01").show();'  
+    endif
+
+
+    Append Page, '  $(document).ready(function(){'
+
+    Append Page, '    InitCheckAndSend()'
+
+    Append Page, '    $(`[id^=setmenu]`).click(function(){'
+    Append Page, '      var AktData = $(this).attr(`dataID`);'
+    Append Page, '      $(`[id^=settings]`).hide();'
+    Append Page, '      $(`div[id^="seGW"]`).css(`display`, `none`);'
+    Append Page, '      $(`div[id^="seSet"]`).css(`display`, `none`);'
+    Append Page, '      $("#settings"+AktData).show();'  
+    Append Page, '      $(`[id^=setmenu]`).removeClass("a3-blue");'
+    Append Page, '      $("#setmenu"+AktData).addClass("a3-blue");'
+    Append Page, '    });'
+    Append Page, '  });'
+
+    Append Page, '</script>'
+    // *******************************************************************************
+
+
+
+
+
+
+  case 'ajax_selectcountevents'
+
+    Append Page, '  <div class="w3-round-xlarge w3-padding CenterThings modalbox modalAlign" style="flex-direction: column; width:350px;">'
+
+    // Inhalt der Filerbox ***********************************************************
+    Append Page, '    <button onclick="AjaxFilter = $(`#sliderevents`).val(); ajax_callarchiv(`#idmain`);" class="w3-button w3-round w3-text-sand w3-margin;">'
+    Append Page, '      <h3><div id="slideroutevent"></div></h3>'
+    Append Page, '    </button>'
+
+    Append Page, '    <div class="slidecontainer w3-margin" style="width:90%;">'
+    Append Page, '      <input type="range" step="1" min="0" max="5000" value="500" class="sliderlong" id="sliderevents">'
+    Append Page, '    </div>'
+
+    Append Page, '  </div>'
+
+
+
+    Append Page, '<script>'
+
+    Append Page, '  if (AjaxFilter === ``) {'
+    Append Page, '    AjaxFilter = `200`;'
+    Append Page, '  }'
+
+    Append Page, '  $(`#slideroutevent`).html(AjaxFilter);'
+    Append Page, '  $(`#sliderevents`).val(AjaxFilter);'
+    Append Page, '  $(`#sliderevents`).change(function() {'
+    Append Page, '    $(`#slideroutevent`).html($(`#sliderevents`).val());'
+    Append Page, '  })'
+    Append Page, '</script>'
+
+
+
+  case 'ajax_kalender'
+  
+    Dim sTmpPieChart: String    := ''
+
+    Append Page, '  <div class="w3-round-xlarge w3-padding CenterThings modalbox modalAlign" style="width:350px;">'
+    Append Page, '    <form enctype="utf-8">'
+    Append Page, '      <input id="myInput" class="InputNormal w3-text-sand" onchange="ShowDIVloader(); datum_klick()" type="date" name="DSearch" max="' + sval(year) + '-' + sval(month) + '-' + sval(day) + '" value="" style="border-bottom:0px; color-scheme: dark; height:45px; font-size: 22px;">'
+    Append Page, '    </form>'
+    Append Page, '    <canvas class="w3-hide w3-margin-bottom" id="myPieChart"></canvas>'
+    Append Page, '  </div>'
+
+    Append Page, '<script>'
+
+    Append Page, '  $("#myInput").val(datum.getFullYear() + `-` + ("0" + (datum.getMonth()+1)).slice(-2) + `-` + ("0" + datum.getDate()).slice(-2));'
+
+    Append Page, '  myInput.max = new Date().toISOString().split("T")[0];'
+
+    Append Page, 'function datum_klick(){'
+    Append Page, '  var datumselect = document.getElementById("myInput").value;'
+    Append Page, '  var modal = document.getElementById("elementmyDatum");'
+
+    Append Page, '  let SelectDay = datumselect.slice(8, 10);'
+    Append Page, '  let SelectMonth = datumselect.slice(5, 7);'
+    Append Page, '  let SelectYear = datumselect.slice(0, 4);'
+
+    Append Page, '  datum = new Date (datumselect.slice(0, 4), (datumselect.slice(5, 7) -1), datumselect.slice(8, 10));'
+
+    Append Page, '  ajax_callarchiv(`#idmain`);'
+
+    Append Page, '}'
+
+    Append Page, '</script>'
+
+
+    if (isana(ihandle)) then
+
+      Append Page, '<script>'
+
+      Append Page, '  if (AjaxSummeArchiv.length > 0) {'
+
+      Append Page, '    $("#myInput").hide();'
+      Append Page, '    $("#myPieChart").removeClass("w3-hide");'
+
+      Append Page, '    // Kontext des Canvas-Elements abrufen'
+      Append Page, '    var ctx = document.getElementById(`myPieChart`).getContext(`2d`);'
+
+      Append Page, '    // Daten für das Pie Chart'
+      Append Page, '    var data = {'
+      Append Page, '      labels: AjaxSummeYear,'
+      Append Page, '      datasets: [{'
+      Append Page, '        data: AjaxSummeArchiv,'
+    //  Append Page, '        backgroundColor: AjaxSummeCol,'
+      Append Page, '        borderWidth: 0'
+      Append Page, '      }]'
+      Append Page, '    };'
+
+      Append Page, '    // Konfiguration des Pie Charts'
+      Append Page, '    var config = {'
+      Append Page, '      type: `pie`,'
+      Append Page, '      data: data,'
+      Append Page, '      options: {'
+      Append Page, '        responsive: true,'
+      Append Page, '        plugins: {'
+      Append Page, '          legend: {'
+      Append Page, '            position: `top`,'
+
+      Append Page, '            labels: {'
+      Append Page, '              color: `#F5F5DC`,'
+      Append Page, '            },'
+
+      Append Page, '          },'
+      Append Page, '          title: {'
+      Append Page, '            display: false,'
+      Append Page, '            text: `Mein Pie Chart`'
+      Append Page, '          }'
+      Append Page, '        }'
+      Append Page, '      }'
+      Append Page, '    };'
+
+      Append Page, '    // Pie Chart erstellen'
+      Append Page, '    var myPieChart = new Chart(ctx, config);'
+      Append Page, '  };'
+
+      Append Page, '</script>'
+    
+    endif
+
+
+
+
+
+
+
+	case 'ajax_selectyear'
+	
+    Append Page, '  <div class="w3-round-large w3-padding CenterThings modalbox modalAlign" style="flex-direction: column; width:300px;">'
+    Append Page, '    <button id="IDBtnYear" class="w3-button w3-text-sand" style="min-width:180px;"><h3><div id="SliderAddYear" val="test"></div></h3></button>'
+    Append Page, '    <div class="slidecontainer w3-margin" style="width:90%">'
+    Append Page, '      <input onchange="$(`#SliderAddYear`).html($(`#SliderAddYearInput`).val());" type="range" step="1" min="' + sVal(DateYear(Date) - 10) + '" max="' + sVal(DateYear(StrToDate(datum))) + '" value="" class="sliderlong" id="SliderAddYearInput"></input>'
+    Append Page, '    </div>'
+    Append Page, '  </div>'
+
+    Append Page, '<script>'
+    Append Page, '  $(`#SliderAddYear`).html(datum.getFullYear()-1)'
+    Append Page, '  $(`#SliderAddYearInput`).val(datum.getFullYear()-1)'
+
+
+    Append Page, '  if (AjaxArchivMode === `55`) {'
+    Append Page, '      $("#IDBtnYear").on("click", function() {AjaxFilter=`1.` + (datum.getMonth()+1) + `.`+ $(`#SliderAddYearInput`).val(); ajax_callarchiv(`#idmain`);});'
+    Append Page, '  } else {'
+    Append Page, '      $("#IDBtnYear").on("click", function() {AjaxFilter=`31.12.`+ $(`#SliderAddYearInput`).val(); ajax_callarchiv(`#idmain`);});'
+    Append Page, '  }'
+
+    Append Page, '</script>'  
+ 
+
+
+
+  case 'ajax_statuspage'
+
+    Dim aGroupListStatus: array		:= []
+    Dim aPrioColorList:array      := StrToArray(GetMessageVar('PrioColorList'))
+
+    Dim sDivText: String          := ''
+    Dim sCSSText: string          := ''
+    Dim sDateTime:string          := ''
+
+
+    // Abfrage ob eine Gruppe gelistet werden soll oder ein Zustand
+    if ival(aPagePara[4]) > 100 Then
+      aGroupListStatus := GetGroupList(ival(aPagePara[4]))
+    else
+      GetReportHandles aGroupListStatus, 0, ival(aPagePara[4])
+    endif
+
+    Call Vorlagen.HeadSinglePanelPage true, true, false
+
+
+    Append Page, '    <div class="CenterThings w3-padding">'
+
+    Append Page, '      <div id="IDEventSearch" onfocus="this.style.width=`65%`;" class="w3-card-2 w3-round-xlarge" style="width:110px;">'
+    Append Page, '        <input autocomplete="off" ondblclick="this.value=``;" onblur="IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`110px`;" onfocus="IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`60%`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="search..."></input>'
+    Append Page, '      </div>'
+
+//    Append Page, '      <div class="CenterThings w3-card-2 w3-round-xlarge" style="flex-direction: column; margin-right:10px; height:36px; width:110px;" onclick="ajax_default(`#IDelementglobal`, `ajax_selectgroup`); modalklick(`IDelementglobal`)"><div class="la la-list FontRespo01"></div></div>'
+
+    Append Page, '    </div>'
+
+
+    Append Page, '		  <div id="mylist" class="" style="flex-direction: column; width:100%;">'
+
+    for iSchleife=1 to Count(aGroupListStatus) 
+
+      GetProcessData sDateTime, iVal(aGroupListStatus[iSchleife]), 'PrioZeit'
+      sDateTime := DateTimeToStr(rVal(sDateTime))
+	
+      Append Page,  '      <button class="CenterThings w3-button" style="width:100%; border:none; border-bottom:1px solid #ccc; border-color:#616161!important; padding:8px 16px;" onclick="AjaxAktion=`1`; AjaxHandle = `' + aGroupListStatus[iSchleife] + '`; ajax_callarchiv(`#idmain`)">'
+
+	    if (IsAna(ival(aGroupListStatus[iSchleife]))) then
+        sDivText := GetRealActValueAsString(ival(aGroupListStatus[iSchleife])) + ' ' + GetAnaUnit(ival(aGroupListStatus[iSchleife]))
+	    else
+        sDivText := GetActPrioText(ival(aGroupListStatus[iSchleife]))
+      endif
+
+      
+      
+      Append Page, '        <div class="CenterThings" style="justify-content: left; width:250px;">' 
+
+      Append Page, '          <div class="las la-square FontRespo01" style="color: ' + aPrioColorList[GetActPrio(ival(aGroupListStatus[iSchleife])) + 1] + ';"></div>'
+
+      Append Page, '          <div class="FontRespo04" style="margin-left:5px; white-space: normal;">' + sDivText + '</div>'
+ 
+      Append Page, '        </div>' 
+
+      Append Page, '        <div class="CenterThings w3-padding-small" style="flex-direction: column; width: 100%">'
+ 	    Append Page, '          <div class="FontRespo03" style="width: 100%; white-space: normal;">' + GetComment(ival(aGroupListStatus[iSchleife])) + '</div>'
+      Append Page, '          <div class="FontRespo04 w3-padding-small" style="color:#42D06A;">' + sDateTime + '</div>'
+      Append Page, '        </div>' 
+
+
+      Append Page, '      </button>'
+	  
+    next	  
+
+    Append Page, '    </div> <!-- Ende Hintergrund -->'
+
+
+
+    Append Page, '<script>'
+
+    Append Page, '  snackbar(`la la-binoculars`, `khaki`, `Datenpunkte in Liste<br>' + sval(count(aGroupListStatus)) + '`);'
+    Append Page, '  isSwipeEnable = true;'
+
+
+    // Suche in Liste
+    Append Page, '    searchInput = document.getElementById(`myInputEvents`);'
+    Append Page, '    searchInput.addEventListener(`input`, function() {'
+
+    Append Page, '      value = this.value.toLowerCase();'
+    Append Page, '      buttons = document.querySelectorAll(`#mylist button`);'
+    
+    Append Page, '      buttons.forEach((button, index) => {'
+    Append Page, '        const text = button.textContent.toLowerCase();'
+    Append Page, '        button.style.display = text.includes(value) ? `` : `none`;'
+    Append Page, '      });'
+    Append Page, '    });'
+
+    Append Page, '</script>'
+
+
+
+
+    Call Vorlagen.FooterSinglePanelPage
+
+
+
+  case 'ajax_ManualMenu'
+    Call vorlagen.ManualMenu
+
+  case 'ajax_rev'
+    Call rev.Main
+
+  case 'ajax_git'
+    Call vorlagen.git
+
+  case 'ajax_anleitung'
+    Append Page, ReadTextFile (ProPath + '\Web\menue\manual.html')
+
+  case 'ajax_touch'
+    Append Page, ReadTextFile (ProPath + '\Web\menue\touch.html')
+
+
+  case 'ajax_archiv'
+    Call archiv.Main
+  
+  else
+	
+  EndSelect
+
+
+endProc
+
+
