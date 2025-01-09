@@ -38,7 +38,7 @@ Proc Main
     // Inhalt der Meldegruppenbox *********************
     for iSchleife = 2 to count(aGroupList)
 
-      Append Page, '    <div onclick="Para02=`' + aGroupList[iSchleife,2] + '_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings modalbox w3-padding w3-margin-top w3-round-large w3-hover-opacity w3-text-sand" style="cursor: pointer; display:flex">'
+      Append Page, '    <div onclick="Para02=`' + aGroupList[iSchleife,2] + '_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings modalbox w3-margin-top w3-round-large w3-hover-opacity w3-text-sand" style="padding: 12px 0 12px 0; cursor: pointer; display:flex">'
 		  Append Page, '      <div class="FontRespo04">' + aGroupList[iSchleife,2] + '</div>'
 		  Append Page, '    </div>'
 
@@ -87,31 +87,31 @@ Proc Main
       GetReportHandles aGroupListStatus, 0, ival(aConvert[iSchleife, 1])
 
       if (Count(aGroupListStatus) > 0) Then
-        Append Page, '        <div onclick="AjaxArchivMode=`50`; ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,' + aConvert[iSchleife, 1] + '`);" class="CenterThings w3-hover-opacity w3-margin-top w3-round-xlarge w3-text-sand modalbox" style="padding: 14px 0 14px 0; cursor: pointer; width:100%;">'
+        Append Page, '    <div onclick="AjaxArchivMode=`50`; ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,' + aConvert[iSchleife, 1] + '`);" class="CenterThings w3-hover-opacity w3-margin-top w3-round-xlarge w3-text-sand modalbox" style="padding: 14px 0 14px 0; cursor: pointer; width:100%;">'
 			else
-        Append Page, '        <div onclick="" class="CenterThings w3-hover-opacity w3-margin-top w3-round-xlarge w3-text-sand modalbox" style="padding: 14px 0 14px 0; width:100%;">'
+        Append Page, '    <div onclick="" class="CenterThings w3-hover-opacity w3-margin-top w3-round-xlarge w3-text-sand modalbox" style="padding: 14px 0 14px 0; width:100%;">'
       EndIf
 
-		  Append Page, '      <div class="la ' + aConvert[iSchleife, 3] + ' FontRespo01" style="margin-right: auto; width:75px;"></div>'
-		  Append Page, '      <div class="FontRespo03" style="">' + aConvert[iSchleife, 2] + '</div>'
-		  Append Page, '      <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;">' + sVal(Count(aGroupListStatus)) + '</div>'
-		  Append Page, '    </div>'
+		  Append Page, '    <div class="la ' + aConvert[iSchleife, 3] + ' FontRespo01" style="margin-right: auto; width:75px;"></div>'
+		  Append Page, '    <div class="FontRespo03" style="">' + aConvert[iSchleife, 2] + '</div>'
+		  Append Page, '    <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;">' + sVal(Count(aGroupListStatus)) + '</div>'
+		  Append Page, '  </div>'
 
 		Next
 
-    Append Page, '    <div onclick="Para02=`DIGITAL-ARCHIV_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings w3-hover-opacity w3-round-xlarge w3-margin-top modalbox" style="padding: 14px 0 14px 0; cursor: pointer; width:100%;">'
-    Append Page, '      <div class="la la-stack-overflow" style="margin-right: auto; width:75px; font-size: clamp(20px, 1vw + 10px, 32px)"></div>'
-    Append Page, '      <div class="FontRespo03" style="">Events</div>'
-    Append Page, '      <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusEvents" data-datapoint="0" data-mode="10" data-pic="" data-col00="sCountEvents" data-col01="" data-col02="" data-animate="">---</div>'
-    Append Page, '    </div>'
+    Append Page, '  <div onclick="Para02=`DIGITAL-ARCHIV_`; AjaxArchivMode=3; AjaxHandle=``; AjaxAktion=`1`; ajax_callarchiv(`#idmain`, `0`);" class="CenterThings w3-hover-opacity w3-round-xlarge w3-margin-top modalbox" style="padding: 14px 0 14px 0; cursor: pointer; width:100%;">'
+    Append Page, '    <div class="la la-stack-overflow" style="margin-right: auto; width:75px; font-size: clamp(20px, 1vw + 10px, 32px)"></div>'
+    Append Page, '    <div class="FontRespo03" style="">Events</div>'
+    Append Page, '    <div class="w3-margin-right FontRespo03" style="margin-left: auto; width:75px;" id="DIVCollectAjaxStatusEvents" data-datapoint="0" data-mode="10" data-pic="" data-col00="sCountEvents" data-col01="" data-col02="" data-animate="">---</div>'
+    Append Page, '  </div>'
 
 
     // Info unten
 
     // Update News anzeigen 
     if (GetMessageVar('sShowUpdateNews') = 'true') then
-      Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-text-grey burncard" style="padding: 12px 0 12px 0; margin-top: 40px; cursor: pointer; width:100%; text-align: center;">'
-      Append Page, '      <div class="FontRespo03 w3-margin-left gradient-text" style="margin-right: auto; width:75px">NEW Version</div>'
+      Append Page, '  <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-text-grey burncard" style="padding: 12px 0 12px 0; margin-top: 40px; cursor: pointer; width:100%; text-align: center;">'
+      Append Page, '    <div class="FontRespo03 w3-margin-left gradient-text" style="margin-right: auto; width:75px">NEW Version</div>'
     else
       Append Page, '    <div onclick="ajax_status(`#idmain`, `villa.htm?page=ajax_ManualMenu&aktion=10`);" class="CenterThings w3-hover-opacity w3-text-grey w3-round-xlarge modalbox" style="padding: 18px 0 18px 0; margin-top: 40px; cursor: pointer; width:100%;">'
       Append Page, '      <div class="FontRespo03 w3-margin-left" style="margin-right: auto; width:75px">Version</div>'
@@ -359,13 +359,13 @@ Proc Main
 
       // Gruppe ist eine Meldegruppe
       if (aGroupListAll[iSchleife01, 3] = 'TRUE') then
-        Append Page, '        <div class="w3-large las la-comment-dots" title="Meldegruppe"></div>'
+        Append Page, '      <div class="w3-large las la-comment-dots" title="Meldegruppe"></div>'
       else
-        Append Page, '        <div class="w3-large las la-comment-alt" title="keine Meldegruppe"></div>'
+        Append Page, '      <div class="w3-large las la-comment-alt" title="keine Meldegruppe"></div>'
       Endif
 
-      Append Page, '        <div onclick="AjaxArchivMode=`50`; ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,' + sval(NameToHandle(aGroupListAll[iSchleife01, 2])) + '`);" class="">'+ aGroupListAll[iSchleife01, 2] + '</div>'
-      Append Page, '        <div class="" style="display:inline-block" id="' + 'DIVCollect_Set03_' + sval(iSchleife01) + '" data-datapoint="' + shandle + '" data-mode="3" data-pic="" data-col00="" data-col01="' + aGroupListAll[iSchleife01, 2] + '" data-col02="" data-animate="1"> </div>'
+      Append Page, '      <div onclick="AjaxArchivMode=`50`; ajax_status(`#idmain`, `villa.htm?page=ajax_statuspage&aktion=10&pagepara=,heizung,,' + sval(NameToHandle(aGroupListAll[iSchleife01, 2])) + '`);" class="">'+ aGroupListAll[iSchleife01, 2] + '</div>'
+      Append Page, '      <div class="" style="display:inline-block" id="' + 'DIVCollect_Set03_' + sval(iSchleife01) + '" data-datapoint="' + shandle + '" data-mode="3" data-pic="" data-col00="" data-col01="' + aGroupListAll[iSchleife01, 2] + '" data-col02="" data-animate="1"> </div>'
 
     Next
 
@@ -406,9 +406,9 @@ Proc Main
 
       Append Page, '      <div class="w3-display-container" style="margin-bottom:35px; display: flex; align-items: center;">'
       GetExtVar sTmpKonfigData, ihandle, 'Meldetext5'
-      Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext5" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey"></input>'
+      Append Page, '        <input data-jsactiondata="4" data-jsextvarname="Meldetext5" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey"></input>'
       GetKonfigData sTmpKonfigData, ihandle, 'Delay0'
-      Append Page, '           <input data-jsactiondata="11" data-jsextvarname="Delay0" type="text" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey" style="margin-left: 8px; width: 70px;"></input>'
+      Append Page, '        <input data-jsactiondata="11" data-jsextvarname="Delay0" type="text" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey" style="margin-left: 8px; width: 70px;"></input>'
       Append Page, '      </div>'
 
 
@@ -436,25 +436,25 @@ Proc Main
         Call Vorlagen.SelectBox2 ihandle, 'MeldePrio' + sval(iSchleife), '11', 64, 95
 
         // SelectBox zur Auswahl > < - -
-        Append Page, '            <div class="CenterThings" style="margin-right:14px;"><button onclick="$(`#se05Main`).fadeOut(function() {$(`#seGW' + sval(iSchleife) + '`).fadeIn(); $(this).css(`display`, `none`);});" id="BtnGW' + sval(iSchleife) + '" class="dropdown-trigger FontRespo03" style="text-align: center; padding: 5px 20px; border-radius: 5px; box-shadow: 0 1px 6px rgba(255, 255, 255, 0.5);">' + sTempWirkung + '</button></div>'
+        Append Page, '        <div class="CenterThings" style="margin-right:14px;"><button onclick="$(`#se05Main`).fadeOut(function() {$(`#seGW' + sval(iSchleife) + '`).fadeIn(); $(this).css(`display`, `none`);});" id="BtnGW' + sval(iSchleife) + '" class="dropdown-trigger FontRespo03" style="text-align: center; padding: 5px 20px; border-radius: 5px; box-shadow: 0 1px 6px rgba(255, 255, 255, 0.5);">' + sTempWirkung + '</button></div>'
 
         // *************************************
-        Append aPageEnd, '            <div id="seGW' + sval(iSchleife)  + '">'
+        Append aPageEnd, '        <div id="seGW' + sval(iSchleife)  + '">'
 
-        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value=">" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-greater-than w3-large a3-green w3-margin-right w3-padding"></div>   <div class="FontRespo03">Grösser als...</div>  </div>'
-        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="<" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-less-than w3-large a3-green w3-margin-right w3-padding"></div>   <div class="FontRespo03">Kleiner als...</div>  </div>'
-        Append aPageEnd, '              <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="-" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-minus w3-large a3-yellow w3-margin-right w3-padding"></div>   <div class="FontRespo03">GW löschen</div>  </div>'
+        Append aPageEnd, '          <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value=">" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-greater-than w3-large a3-green w3-margin-right w3-padding"></div>   <div class="FontRespo03">Grösser als...</div>  </div>'
+        Append aPageEnd, '          <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="<" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-less-than w3-large a3-green w3-margin-right w3-padding"></div>   <div class="FontRespo03">Kleiner als...</div>  </div>'
+        Append aPageEnd, '          <div class="w3-round-xlarge w3-border w3-border-dark-grey dropdown-item w3-margin-top CenterThings" data-fieldname="Wirkung' + sval(iSchleife) + '" data-sendmode="11" value="-" onclick="document.getElementById(`BtnGW' + sval(iSchleife) + '`).innerHTML = this.getAttribute(`value`);">   <div class="las la-minus w3-large a3-yellow w3-margin-right w3-padding"></div>   <div class="FontRespo03">GW löschen</div>  </div>'
 
-        Append aPageEnd, '            </div>'
+        Append aPageEnd, '        </div>'
         // *************************************
 
 
 
 
         if (sTempWirkung = '>') and (GetRealActValue(ihandle) > rval(sTempWert)) or (sTempWirkung = '<') and (GetRealActValue(ihandle) < rval(sTempWert)) then 
-          Append Page, '           <input data-jsactiondata="11" data-jsextvarname="Grenze' + sval(iSchleife) + '" type="text" name="fname" value="' + sTempWert + '" class="InputNormal CheckAndSend w3-text-deep-orange FontRespo03" style="width: 70px;"></input>'
+          Append Page, '        <input data-jsactiondata="11" data-jsextvarname="Grenze' + sval(iSchleife) + '" type="text" name="fname" value="' + sTempWert + '" class="InputNormal CheckAndSend w3-text-deep-orange FontRespo03" style="width: 70px;"></input>'
         else
-          Append Page, '           <input data-jsactiondata="11" data-jsextvarname="Grenze' + sval(iSchleife) + '" type="text" name="fname" value="' + sTempWert + '" class="InputNormal CheckAndSend w3-text-white FontRespo03" style="width: 70px;"></input>'
+          Append Page, '        <input data-jsactiondata="11" data-jsextvarname="Grenze' + sval(iSchleife) + '" type="text" name="fname" value="' + sTempWert + '" class="InputNormal CheckAndSend w3-text-white FontRespo03" style="width: 70px;"></input>'
         endif
 
         Append Page, '      </div>'
@@ -462,10 +462,10 @@ Proc Main
         Append Page, '      <div class="w3-display-container" style="display: flex; align-items: center;">'
 
           GetExtVar sTmpKonfigData, ihandle, 'Meldetext' + sval(iSchleife + 5)
-          Append Page, '           <input data-jsactiondata="4" data-jsextvarname="Meldetext' + sval(iSchleife + 5) + '" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey"></input>'
+          Append Page, '        <input data-jsactiondata="4" data-jsextvarname="Meldetext' + sval(iSchleife + 5) + '" type="text" value="' + sTmpKonfigData + '" class="FontRespo03 CheckAndSend InputNormal w3-text-grey"></input>'
 
           GetKonfigData sTmpKonfigData, ihandle, 'Delay' + sval(iSchleife)
-          Append Page, '           <input data-jsactiondata="11" data-jsextvarname="Delay' + sval(iSchleife) + '" type="text" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey" style="margin-left: 8px; width: 70px;"></input>'
+          Append Page, '        <input data-jsactiondata="11" data-jsextvarname="Delay' + sval(iSchleife) + '" type="text" name="fname" value="' + sTmpKonfigData + '" class="FontRespo03 InputNormal CheckAndSend w3-text-grey" style="margin-left: 8px; width: 70px;"></input>'
 
         Append Page, '      </div>'
 
@@ -572,8 +572,6 @@ Proc Main
     Append Page, '      </div>   <!-- sett05Main -->'
 
 
-
-
     Append Page, '      <div class="">'
 
     // Elemente ausserhalb von SettingsTAB werden hinzugeügt damit sie eingeblendet werden können
@@ -644,7 +642,9 @@ Proc Main
 
       GetExtVar sTmpKonfigData, iHandle, 'Sonder' + sval(iSchleife01)
 
-      ReadIniData sIniData, ProPath + '\Projekt.ini', 'PG_KONFIG.SONDERTEXTE', 'L' + sval(iSchleife01 - 1)   
+      ReadIniData sIniData, ProPath + '\Projekt.ini', 'PG_KONFIG.SONDERTEXTE', 'L' + sval(iSchleife01 - 1) 
+
+      StrReplaceEx sIniData, '|', ''  
 
       sTmpLoopData := ' + document.getElementById(' + #39 + 'IDSonder' + sval(iSchleife01) + #39 + ').value'
 
@@ -669,12 +669,12 @@ Proc Main
 
     Append Page, '    <div class="PSettings FontRespo03" style="display: grid; grid-template-columns: max(20px, 10%) 1fr 1fr; gap: 10px; align-items: center;" id="settings01" >'
 
-    Append Page, '        <div class="w3-large w3-right-align lab la-neos"></div>'
-    Append Page, '        <div class="w3-left-align clipboard" style="grid-column: span 2;">' + GetName(ihandle) + '</div>'
+    Append Page, '      <div class="w3-large w3-right-align lab la-neos"></div>'
+    Append Page, '      <div class="w3-left-align clipboard" style="grid-column: span 2;">' + GetName(ihandle) + '</div>'
 
-    Append Page, '        <div class="w3-large w3-right-align la la-info"></div>'
-    Append Page, '        <div class="w3-left-align">Aktwert</div>'
-    Append Page, '        <div class="w3-left-align" style="width:fit-content;" onclick="ajax_callarchiv(`#idmain`);" id="DIVCollecthandlewert" data-datapoint="' + sval(ihandle) + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""></div>'
+    Append Page, '      <div class="w3-large w3-right-align la la-info"></div>'
+    Append Page, '      <div class="w3-left-align">Aktwert</div>'
+    Append Page, '      <div class="w3-left-align" style="width:fit-content;" onclick="ajax_callarchiv(`#idmain`);" id="DIVCollecthandlewert" data-datapoint="' + sval(ihandle) + '" data-mode="" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""></div>'
 
     Call Vorlagen.InfoBoxDetails 'Handle', sHandle
     Call Vorlagen.InfoBoxDetails 'Anlage', aGetStatInfo.PLANT
@@ -685,18 +685,18 @@ Proc Main
 
     call vorlagen.ColConfigtoHTML sHandle, 1
 
-    Append Page, '        <div class="w3-large w3-right-align la la-fill"></div>'
-    Append Page, '        <div class="w3-left-align">Archivfarbe</div>'
-    Append Page, '        <input id="IDColorPicker" type="color" class="w3-border-dark-grey b3-border w3-round" style="height: 8px; width:60px; background-color:rgb(' + sRGBArc + ');"></input>'
+    Append Page, '      <div class="w3-large w3-right-align la la-fill"></div>'
+    Append Page, '      <div class="w3-left-align">Archivfarbe</div>'
+    Append Page, '      <input id="IDColorPicker" type="color" class="w3-border-dark-grey b3-border w3-round" style="height: 8px; width:60px; background-color:rgb(' + sRGBArc + ');"></input>'
 
 
 
-    Append Page, '        <div class="w3-large w3-right-align w3-margin-top la la-code-fork"></div>'
-    Append Page, '        <div class="clipboard w3-margin-top w3-left-align" style="grid-column: span 2;">' + sval(ArrayToVarArray(GetStatInfo(iHandle)).SCANNERINFO) + '</div>'
+    Append Page, '      <div class="w3-large w3-right-align w3-margin-top la la-code-fork"></div>'
+    Append Page, '      <div class="clipboard w3-margin-top w3-left-align" style="grid-column: span 2;">' + sval(ArrayToVarArray(GetStatInfo(iHandle)).SCANNERINFO) + '</div>'
 
     Append Page, '    </div>'
 
-    Append Page, '    </div>     <!-- settings01 -->'
+    Append Page, '  </div>     <!-- settings01 -->'
 
 
     Append Page, '    <script>'
@@ -780,7 +780,7 @@ Proc Main
     Append Page, '    </button>'
 
     Append Page, '    <div class="slidecontainer w3-margin" style="width:90%;">'
-    Append Page, '      <input type="range" step="1" min="0" max="2000" value="200" class="sliderlong" id="sliderevents">'
+    Append Page, '      <input type="range" step="1" min="0" max="5000" value="500" class="sliderlong" id="sliderevents">'
     Append Page, '    </div>'
 
     Append Page, '  </div>'
@@ -937,23 +937,28 @@ Proc Main
       GetReportHandles aGroupListStatus, 0, ival(aPagePara[4])
     endif
 
-
-    Append Page, '      <script>'
-    Append Page, '        snackbar(`la la-binoculars`, `khaki`, `Datenpunkte in Liste<br>' + sval(count(aGroupListStatus)) + '`);'
-    Append Page, '        isSwipeEnable = true;'
-    Append Page, '      </script>'
-
-
     Call Vorlagen.HeadSinglePanelPage true, true, false
 
-    Append Page, '		  <div class="CenterThings" style="flex-direction: column; margin-top:10px; margin-bottom:10px;">'
+
+    Append Page, '    <div class="CenterThings w3-padding">'
+
+    Append Page, '      <div id="IDEventSearch" onfocus="this.style.width=`calc(100% - 10px);`;" class="w3-card-2 w3-round-xlarge w3-opacity-min" style="width:50%;">'
+    Append Page, '        <input autocomplete="off" ondblclick="this.value=``;" onblur="IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`50%`;" onfocus="IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`calc(100% - 10px)`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="  &#x1F50D;"></input>'
+    Append Page, '      </div>'
+
+//    Append Page, '      <div class="CenterThings w3-card-2 w3-round-xlarge" style="flex-direction: column; margin-right:10px; height:36px; width:110px;" onclick="ajax_default(`#IDelementglobal`, `ajax_selectgroup`); modalklick(`IDelementglobal`)"><div class="la la-list FontRespo01"></div></div>'
+
+    Append Page, '    </div>'
+
+
+    Append Page, '		  <div id="mylist" class="" style="flex-direction: column; width:100%;">'
 
     for iSchleife=1 to Count(aGroupListStatus) 
 
       GetProcessData sDateTime, iVal(aGroupListStatus[iSchleife]), 'PrioZeit'
       sDateTime := DateTimeToStr(rVal(sDateTime))
 	
-      Append Page,  '      <button style="display: flex; width:100%; height:80px" onclick="AjaxAktion=`1`; AjaxHandle = `' + aGroupListStatus[iSchleife] + '`; ajax_callarchiv(`#idmain`)" class="w3-hover-opacity w3-button w3-border-bottom w3-border-dark-grey">'
+      Append Page,  '      <button class="CenterThings w3-button" style="width:100%; border:none; border-bottom:1px solid #ccc; border-color:#616161!important; padding:8px 16px;" onclick="AjaxAktion=`1`; AjaxHandle = `' + aGroupListStatus[iSchleife] + '`; ajax_callarchiv(`#idmain`)">'
 
 	    if (IsAna(ival(aGroupListStatus[iSchleife]))) then
         sDivText := GetRealActValueAsString(ival(aGroupListStatus[iSchleife])) + ' ' + GetAnaUnit(ival(aGroupListStatus[iSchleife]))
@@ -961,12 +966,18 @@ Proc Main
         sDivText := GetActPrioText(ival(aGroupListStatus[iSchleife]))
       endif
 
-      Append Page, '        <div class="CenterThings" style="height:100%;"><div class="las la-square FontRespo01" style="color: ' + aPrioColorList[GetActPrio(ival(aGroupListStatus[iSchleife])) + 1] + ';width:35px;"></div></div>'
+      
+      
+      Append Page, '        <div class="CenterThings" style="justify-content: left; width:250px;">' 
 
-      Append Page, '        <div class="CenterThings w3-margin-right w3-margin-left FontRespo03" style="white-space: normal; height:100%; width:90px;">' + sDivText + '</div>'
+      Append Page, '          <div class="las la-square FontRespo01" style="color: ' + aPrioColorList[GetActPrio(ival(aGroupListStatus[iSchleife])) + 1] + ';"></div>'
+
+      Append Page, '          <div class="FontRespo04" style="margin-left:5px; white-space: normal;">' + sDivText + '</div>'
  
-      Append Page, '        <div class="CenterThings" style="flex-direction: column; height:100%; width: 100%">'
- 	    Append Page, '          <div class="FontRespo03" style="white-space: normal;">' + GetComment(ival(aGroupListStatus[iSchleife])) + '</div>'
+      Append Page, '        </div>' 
+
+      Append Page, '        <div class="CenterThings w3-padding-small" style="flex-direction: column; width: 100%">'
+ 	    Append Page, '          <div class="FontRespo03" style="width: 100%; white-space: normal;">' + GetComment(ival(aGroupListStatus[iSchleife])) + '</div>'
       Append Page, '          <div class="FontRespo04 w3-padding-small" style="color:#42D06A;">' + sDateTime + '</div>'
       Append Page, '        </div>' 
 
@@ -976,6 +987,32 @@ Proc Main
     next	  
 
     Append Page, '    </div> <!-- Ende Hintergrund -->'
+
+
+
+    Append Page, '<script>'
+
+    Append Page, '  snackbar(`la la-binoculars`, `khaki`, `Datenpunkte in Liste<br>' + sval(count(aGroupListStatus)) + '`);'
+    Append Page, '  isSwipeEnable = true;'
+
+
+    // Suche in Liste
+    Append Page, '    searchInput = document.getElementById(`myInputEvents`);'
+    Append Page, '    searchInput.addEventListener(`input`, function() {'
+
+    Append Page, '      value = this.value.toLowerCase();'
+    Append Page, '      buttons = document.querySelectorAll(`#mylist button`);'
+    
+    Append Page, '      buttons.forEach((button, index) => {'
+    Append Page, '        const text = button.textContent.toLowerCase();'
+    Append Page, '        button.style.display = text.includes(value) ? `` : `none`;'
+    Append Page, '      });'
+    Append Page, '    });'
+
+    Append Page, '</script>'
+
+
+
 
     Call Vorlagen.FooterSinglePanelPage
 

@@ -69,12 +69,12 @@ Proc SelectBox2 iAktHandle:Int, sAktPrio:string, sSendMode:string, iStartPrio:In
 
 
   if (sAktMeldePrio = '-1') then
-    Append Page, '            <button onclick="$(`#se05Main`).fadeOut(function() {$(`#seSet' + sAktMeldePrio + '`).fadeIn(); $(this).css(`display`, `none`);});" id="Btn' + sAktPrio + '" class="dropdown-trigger FontRespo03"><div class="las la-square w3-margin-right" style="display:inline; color:rgba(255, 255, 255, 0.3);"></div>--</button>'
+    Append Page, '        <button onclick="$(`#se05Main`).fadeOut(function() {$(`#seSet' + sAktMeldePrio + '`).fadeIn(); $(this).css(`display`, `none`);});" id="Btn' + sAktPrio + '" class="dropdown-trigger FontRespo03"><div class="las la-square w3-margin-right" style="display:inline; color:rgba(255, 255, 255, 0.3);"></div>--</button>'
   else
-    Append Page, '            <button onclick="$(`#se05Main`).fadeOut(function() {$(`#seSet' + sAktMeldePrio + '`).fadeIn(); $(this).css(`display`, `none`);});" id="Btn' + sAktPrio + '" class="dropdown-trigger FontRespo03"><div class="las la-square w3-margin-right" style="display:inline; color:' + aPrioColorList[ival(sAktMeldePrio) + 1] + ';"></div>' + PrioToString(ival(sAktMeldePrio)) + '</button>'
+    Append Page, '        <button onclick="$(`#se05Main`).fadeOut(function() {$(`#seSet' + sAktMeldePrio + '`).fadeIn(); $(this).css(`display`, `none`);});" id="Btn' + sAktPrio + '" class="dropdown-trigger FontRespo03"><div class="las la-square w3-margin-right" style="display:inline; color:' + aPrioColorList[ival(sAktMeldePrio) + 1] + ';"></div>' + PrioToString(ival(sAktMeldePrio)) + '</button>'
   endif
 
-  Append aPageEnd, '            <div id="seSet' + sAktMeldePrio  + '" class="w3-animate-top">'
+  Append aPageEnd, '        <div id="seSet' + sAktMeldePrio  + '" class="w3-animate-top">'
 
   for iAktSchleife02 = iStartPrio to iEndPrio
 
@@ -88,17 +88,17 @@ Proc SelectBox2 iAktHandle:Int, sAktPrio:string, sSendMode:string, iStartPrio:In
         sAktClassSet := ''
       endif
 
-      Append aPageEnd, '                <div id="' + sAktID + '" data-fieldname="' + sAktPrio + '" data-sendmode="' + sSendMode + '" value="' + sval(iAktSchleife02) + '"' 
-      Append aPageEnd, '                  onclick="document.getElementById(`Btn' + sAktPrio + '`).innerHTML = this.innerHTML; '
-      Append aPageEnd, '                  $(`div[id^=' +#39 + sAktPrio +#39 + ']`).removeClass(`w3-border-left w3-border-khaki`); '
-      Append aPageEnd, '                  $(this).addClass(`w3-border-left w3-border-khaki`);" class="' + sAktClassSet + ' w3-padding w3-left-align FontRespo03 dropdown-item" style="max-width:310px; margin:auto;"><div class="las la-square w3-margin-right" style="display:inline; color:' + aPrioColorList[iAktSchleife02 + 1] + ';"></div>' + PrioToString(iAktSchleife02)
-      Append aPageEnd, '                </div>'
+      Append aPageEnd, '          <div id="' + sAktID + '" data-fieldname="' + sAktPrio + '" data-sendmode="' + sSendMode + '" value="' + sval(iAktSchleife02) + '"' 
+      Append aPageEnd, '            onclick="document.getElementById(`Btn' + sAktPrio + '`).innerHTML = this.innerHTML; '
+      Append aPageEnd, '            $(`div[id^=' +#39 + sAktPrio +#39 + ']`).removeClass(`w3-border-left w3-border-khaki`); '
+      Append aPageEnd, '            $(this).addClass(`w3-border-left w3-border-khaki`);" class="' + sAktClassSet + ' w3-padding w3-left-align FontRespo03 dropdown-item" style="max-width:310px; margin:auto;"><div class="las la-square w3-margin-right" style="display:inline; color:' + aPrioColorList[iAktSchleife02 + 1] + ';"></div>' + PrioToString(iAktSchleife02)
+      Append aPageEnd, '          </div>'
 
     endif
 
   next
 
-  Append aPageEnd, '            </div>'
+  Append aPageEnd, '        </div>'
 
 EndProc
 
@@ -119,9 +119,9 @@ EndProc
 
 Proc InfoBoxDetails sFuncText:string, sFuncValue:string
 
-    Append Page, '        <div class="w3-large w3-right-align la la-share-alt"></div>'
-    Append Page, '        <div class="w3-left-align">' + sFuncText + '</div>'
-    Append Page, '        <div class="w3-left-align clipboard">' + sFuncValue + '</div>'
+    Append Page, '      <div class="w3-large w3-right-align la la-share-alt"></div>'
+    Append Page, '      <div class="w3-left-align">' + sFuncText + '</div>'
+    Append Page, '      <div class="w3-left-align clipboard">' + sFuncValue + '</div>'
 
 EndProc
 
@@ -147,13 +147,12 @@ Proc ManualMenu
 
   Call Vorlagen.HeadSinglePanelPage true, true, false
 
-  Append Page, '        <div class="CenterThings w3-medium">'
-  Append Page, '          <div id="IDManual01" dataPage="villa.htm?page=ajax_rev&aktion=10" onclick="" class="w3-padding a3-blue">Rev</div>'
-  Append Page, '          <div id="IDManual02" dataPage="/menue/sub/manual.html" onclick="" class="w3-padding" style="cursor: pointer">Manual</div>'
+  Append Page, '        <div class="CenterThings FontRespo01">'
+  Append Page, '          <div id="IDManual01" dataPage="villa.htm?page=ajax_rev&aktion=10" onclick="" class="w3-padding a3-blue">rev</div>'
+  Append Page, '          <div id="IDManual02" dataPage="/menue/sub/manual.html" onclick="" class="w3-padding" style="cursor: pointer">manual</div>'
   Append Page, '          <div id="IDManual03" dataPage="/menue/sub/touch.html" onclick="" class="w3-padding las la-fingerprint"></div>'
   Append Page, '          <div id="IDManual04" dataPage="/menue/sub/check.html" onclick="" class="w3-padding las la-check-double"></div>'
   Append Page, '        </div>'
-
  
   Append Page, '        <div id="IDContentManual" class="w3-margin-top">'
   Append Page, '        </div>'
