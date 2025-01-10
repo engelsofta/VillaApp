@@ -9,6 +9,7 @@ Proc Main
   // Variable News wurden gelesen
   SetMessageVar 'sShowUpdateNews', 'false'
 
+  aREV[167] := ['9.66', 'matchCount in event lists']
   aREV[166] := ['9.65', 'style search input']
   aREV[165] := ['9.64', 'style update check.html', 'collect events by json', 'set init sleep to 30000', 'show event count', 'search in all status pages available']
   aREV[164] := ['9.63', 'chart.js 4.4.7', 'css optimization (v 1.0.1)', 'file extension status']

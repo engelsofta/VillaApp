@@ -940,13 +940,12 @@ Proc Main
     Call Vorlagen.HeadSinglePanelPage true, true, false
 
 
-    Append Page, '    <div class="CenterThings w3-padding">'
+    Append Page, '    <div class="CenterThings" style="padding: 10px 0px;">'
 
-    Append Page, '      <div id="IDEventSearch" onfocus="this.style.width=`calc(100% - 10px);`;" class="w3-card-2 w3-round-xlarge w3-opacity-min" style="width:50%;">'
-    Append Page, '        <input autocomplete="off" ondblclick="this.value=``;" onblur="IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`50%`;" onfocus="IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`calc(100% - 10px)`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="  &#x1F50D;"></input>'
+    Append Page, '      <div id="IDEventSearch" onfocus="this.style.width=`calc(100% - 50px);`;" class="w3-card-2 w3-round-xlarge w3-opacity-min" style="position: relative; width:50%;">'
+    Append Page, '        <input autocomplete="off" ondblclick="this.value=``;" onblur="this.placeholder=`  &#x1F50D;`; IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`50%`;" onfocus="this.placeholder=``; IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`calc(100% - 50px)`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="  &#x1F50D;"></input>'
+    Append Page, '        <div id="IDBadgeEvents" class="FontRespo04 w3-card-2 a3-green w3-border w3-border-dark-grey w3-round-large" style="position: absolute; top: -15px; right: -20px; padding: 2px 10px;">--</div>'
     Append Page, '      </div>'
-
-//    Append Page, '      <div class="CenterThings w3-card-2 w3-round-xlarge" style="flex-direction: column; margin-right:10px; height:36px; width:110px;" onclick="ajax_default(`#IDelementglobal`, `ajax_selectgroup`); modalklick(`IDelementglobal`)"><div class="la la-list FontRespo01"></div></div>'
 
     Append Page, '    </div>'
 
@@ -972,7 +971,7 @@ Proc Main
 
       Append Page, '          <div class="las la-square FontRespo01" style="color: ' + aPrioColorList[GetActPrio(ival(aGroupListStatus[iSchleife])) + 1] + ';"></div>'
 
-      Append Page, '          <div class="FontRespo04" style="margin-left:5px; white-space: normal;">' + sDivText + '</div>'
+      Append Page, '          <div class="FontRespo03" style="margin-left:5px; white-space: normal;">' + sDivText + '</div>'
  
       Append Page, '        </div>' 
 
@@ -992,8 +991,8 @@ Proc Main
 
     Append Page, '<script>'
 
-    Append Page, '  snackbar(`la la-binoculars`, `khaki`, `Datenpunkte in Liste<br>' + sval(count(aGroupListStatus)) + '`);'
-    Append Page, '  isSwipeEnable = true;'
+    Append Page, '    BadgeCountDiv = document.getElementById(`IDBadgeEvents`);'
+    Append Page, '    BadgeCountDiv.innerHTML = ' + sval(count(aGroupListStatus)) + ';'
 
 
     // Suche in Liste
@@ -1002,11 +1001,22 @@ Proc Main
 
     Append Page, '      value = this.value.toLowerCase();'
     Append Page, '      buttons = document.querySelectorAll(`#mylist button`);'
-    
+
+    Append Page, '      matchCount = 0;'
+
     Append Page, '      buttons.forEach((button, index) => {'
     Append Page, '        const text = button.textContent.toLowerCase();'
     Append Page, '        button.style.display = text.includes(value) ? `` : `none`;'
+
+
+    Append Page, '        if (text.includes(value)) {'
+    Append Page, '          matchCount++;'
+    Append Page, '        }'
+
+
     Append Page, '      });'
+
+     Append Page, '    BadgeCountDiv.innerHTML = matchCount;'
     Append Page, '    });'
 
     Append Page, '</script>'
