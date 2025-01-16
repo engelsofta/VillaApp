@@ -803,7 +803,9 @@ Proc Main
 
 
   case 'ajax_kalender'
-  
+
+    Global Dim sRGBArc: String
+
     Dim sTmpPieChart: String    := ''
 
     Append Page, '  <div class="w3-round-xlarge w3-padding CenterThings modalbox modalAlign" style="width:350px;">'
@@ -853,7 +855,11 @@ Proc Main
       Append Page, '      labels: AjaxSummeYear,'
       Append Page, '      datasets: [{'
       Append Page, '        data: AjaxSummeArchiv,'
-    //  Append Page, '        backgroundColor: AjaxSummeCol,'
+
+      call vorlagen.ColConfigtoHTML sHandle, 1
+
+      Append Page, '        backgroundColor: [`rgba(' + sRGBArc + ', 0.8)`, `rgba(66, 208, 106, 0.8)`, `rgba(41, 159, 255, 0.8)`],'
+
       Append Page, '        borderWidth: 0'
       Append Page, '      }]'
       Append Page, '    };'
@@ -943,7 +949,7 @@ Proc Main
     Append Page, '    <div class="CenterThings" style="padding: 10px 0px;">'
 
     Append Page, '      <div id="IDEventSearch" onfocus="this.style.width=`calc(100% - 50px);`;" class="w3-card-2 w3-round-xlarge w3-opacity-min" style="position: relative; width:50%;">'
-    Append Page, '        <input autocomplete="off" ondblclick="this.value=``;" onblur="this.placeholder=`  &#x1F50D;`; IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`50%`;" onfocus="this.placeholder=``; IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`calc(100% - 50px)`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="  &#x1F50D;"></input>'
+    Append Page, '        <input autocomplete="off" ondblclick="DataToBadge(); this.value=``; this.dispatchEvent(new Event(`input`));" onblur="this.placeholder=`  &#x1F50D;`; IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`50%`;" onfocus="this.placeholder=``; IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`calc(100% - 50px)`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="  &#x1F50D;"></input>'
     Append Page, '        <div id="IDBadgeEvents" class="FontRespo04 w3-card-2 a3-green w3-border w3-border-dark-grey w3-round-large" style="position: absolute; top: -15px; right: -20px; padding: 2px 10px;">--</div>'
     Append Page, '      </div>'
 
@@ -991,8 +997,13 @@ Proc Main
 
     Append Page, '<script>'
 
-    Append Page, '    BadgeCountDiv = document.getElementById(`IDBadgeEvents`);'
-    Append Page, '    BadgeCountDiv.innerHTML = ' + sval(count(aGroupListStatus)) + ';'
+    Append Page, '    function DataToBadge() {'
+    Append Page, '      BadgeCountDiv = document.getElementById(`IDBadgeEvents`);'
+    Append Page, '      BadgeCountDiv.innerHTML = `' + sval(Count(aGroupListStatus)) + '`;'
+    Append Page, '    }'
+
+    Append Page, '    DataToBadge();'
+
 
 
     // Suche in Liste

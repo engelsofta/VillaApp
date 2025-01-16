@@ -18,7 +18,7 @@ Proc HeadSinglePanelPage bFullScreen:boolean, bCardBackground:boolean, bFullWidt
   endif
  
   if (bCardBackground) then 
-    sClassExtension := sClassExtension + ' w3-card-2'
+    sClassExtension := sClassExtension + ' a3-glass'
   endif
 
 
@@ -191,6 +191,11 @@ Proc ColConfigtoHTML sTempHandle:String, iCountDP:int
 
   Dim sColConfig: string
   Dim sRGBTMP: string
+
+//  Dim sRGBArc:String
+
+logbook sTempHandle
+
 
   GetExtVar sColConfig, ival(sTempHandle), 'ArchivColor'  
 
