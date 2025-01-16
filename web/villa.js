@@ -165,7 +165,7 @@ $("[id*='element']").click(function(event){
 
   if (event.target.id.includes('element')) {
     $(this).hide();
-    RemoveOverlay()
+    $('#myOverlay, #myVillaSideBar').hide();
     $('#IDelementglobal').html('');	
     isSwipeEnable = true;
   }
@@ -368,17 +368,10 @@ function ShowSnack() {
 
 function modalklick(modalid) {
 
-//  $("[id*='element']").hide();
-
   $('#myVillaSideBar, #myOverlay').hide();
-  $('#myVillaSideBar, #idmain').css('filter', 'blur(6px)');
-  blurry(true);
-  
   isSwipeEnable = false;
-  
-//  $("#bottommenue").css('filter', 'opacity(.8) blur(6px)');
   $("#" + modalid).show();
-
+  
 
   // Autofocus Searchfeld und DPList wird eingelesen
   if (modalid === 'elementsearch') {
@@ -405,43 +398,17 @@ function modalklick(modalid) {
 // Toggle between showing and hiding the sidebar, and add overlay effect
 
 function w3_open() {
-  $("#myVillaSideBar").css('filter', 'blur(0px)');
+ // $("#myVillaSideBar").css('filter', 'blur(0px)');
 
   if ($("#myVillaSideBar").is(":visible")) {
-    RemoveOverlay();
+    $('#myOverlay, #myVillaSideBar').hide();
   } else {
     $("#myVillaSideBar, #myOverlay").show();
-//    $("#idmain, #bottommenue").css('filter', 'opacity(.8) blur(6px)');
     $("[id*='element']").hide();
-    blurry(true);
   }
 }
 
 
-
-function blurry(bIsBlur) {
-
-  if (bIsBlur) {
-    $("#idmain, #bottommenue").css('filter', 'opacity(.8) blur(4px)');
-  } else {
-
-  }
-
-}
-
-
-
-
-
-function RemoveOverlay() {
-
-  // Alles wieder aufhellen
-  $('#myOverlay, #myVillaSideBar').hide();
-  
-  // Alles wieder scharf machen
-  $('#idmain, #myVillaSideBar, #bottommenue').css('filter', 'blur(0px)');
-
-}
 
 
 
@@ -471,10 +438,7 @@ function ajax_arcmodal(DestElement, AjaxPage) {
   isSwipeEnable = false;
 
   var TempLink = 'villa.htm?page=' + AjaxPage + '&handle=' + AjaxHandle + '&aktion=10';
-		
-  $('#myVillaSideBar').css('filter', 'opacity(.8) blur(6px)');
-  blurry(true);
-
+ 
   $.get(TempLink, function(data) {
     $(DestElement).html(data);
 	  $('#DIVloader').fadeOut();
@@ -512,7 +476,7 @@ function ajax_status(DestElement, AjaxPage) {
   $('[id*=element]').fadeOut(); 
   
   $.get(AjaxPage, function(data) {
-    RemoveOverlay();
+    $('#myOverlay, #myVillaSideBar').hide();
     $(DestElement).html(data);	
     $('#DIVloader').fadeOut();
     CollectDataNew();
@@ -531,7 +495,7 @@ function ajax_menu(mainPage) {
   AjaxFilter = '';
   datum = new Date();
   AjaxArchivMode = '50';
-  RemoveOverlay();
+  $('#myOverlay, #myVillaSideBar').hide();
 
   $('#bottommenue, #idmain').addClass("w3-hide");
   $('[id^=btnMain]').removeClass("wandy-buttonback");
@@ -577,7 +541,7 @@ function ajax_callarchiv(DestElement) {
   var TempLink = 'villa.htm?page=ajax_archiv&handle=' + AjaxHandle + '&aktion=10&pagepara= ' + datum.toLocaleDateString('de-DE') + ',' + Para02 + ',' + AjaxFilter + ',' + AjaxHandle2 + ',' + AjaxArchivMode + ',,';
 
   $.get(TempLink, function(data) {
-    RemoveOverlay();
+    $('#myOverlay, #myVillaSideBar').hide();
     $('[id^=btnResetArc]').addClass("w3-hide");
     $(DestElement).html(data);
     $('#DIVloader').fadeOut();
