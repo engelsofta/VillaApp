@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.66'
+  Global Dim sVillaVersion:         String    := '9.67'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -19,7 +19,7 @@ Proc Main
   Repeat
 
     // Pause bei Initialisierung
-    if (bInit) then pause 30000
+    if (bInit) then pause 300
 
     // Freigabe einmal täglich
     if (hour<2 and GetMessageVar('sOnceADay') = 'true') then
@@ -478,7 +478,7 @@ Proc MainMenue
   Append aPageMenue, '<!-- Top container -->'
 
 
-  Append aPageMenue, '<div class="w3-text-white w3-top w3-large" style="backdrop-filter: blur(7px); height: var(--TopMenueHeight); display: flex; align-items: center; background-image: linear-gradient(55deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5)); border-radius: 0px 0px 15px 15px; z-index:4">'
+  Append aPageMenue, '<div class="a3-glass w3-text-white w3-top w3-large" style="height: var(--TopMenueHeight); display: flex; align-items: center; border-radius: 0px 0px 15px 15px; z-index:4">'
 
   Append aPageMenue, '  <div onclick="ajax_menu(`villa`);" id="IDMainName" class="w3-padding-small w3-margin-left gradient-text">' + sConfigJsonProName + '</div>'
 
@@ -510,7 +510,7 @@ Proc MainMenue
   Append aPageMenue, ''
   Append aPageMenue, '<!-- Sidebar/menu -->'
 
-  Append aPageMenue, '<div id="myVillaSideBar" class="w3-card-2 w3-sidebar w3-round-large w3-collapse w3-text-white" style="z-index:3; top: calc(var(--TopMenueHeight) + 4px); right:0px; width:260px; position: absolute;">'
+  Append aPageMenue, '<div id="myVillaSideBar" class="a3-glass w3-sidebar w3-round-large w3-collapse w3-text-white" style="z-index:3; top: calc(var(--TopMenueHeight) + 4px); right:0px; width:260px; position: absolute;">'
 
   Append aPageMenue, '  <div class="w3-container w3-row" style="width:100%">'
   Append aPageMenue, '    <div class="w3-bar w3-margin-top" style="white-space: nowrap;">'
@@ -620,7 +620,7 @@ Proc MainMenue
   Append aPageMenue, '<div id="bottommenue" class="w3-bottom w3-hide" style="height:60px;">'
   Append aPageMenue, '  <div id="DivArchivRight" class="w3-hide-small w3-hide-medium" style="width:264px; min-height:40px; float:right;"></div>'
 
-  Append aPageMenue, '  <div class="w3-card-2 w3-text-white w3-large" style="border-radius: 15px 15px 0px 0px; height:60px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">'
+  Append aPageMenue, '  <div class="a3-glass w3-text-white w3-large" style="border-radius: 15px 15px 0px 0px; height:60px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">'
 
   //links
   Append aPageMenue, '    <div class="ArcLeft" style="margin-right:4px; margin-left:10px;">'
@@ -750,7 +750,7 @@ Proc Content
     
       // Farbverlauf
       else
-        Append aContent, '  <div class="w3-card-2 w3-container w3-border-dark-grey w3-rest w3-text-white w3-center w3-round-xlarge w3-padding" style="margin-left:8px; margin-right:8px; margin-bottom:16px;">'        
+        Append aContent, '  <div class="a3-glass w3-container w3-border-dark-grey w3-rest w3-text-white w3-center w3-round-xlarge w3-padding" style="margin-left:8px; margin-right:8px; margin-bottom:16px;">'        
   
     EndSelect
 
@@ -814,7 +814,7 @@ Proc Content
   
           //Hintergrund mit Farbverlauf
           else
-            Append aContent, '      <div class="w3-card-2 w3-text-white w3-round-xlarge w3-padding w3-padding-16" style="min-height:250px;">'
+            Append aContent, '      <div class="a3-glass w3-text-white w3-round-xlarge w3-padding w3-padding-16" style="min-height:250px;">'
   
         EndSelect
 
