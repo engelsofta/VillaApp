@@ -49,9 +49,6 @@ Proc Main
     Dim sSQL: String                := ''
     Dim aPrioColorList:array        := StrToArray(GetMessageVar('PrioColorList'))
 
-    Dim aJsonData:array
-    Dim sJsonData:String
-
     Dim sTimeStampStart: String
     Dim sTimeStampEnd: String
     Dim sFileEnd: String
@@ -72,6 +69,7 @@ Proc Main
     if (len(sSecondArc) < 1) then
       sSecondArc := 'DIGITAL-ARCHIV_'
     endif
+
 
 
     if (ExistFile(ProPath + '\MGruppen\D_Event_' + sFileEnd + sFileExtension) and ExistFile(ProPath + '\MGruppen\' + sSecondArc + sFileEnd + sFileExtension)) then
@@ -111,25 +109,18 @@ Proc Main
 
     Call Vorlagen.HeadSinglePanelPage false, true, false
 
-    Append Page, '    <div class="CenterThings w3-opacity-min" style="padding: 10px 0px;">'
+    Append Page, '    <div class="CenterThings" style="height:50px">'
 
-    Append Page, '      <div id="IDEventSearch" onfocus="this.style.width=`calc(100% - 170px);`;" class="w3-card-2 w3-round-xlarge" style="position: relative; width:110px; margin-right:auto; margin-left:10px;">'
-    Append Page, '        <input autocomplete="off" ondblclick="DataToBadge(); this.value=``; this.dispatchEvent(new Event(`input`));" onblur="this.placeholder=`  &#x1F50D;`; IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`110px`;" onfocus="this.placeholder=``; IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`calc(100% - 170px)`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="  &#x1F50D;"></input>'
-    Append Page, '        <div id="IDBadgeEvents" class="FontRespo04 w3-card-2 a3-green w3-border w3-border-dark-grey w3-round-large" style="position: absolute; top: -15px; right: -20px; padding: 2px 10px;">--</div>'
+    Append Page, '      <div id="IDEventSearch" onfocus="this.style.width=`65%`;" class="w3-card-2 w3-round-xlarge" style="width:110px; margin-right:auto; margin-left:10px;">'
+    Append Page, '        <input autocomplete="off" ondblclick="this.value=``;" onblur="IDEventSearch.style.transition=`none`; IDEventSearch.style.width=`110px`;" onfocus="IDEventSearch.style.transition=`all 0.5s ease-out`; IDEventSearch.style.width=`60%`;" id="myInputEvents" class="w3-text-sand w3-round-xlarge InputNormal FontRespo04" style="border-bottom:0px; height:36px;" type="search" placeholder="search..."></input>'
     Append Page, '      </div>'
 
-    Append Page, '      <div class="CenterThings w3-card-2 w3-round-xlarge" style="position: relative; flex-direction: column; margin-right:10px; height:36px; width:110px;" onclick="ajax_default(`#IDelementglobal`, `ajax_selectgroup`); modalklick(`IDelementglobal`)"><div class="la la-list FontRespo01"></div></div>'
+    Append Page, '      <div class="CenterThings w3-card-2 w3-round-xlarge" style="margin-right:10px; height:36px; width:110px;" onclick="ajax_default(`#IDelementglobal`, `ajax_selectgroup`); modalklick(`IDelementglobal`)"><div class="la la-list FontRespo01"></div></div>'
 
     Append Page, '    </div>'
 
 
-    Append Page, '    <div id="mylist" class="EventList">'
-
-    Append Page, '    </div>'
-
-
-
-    Call Vorlagen.FooterSinglePanelPage
+    Append Page, '    <div id="myList" class="EventList">'
 
 
     for iSchleife = 2 to Count(aRes)
@@ -151,107 +142,36 @@ Proc Main
         endif
 
         rWertBetween  := (rTimeBtwEnd - rTimeBtwStart) * 100
-
-      else  
-      
-        rWertBetween := 0.0
-
+          
       endif
 
-      // JSON Data wird gefüllt
-      sJsonData := '        ["'+ aRes[iSchleife, 6] +'", "' + TimeToStr(UtcDateTimeToLocalDateTime(rVal(aRes[iSchleife, 1]))) + '", "' + aRes[iSchleife, 5] + '",'
-      sJsonData := sJsonData + '"' + aPrioColorList[ival(aRes[iSchleife, 7])+1,1] +  '", "' +  aPrioColorList[ival(aRes[iSchleife, 8])+1,1] + '",'
-      sJsonData := sJsonData + '"' + PrioToString(iVal(aRes[iSchleife, 8])) + '"'
-      
+
       if (isHandle(ihandle)) Then
-        sJsonData := sJsonData + ', "' + sval(rWertBetween) + '"'
-      endif
+        Append Page, '      <button class="el00 FontRespo03">'
+      else
+        Append Page, '      <button class="el00 FontRespo03" onclick="AjaxHandle=`' + aRes[iSchleife, 6] + '`; ajax_callarchiv(`#idmain`);">'
+      Endif
 
-      sJsonData := sJsonData + ']'
-      
-      
+      Append Page, '        <div class="el01 FontRespo04">' + TimeToStr(UtcDateTimeToLocalDateTime(rVal(aRes[iSchleife, 1]))) + '</div>'
+      Append Page, '        <div class="el03 FontRespo04">' + aRes[iSchleife, 5] + '</div>'
+      Append Page, '        <div class="el04 FontRespo04" style="background-image: linear-gradient(35deg, ' + aPrioColorList[ival(aRes[iSchleife, 7])+1,1] +  ' -100%,rgba(48,48,48,0.2) 75%, rgba(48,48,48,0.2) 20%, ' 
+      Append Page, '          ' +  aPrioColorList[ival(aRes[iSchleife, 8])+1,1] + ' 80%)">' + PrioToString(iVal(aRes[iSchleife, 8])) + '</div>'
 
-      // in der letzten Zeile kein Komma im Array
-      if (iSchleife <> Count(aRes)) then
-        sJsonData := sJsonData + ','
-      endif
+      if (isHandle(ihandle)) Then
+        Append Page, '        <div class="el05 w3-animate-left" style="background-image: linear-gradient(90deg, var(--ColorBlue) ' + sval(rWertBetween) + '%, rgba(0, 0, 0, 0.2) ' + sval(rWertBetween) + '%)"></div>'
+      Endif
 
-      Append aJsonData, sJsonData
+      Append Page, '      </button>'
       
     Next
 
+    Append Page, '    </div>'
+
+    Call Vorlagen.FooterSinglePanelPage
+
+
 
     Append Page, '  <script>'
-
-
-
-
-
-    Append Page, '    jsonData = {'
-    Append Page, '      "headers": ["Handle", "Time", "Comment", "OldColor", "NewColor", "Prio", "WertBetween"],'
-    Append Page, '      "data": ['
-
-    Append Page,         aJsonData
-
-    Append Page, '      ]'
-    Append Page, '    };'
-
-
-    Append Page, '    parentDiv = document.getElementById(`mylist`);'
-
-    StrDelete sSecondArc, len(sSecondArc), 1
-
-
-    Append Page, '    function DataToBadge() {'
-    Append Page, '      BadgeCountDiv = document.getElementById(`IDBadgeEvents`);'
-    Append Page, '      BadgeCountDiv.innerHTML = jsonData.data.length;'
-    Append Page, '    }'
-
-    Append Page, '    DataToBadge();'
-
-
-    Append Page, '    jsonData.data.forEach(entry => {'
-
-    Append Page, '        NEWbutton = document.createElement(`button`);'
-    Append Page, '        NEWbutton.classList.add(`el00`, `FontRespo03`);'
-    Append Page, '        NEWbutton.setAttribute(`onclick`, "AjaxHandle=" + entry[0] + "; ajax_callarchiv(`#idmain`);");'
-
-    Append Page, '        el01 = document.createElement(`div`);'
-    Append Page, '        el01.classList.add(`el01`, `FontRespo04`);'
-    Append Page, '        el01.textContent = entry[1];'
-
-    Append Page, '        el03 = document.createElement(`div`);'
-    Append Page, '        el03.classList.add(`el03`, `FontRespo04`);'
-    Append Page, '        el03.textContent = entry[2];'
-
-    Append Page, '        el04 = document.createElement(`div`);'
-    Append Page, '        el04.classList.add(`el04`, `FontRespo04`);'
-    Append Page, '        el04.textContent = entry[5];'
-    Append Page, '        el04.style.backgroundImage = `linear-gradient(35deg,` +  entry[3] + ` -100%,rgba(48,48,48,0.2) 75%, rgba(48,48,48,0.2) 20%,` + entry[4] + ` 80%)`;' 
-
-    Append Page, '        NEWbutton.appendChild(el01);'
-    Append Page, '        NEWbutton.appendChild(el03);'
-    Append Page, '        NEWbutton.appendChild(el04);'
-
-    // Zeitschiene für einen Einzelnen IP
-    if (isHandle(ihandle)) Then
-      Append Page, '        el05 = document.createElement(`div`);'
-      Append Page, '        el05.classList.add(`el05`, `w3-animate-left`);'
-      Append Page, '        el05.style.backgroundImage = `linear-gradient(90deg, var(--ColorBlue) ` + entry[6] + `%, rgba(0, 0, 0, 0.2) ` + entry[6] + `%)`;' 
-      Append Page, '        NEWbutton.appendChild(el05);'
-    endif
-
-
-    Append Page, '        parentDiv.appendChild(NEWbutton);'
-
-    Append Page, '    });'
-
-
-
-
-
-
-
 
     Append Page, '    $(`#IDAjaxDate`).html(("0" + datum.getDate()).slice(-2) + `.` + ("0" + (datum.getMonth()+1)).slice(-2) + `<br>` + datum.getFullYear());'
     Append Page, '    $("#ArchivBack").attr("onclick","datum.setDate(datum.getDate()-1); ajax_callarchiv(`#idmain`);");'
@@ -272,40 +192,18 @@ Proc Main
       Append Page, '    $("#btnResetArcfilter").removeClass("w3-hide");'
     endif
 
-
-    // Suche in Liste
-    Append Page, '    searchInput = document.getElementById(`myInputEvents`);'
-    Append Page, '    searchInput.addEventListener(`input`, function() {'
-
-    Append Page, '      value = this.value.toLowerCase();'
-    Append Page, '      buttons = document.querySelectorAll(`#mylist button`);'
-    
-    Append Page, '      matchCount = 0;'
-
-    Append Page, '      buttons.forEach((button, index) => {'
-    Append Page, '        const text = button.textContent.toLowerCase();'
-    Append Page, '        button.style.display = text.includes(value) ? `` : `none`;'
-
-    Append Page, '        if (text.includes(value)) {'
-    Append Page, '          matchCount++;'
-    Append Page, '        }'
-
-    Append Page, '    BadgeCountDiv.innerHTML = matchCount;'
+    Append Page, '    $(document).ready(function(){'
+    Append Page, '      $("#myInputEvents").on("input", function() {'
+    Append Page, '        var value = $(this).val().toLowerCase();'
+    Append Page, '        $("#myList button").filter(function() {'
+    Append Page, '          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)'
+    Append Page, '        });'
     Append Page, '      });'
     Append Page, '    });'
-
-
-
 
     Append Page, '  </script>'
 
   Endif
-
-
-
-
-
-
 
 
 
@@ -480,16 +378,18 @@ Proc Main
 
         Append Page, '              data: [' + sArcData +'],'
 
-        if (iCountHandles = 1) Then
-          call vorlagen.ColConfigtoHTML aHandleList[1,1], iCountHandles
-        else
-          call vorlagen.ColConfigtoHTML -1, iCountHandles
-        endif
+// Hier noch was überlegen damit die eingestellten Farben in der Konfig verwedet werden können
 
-        Append Page, '              backgroundColor: `rgba(' + sRGBArc + ', 0.6)`,'
-        Append Page, '              borderColor: `rgba(' + sRGBArc + ', 1)`,'
+//        if (iCountHandles=1) Then
+//
+//          call vorlagen.ColConfigtoHTML aHandleList[1,1], iCountHandles       
+//
+//          Append Page, '                            backgroundColor: `rgba(' + sRGBArc + ', 0.8)`,'
+//          Append Page, '                            borderColor: `rgba(' + sRGBArc + ', 1)`,'
+//        
+//        endif
 
-        Append Page, '              borderWidth: 1'
+        Append Page, '              borderWidth: 0'
         Append Page, '            },'
 
 
