@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.67'
+  Global Dim sVillaVersion:         String    := '9.68'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -19,7 +19,7 @@ Proc Main
   Repeat
 
     // Pause bei Initialisierung
-    if (bInit) then pause 300
+    if (bInit) then pause 30000
 
     // Freigabe einmal täglich
     if (hour<2 and GetMessageVar('sOnceADay') = 'true') then
@@ -457,6 +457,9 @@ Proc MainMenue
 
   Append aPageMenue, '  <script src="/hammer.min.js"></script>'
   Append aPageMenue, '  <script src="/chartjs-plugin-zoom.min.js"></script>'
+
+  Append aPageMenue, '  <script src="/chartjs-streaming.js"></script>'
+
 
 // **********************
 
@@ -1229,6 +1232,7 @@ Proc Content
               Append aContent, '                    rotation: -90,'
               Append aContent, '                    cutout: `85%`,'
               Append aContent, '                    plugins: {'
+              Append aContent, '                      streaming: false,'
               Append aContent, '                      legend: { display: false },'
               Append aContent, '                      tooltip: { enabled: false }'
               Append aContent, '                    },'
@@ -1507,6 +1511,8 @@ Proc Content
 
             Append aContent, '                  plugins: {'
 
+            Append aContent, '                    streaming: false,'
+
             Append aContent, '                    legend: {'
             Append aContent, '                      display: ' + sShowLegend + ','
             Append aContent, '                      position: `top`,'
@@ -1682,8 +1688,8 @@ Proc Content
 
             Append aContent, '            <script>'
             Append aContent, '              // Initialisieren des Pie-Charts'
-            Append aContent, '              var ctx = document.getElementById(`myPieChart' + sDIVVariable + '`).getContext(`2d`);'
-            Append aContent, '              var myPieChart' + sDIVVariable + ' = new Chart(ctx, {'
+            Append aContent, '              var ctx' + sDIVVariable + ' = document.getElementById(`myPieChart' + sDIVVariable + '`).getContext(`2d`);'
+            Append aContent, '              var myPieChart' + sDIVVariable + ' = new Chart(ctx' + sDIVVariable + ', {'
             Append aContent, '                type: `doughnut`,'
             Append aContent, '                data: {'
             Append aContent, '                  labels: [' + sLabTemp + '],'
@@ -1712,6 +1718,9 @@ Proc Content
             Append aContent, '                  },'
 
             Append aContent, '                  plugins: {'
+            Append aContent, '                    streaming: false,'
+
+
             Append aContent, '                    legend: {'
             Append aContent, '                      display: ' + sShowLegend + ','
             Append aContent, '                      position: `top`,'
@@ -1818,13 +1827,230 @@ Proc Content
 
             Append aContent, '              })();'
 
-
             Append aContent, '            </script>'
 
 
 
 
+
+
+
+          // ZEICHNE  ->  LIVE Chart  (13)
+          Case '13'
+
+            Dim sShowLegend:String    := 'true'
+
+            if (sConfigJsonCont07 = '0') then sShowLegend := 'false'
+
+            Append aContent, '            <div class="CenterThings" style="min-height:230px;">'
+
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '            <div class="w3-hide" style="display:inline;" id="' + 'DIVCollectLChart00' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '            <div class="w3-hide" style="display:inline;" id="' + 'DIVCollectLChart01' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont03 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '            <div class="w3-hide" style="display:inline;" id="' + 'DIVCollectLChart02' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont04 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '            <div class="w3-hide" style="display:inline;" id="' + 'DIVCollectLChart03' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont05 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+
+            Append aContent, '              <canvas id="myLiveChart' + sDIVVariable + '"></canvas>'
+
+     
+
+
+            Append aContent, '            </div>'
+
+
+
+            Append aContent, '<script>'
+            Append aContent, '  ctx' + sDIVVariable + ' = document.getElementById(`myLiveChart' + sDIVVariable + '`).getContext(`2d`);'
+          
+            Append aContent, '  new Chart(ctx' + sDIVVariable + ', {'
+            Append aContent, '    type: `line`,'
+            Append aContent, '    data: {'
+            Append aContent, '      datasets: ['
+
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '        {'
+              Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont00)) + '`,'
+              Append aContent, '          backgroundColor: `rgba(41, 159, 255, 0.2)`,'
+              Append aContent, '          borderColor: `rgba(41, 159, 255, 1)`,'
+              Append aContent, '          pointRadius: 1,'
+              Append aContent, '          borderWidth: 1,'
+              Append aContent, '          data: []'
+              Append aContent, '        },'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '        {'
+              Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont03)) + '`,'
+              Append aContent, '          backgroundColor: `rgba(255, 202, 44, 0.8)`,'
+              Append aContent, '          borderColor: `rgba(255, 202, 44, 1)`,'
+              Append aContent, '          pointRadius: 1,'
+              Append aContent, '          borderWidth: 1,'
+              Append aContent, '          data: []'
+              Append aContent, '        },'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '        {'
+              Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont04)) + '`,'
+              Append aContent, '          backgroundColor: `rgba(66, 208, 106, 0.8)`,'
+              Append aContent, '          borderColor: `rgba(66, 208, 106, 1)`,'
+              Append aContent, '          pointRadius: 1,'
+              Append aContent, '          borderWidth: 1,'
+              Append aContent, '          data: []'
+              Append aContent, '        },'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '        {'
+              Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont05)) + '`,'
+              Append aContent, '          backgroundColor: `rgba(255, 99, 132, 0.8)`,'
+              Append aContent, '          borderColor: `rgba(255, 99, 132, 1)`,'
+              Append aContent, '          pointRadius: 1,'
+              Append aContent, '          borderWidth: 1,'
+              Append aContent, '          data: []'
+              Append aContent, '        },'
+            endif
+
+
+            Append aContent, '      ]'
+            Append aContent, '    },'
+            
+            Append aContent, '    options: {'
+
+            Append aContent, '      responsive: true,'
+            Append aContent, '      maintainAspectRatio: false,'
+
+            Append aContent, '      plugins: {'
+            Append aContent, '        legend: {'
+
+            Append aContent, '          display: ' + sShowLegend + ','
+
+            Append aContent, '          labels: {'
+            Append aContent, '            boxWidth: 15, // Breite der farbigen Box'
+            Append aContent, '            boxHeight: 4, // Breite der farbigen Box'            
+            Append aContent, '            borderWidth: 0, // Entfernt den Rahmen um die Boxen'
+            Append aContent, '            color: `#EEE`, // Ändert die Schriftfarbe der Legende'
+
+            Append aContent, '            font: {'
+            Append aContent, '              family: `Helvetica`, // Schriftart'
+            Append aContent, '              size: 12, // Schriftgröße'
+            Append aContent, '              style: `normal` // Schriftstil (normal, italic, bold, etc.)'
+            Append aContent, '            }'
+            Append aContent, '          }'
+
+            Append aContent, '        }'
+            Append aContent, '      },'
+
+
+              
+            Append aContent, '      scales: {'
+            Append aContent, '        x: {'
+  
+            Append aContent, '          time: {'
+            Append aContent, '            displayFormats: {'
+            Append aContent, '              second: `HH:mm:ss`,'
+            Append aContent, '              minute: `HH:mm`,'
+            Append aContent, '              hour: `HH:mm`'
+            Append aContent, '            }'
+            Append aContent, '          },'
+    
+            Append aContent, '          ticks: {'
+            Append aContent, '            color: `white`'
+            Append aContent, '          },'
+    
+            Append aContent, '          type: `realtime`,'
+            Append aContent, '          realtime: {'
+            Append aContent, '            duration: ' + sConfigJsonCont02 + ','
+            Append aContent, '            refresh: ' + sConfigJsonCont06 + ','
+  
+            Append aContent, '            onRefresh: chart => {'
+            Append aContent, '              const now = Date.now();'
+
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '              const newData1 = parseFloat(document.getElementById(`DIVCollectLChart00' + sDIVVariable + '`).innerHTML);'
+              Append aContent, '              chart.data.datasets[0].data.push({x: now, y: newData1});'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '              const newData2 = parseFloat(document.getElementById(`DIVCollectLChart01' + sDIVVariable + '`).innerHTML);'
+              Append aContent, '              chart.data.datasets[1].data.push({x: now, y: newData2});'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '              const newData3 = parseFloat(document.getElementById(`DIVCollectLChart02' + sDIVVariable + '`).innerHTML);'
+              Append aContent, '              chart.data.datasets[2].data.push({x: now, y: newData3});'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '              const newData4 = parseFloat(document.getElementById(`DIVCollectLChart03' + sDIVVariable + '`).innerHTML);'
+              Append aContent, '              chart.data.datasets[3].data.push({x: now, y: newData4});'
+            endif
+
+
+
+
+
+            Append aContent, '            }'
+            Append aContent, '          }'
+            Append aContent, '        },'
+
+            Append aContent, '        y: {'
+  
+            Append aContent, '          ticks: {'
+            Append aContent, '            color: `white`'
+            Append aContent, '          },'
+    
+            Append aContent, '          title: {'
+            Append aContent, '            display: true,'
+//            Append aContent, '            text: `Wert`'
+            Append aContent, '          }'
+            Append aContent, '        }'
+            Append aContent, '      }'
+            Append aContent, '    }'
+            Append aContent, '  });'
+            Append aContent, '</script>'
+
+
+
+
+
+
+
+
+
+
+
+
+
           EndSelect
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
