@@ -363,7 +363,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 
 .a3-glass {
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   background-color: rgba(0, 0, 0, 0.5);
 }
 
