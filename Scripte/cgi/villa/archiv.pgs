@@ -562,8 +562,6 @@ Proc Main
 
       Append Page, '          plugins: {'
 
-      Append Page, '            streaming: false,'
-
       Append Page, '            legend: {'
       Append Page, '              position: `top`,'
 
@@ -975,8 +973,6 @@ Proc Main
     
       Append Page, '          plugins: {'
 
-      Append Page, '            streaming: false,'
-      
       Append Page, '            zoom: {'
       Append Page, '              zoom: {'
       Append Page, '                wheel: {'
