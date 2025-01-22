@@ -871,6 +871,7 @@ Proc Main
       Append Page, '      options: {'
       Append Page, '        responsive: true,'
       Append Page, '        plugins: {'
+      Append Page, '          streaming: false,'
       Append Page, '          legend: {'
       Append Page, '            position: `top`,'
 

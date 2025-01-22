@@ -9,6 +9,7 @@ Proc Main
   // Variable News wurden gelesen
   SetMessageVar 'sShowUpdateNews', 'false'
 
+  aREV[169] := ['9.68', 'LiveChart Beta 1']
   aREV[168] := ['9.67', 'Fix: event lists double click function', 'graphic optimization of the bar charts', 'color optimization of Pie-chart', 'glass effect with backdrop filter']
   aREV[167] := ['9.66', 'matchCount in event lists']
   aREV[166] := ['9.65', 'style search input']
