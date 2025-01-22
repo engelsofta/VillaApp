@@ -116,7 +116,37 @@ $(document).ready(function() {
   } else {
   }
 
- 
+
+
+
+
+  // refresh für Elemente, welche sich nach einem resize neu ausrichten müssen
+  const REFRESH_INTERVAL = 250;
+  const REFRESH_CLASS_NAME = "refreshable";
+
+  const debounce = (func) => {
+    let requestId;
+    return (...args) => {
+      cancelAnimationFrame(requestId);
+      requestId = requestAnimationFrame(() => func.apply(this, args));
+    };
+  };
+
+  const refreshHandler = () => {
+    const elementsToRefresh = $(`.${REFRESH_CLASS_NAME}`);
+    if (elementsToRefresh.length === 0) {
+      return;
+    }
+    for (let i = 0; i < elementsToRefresh.length; i++) {
+      const element = elementsToRefresh[i];
+      const functionName = $(element).data("runjs") || REFRESH_FUNCTION_NAME;
+      if (typeof window[functionName] === "function") {
+        window[functionName](element);
+      }
+    }
+  };
+
+  $(window).on('resize', debounce(refreshHandler));
 
 });
 
