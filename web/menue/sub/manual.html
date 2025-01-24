@@ -262,6 +262,238 @@
 
     </div>
 
+
+
+
+
+
+    <div class="HelpClick w3-card w3-round w3-padding w3-margin" style="width:100%;">
+
+
+      <canvas id="myLiveChart" width="300px" height="160" style="display:block; margin: 20px auto;"></canvas>
+
+      <div id="chartData1" style="display:none;"></div>
+      <div id="chartData2" style="display:none;"></div>
+
+      <div class="HelpToggle w3-left-align w3-margin-left" style="display: none;">
+        <div class="clipboard w3-text-orange w3-margin-bottom">[1752, 13, 60, 1688, 2, 3, 2000, 1, 0]</div>
+        <div>1 Handle01<br>2 13<br>3 count of values<br>4 Handle02<br>5 Handle03<br>6 Handle04<br>7 refresh interval in ms<br>8 Show Legende (0=Aus / 1=Ein)<br>9 Zeilenumbruch (1=JA)</div>
+
+
+        
+
+
+
+
+        <script>
+          ctx = document.getElementById('myLiveChart').getContext('2d');
+          chart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                  datasets: [
+                      {
+                          label: 'AT',
+                          data: [],
+                          borderColor: 'rgb(75, 192, 192)',
+                          borderWidth: 1,
+                          tension: 0.1,
+                          pointRadius: 1,
+                          pointHoverRadius: 3
+                      },
+                      {
+                          label: 'Vorlauf',
+                          data: [],
+                          borderColor: 'rgb(255, 99, 132)',
+                          borderWidth: 1,
+                          tension: 0.1,
+                          pointRadius: 1,
+                          pointHoverRadius: 3
+                      },
+                      {
+                          label: 'Rücklauf',
+                          data: [],
+                          borderColor: 'rgb(255, 205, 86)',
+                          borderWidth: 1,
+                          tension: 0.1,
+                          pointRadius: 1,
+                          pointHoverRadius: 3
+                      },
+                      {
+                          label: 'Speicher',
+                          data: [],
+                          borderColor: 'rgb(54, 162, 235)',
+                          borderWidth: 1,
+                          tension: 0.1,
+                          pointRadius: 1,
+                          pointHoverRadius: 3
+                      }
+                  ]
+              },
+              options: {
+                  responsive: true,
+
+                  plugins: {
+                    legend: {
+                      labels: {
+                        boxWidth: 15,
+                        boxHeight: 4,
+                        borderWidth: 0,
+                        color: '#EEE'
+                      }
+                    }
+                  },
+                  
+
+                  scales: {
+                      x: {
+                          type: 'time',
+                          time: {
+                              unit: 'second',
+                              displayFormats: {
+                                  second: 'HH:mm:ss'
+                              }
+                          },
+                          title: {
+                              display: false,
+                              text: 'Zeit'
+                          }
+                      },
+                      y: {
+                          beginAtZero: true,
+                          title: {
+                              display: false,
+                              text: 'Wert'
+                          }
+                      }
+                  }
+              }
+          });
+  
+          function addData(chart, data) {
+              const now = new Date();
+              for (let i = 0; i < 4; i++) {
+                  chart.data.datasets[i].data.push({x: now, y: data[i]});
+                  
+                  const maxDataPoints = 30; // Zeigt die letzten 60 Sekunden an
+                  if (chart.data.datasets[i].data.length > maxDataPoints) {
+                      chart.data.datasets[i].data.shift();
+                  }
+              }
+              
+              chart.update('none');
+          }
+  
+          function generateRandomData() {
+              return [
+                  Math.random() * 40,
+                  Math.random() * 60,
+                  Math.random() * 100,
+                  Math.random() * 100
+              ];
+          }
+  
+          setInterval(() => {
+              const newData = generateRandomData();
+              addData(chart, newData);
+          }, 1000); // Aktualisiert jede Sekunde
+      </script>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   </div>
 
 	
