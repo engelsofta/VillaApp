@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.69'
+  Global Dim sVillaVersion:         String    := '9.70'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -1820,6 +1820,283 @@ Proc Content
 
 
             Append aContent, '            </script>'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          // ZEICHNE  ->  LIVE Chart  (13)
+          Case '13'
+
+            Dim sShowLegend:String    := 'true'
+
+            if (sConfigJsonCont07 = '0') then sShowLegend := 'false'
+
+            Append aContent, '            <div class="CenterThings">'
+
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '            <div class="w3-hide" style="display:inline;" id="' + 'DIVCollectLChart00' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont00 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '            <div class="w3-hide" style="display:inline;" id="' + 'DIVCollectLChart01' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont03 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '            <div class="w3-hide" style="display:inline;" id="' + 'DIVCollectLChart02' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont04 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '            <div class="w3-hide" style="display:inline;" id="' + 'DIVCollectLChart03' + sDIVVariable + '" data-datapoint="' + sConfigJsonCont05 + '" data-mode="8" data-pic="" data-col00="" data-col01="" data-col02="" data-animate=""> </div>'
+            endif
+
+
+            Append aContent, '              <canvas id="myLiveChart' + sDIVVariable + '" style="min-height:250px;"></canvas>'
+
+     
+
+
+            Append aContent, '            </div>'
+
+
+
+
+
+
+
+
+
+
+
+            Append aContent, '<script>'
+            Append aContent, '  ctx' + sDIVVariable + ' = document.getElementById(`myLiveChart' + sDIVVariable + '`).getContext(`2d`);'
+            Append aContent, '  chart' + sDIVVariable + ' = new Chart(ctx' + sDIVVariable + ', {'
+            Append aContent, '    type: `line`,'
+            Append aContent, '    data: {'
+            Append aContent, '      datasets: ['
+
+
+
+
+            if (isHandle(ival(sConfigJsonCont00))) then
+              Append aContent, '        {'
+              Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont00)) + '`,'
+              Append aContent, '          backgroundColor: `rgba(41, 159, 255, 0.2)`,'
+              Append aContent, '          borderColor: `rgba(41, 159, 255, 1)`,'
+              Append aContent, '          pointRadius: 1,'
+              Append aContent, '          borderWidth: 1,'
+              Append aContent, '          data: []'
+              Append aContent, '        },'
+            endif
+
+
+            if (isHandle(ival(sConfigJsonCont03))) then
+              Append aContent, '        {'
+              Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont03)) + '`,'
+              Append aContent, '          backgroundColor: `rgba(255, 202, 44, 0.8)`,'
+              Append aContent, '          borderColor: `rgba(255, 202, 44, 1)`,'
+              Append aContent, '          pointRadius: 1,'
+              Append aContent, '          borderWidth: 1,'
+              Append aContent, '          data: []'
+              Append aContent, '        },'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont04))) then
+              Append aContent, '        {'
+              Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont04)) + '`,'
+              Append aContent, '          backgroundColor: `rgba(66, 208, 106, 0.8)`,'
+              Append aContent, '          borderColor: `rgba(66, 208, 106, 1)`,'
+              Append aContent, '          pointRadius: 1,'
+              Append aContent, '          borderWidth: 1,'
+              Append aContent, '          data: []'
+              Append aContent, '        },'
+            endif
+
+            if (isHandle(ival(sConfigJsonCont05))) then
+              Append aContent, '        {'
+              Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont05)) + '`,'
+              Append aContent, '          backgroundColor: `rgba(255, 99, 132, 0.8)`,'
+              Append aContent, '          borderColor: `rgba(255, 99, 132, 1)`,'
+              Append aContent, '          pointRadius: 1,'
+              Append aContent, '          borderWidth: 1,'
+              Append aContent, '          data: []'
+              Append aContent, '        },'
+            endif
+
+            Append aContent, '      ]'
+
+            Append aContent, '      },'
+
+            Append aContent, '      options: {'
+            Append aContent, '        responsive: true,'
+            Append aContent, '        maintainAspectRatio: false,'
+
+            Append aContent, '        plugins: {'
+
+
+            Append aContent, '          legend: {'
+            Append aContent, '            display: ' + sShowLegend + ','            
+            Append aContent, '            labels: {'
+            Append aContent, '              boxWidth: 15,'
+            Append aContent, '              boxHeight: 4,'
+            Append aContent, '              borderWidth: 0,'
+            Append aContent, '              color: `#EEE`'
+            Append aContent, '            }'
+            Append aContent, '          }'
+            Append aContent, '        },'
+                  
+
+            Append aContent, '        scales: {'
+            Append aContent, '          x: {'
+
+            Append aContent, '                      ticks: {'
+            Append aContent, '                        color: `rgba(255, 255, 255, 0.5)`, // Farbe der Zahlen'
+            Append aContent, '                        backdropColor: `rgba(255, 255, 255, 0.0)` // Hintergrundfarbe der Zahlen'
+            Append aContent, '                      },'
+
+
+
+
+            Append aContent, '            type: `time`,'
+            Append aContent, '            time: {'
+            Append aContent, '              unit: `second`,'
+            Append aContent, '              displayFormats: {'
+            Append aContent, '                second: `HH:mm:ss`'
+            Append aContent, '              }'
+            Append aContent, '            },'
+            Append aContent, '          },'
+
+            Append aContent, '          y: {'
+
+
+            Append aContent, '                      ticks: {'
+            Append aContent, '                        color: `rgba(255, 255, 255, 0.5)`, // Farbe der Zahlen'
+            Append aContent, '                        backdropColor: `rgba(255, 255, 255, 0.0)` // Hintergrundfarbe der Zahlen'
+            Append aContent, '                      },'
+
+
+            Append aContent, '            beginAtZero: true,'
+            Append aContent, '          }'
+            Append aContent, '        }'
+
+            Append aContent, '      }'
+            Append aContent, '    });'
+  
+
+
+  Append aContent, '    var timer' + sDIVVariable + ';'
+  Append aContent, '                    if (timer' + sDIVVariable + ') {'
+  Append aContent, '        clearInterval(timer' + sDIVVariable + ');'
+  Append aContent, '        }'
+
+
+
+            Append aContent, '      function addData' + sDIVVariable + '(chart, data) {'
+
+            Append aContent, '          const now = new Date();'
+    
+            Append aContent, '          Object.keys(data).forEach((key, index) => {'
+            Append aContent, '              if (index >= chart.data.datasets.length) {'
+            Append aContent, '                  console.warn(`Mehr Daten als Datasets vorhanden. Überspringe Wert für ${key}.`);'
+            Append aContent, '                  return;'
+            Append aContent, '              }'
+        
+            Append aContent, '              chart.data.datasets[index].data.push({x: now, y: data[key]});'
+        
+            Append aContent, '              const maxDataPoints = ' + sConfigJsonCont02 + '; // Zeigt die letzten x Datenpunkte an'
+            Append aContent, '              if (chart.data.datasets[index].data.length > maxDataPoints) {'
+            Append aContent, '                  chart.data.datasets[index].data.shift();'
+            Append aContent, '              }'
+            Append aContent, '          });'
+    
+            Append aContent, '          chart.update(`none`);'
+            Append aContent, '      }'
+
+            Append aContent, '      function getDataFromHTML' + sDIVVariable + '() {'
+            Append aContent, '          const data = {};'
+            Append aContent, '          const elements = document.querySelectorAll(`[id^="DIVCollectLChart"][id$="' + sDIVVariable + '"]`);'
+            Append aContent, '          elements.forEach(element => {'
+            Append aContent, '              const value = parseFloat(element.innerHTML);'
+            Append aContent, '              if (!isNaN(value)) {'
+            Append aContent, '                  data[element.id] = value;'
+            Append aContent, '              }'
+            Append aContent, '          });'
+            Append aContent, '          return data;'
+            Append aContent, '      }'
+
+
+
+
+  Append aContent, '      timer' + sDIVVariable + ' = setInterval(() => {'
+  Append aContent, '          const newData' + sDIVVariable + ' = getDataFromHTML' + sDIVVariable + '();'
+  Append aContent, '          addData' + sDIVVariable + '(chart' + sDIVVariable + ', newData' + sDIVVariable + ');'
+  Append aContent, '      }, ' + sConfigJsonCont06 + ');'
+
+
+
+
+//            Append aContent, '      setInterval(() => {'
+//            Append aContent, '          const newData' + sDIVVariable + ' = getDataFromHTML' + sDIVVariable + '();'
+//            Append aContent, '          addData' + sDIVVariable + '(chart' + sDIVVariable + ', newData' + sDIVVariable + ');'
+//            Append aContent, '      }, ' + sConfigJsonCont06 + ');'
+
+//            Append aContent, '      window.addEventListener('beforeunload', () => {'
+//            Append aContent, '          clearInterval(timerP1L0R0);'
+//            Append aContent, '      });'
+
+
+
+
+            Append aContent, '</script>'
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
