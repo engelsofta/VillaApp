@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.70'
+  Global Dim sVillaVersion:         String    := '9.71'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -806,15 +806,15 @@ Proc Content
 
           // Hintergrund transparent
           Case 'transparent'
-            Append aContent, '      <div class="w3-text-white w3-round-xlarge w3-padding w3-padding-16 w3-border w3-border-dark-grey" style="min-height:250px; background: rgba(200, 54, 54, 0.0);">'
+            Append aContent, '      <div class="w3-text-white w3-round-xlarge w3-padding w3-padding-16 w3-border w3-border-dark-grey" style="min-height:250px; background: rgba(200, 54, 54, 0.0); display: flex; flex-direction: column;">'
 
           //Hintergrund mit Bild
           Case 'picture'
-            Append aContent, '      <div class="w3-text-white w3-round-xlarge w3-padding w3-padding-16" style="min-height:250px; background-image: url(' + #39 + '/panelback.png' + #39 + '); background-repeat: no-repeat; background-size: 100% 100%;">'
+            Append aContent, '      <div class="w3-text-white w3-round-xlarge w3-padding w3-padding-16" style="min-height:250px; background-image: url(' + #39 + '/panelback.png' + #39 + '); background-repeat: no-repeat; background-size: 100% 100%; display: flex; flex-direction: column;">'
   
           //Hintergrund mit Farbverlauf
           else
-            Append aContent, '      <div class="a3-glass w3-text-white w3-round-xlarge w3-padding w3-padding-16" style="min-height:250px;">'
+            Append aContent, '      <div class="a3-glass w3-text-white w3-round-xlarge w3-padding w3-padding-16" style="min-height:250px; display: flex; flex-direction: column;">'
   
         EndSelect
 
@@ -824,7 +824,7 @@ Proc Content
           Append aContent, '      <h5 class="w3-border-bottom w3-margin-right w3-border-' + sConfigJsonColor + '">' + sConfigJsonName + '</h5>'
         endif
 
-        Append aContent, '      <table class="w3-table w3-centered" style="max-width: 100%; width: 100%; table-layout: fixed">'
+        Append aContent, '      <table class="w3-table w3-centered" style="flex: 1; max-width: 100%; width: 100%; table-layout: fixed">'
           
       EndIf
 
@@ -1289,15 +1289,16 @@ Proc Content
 
               Append aContent, '                      Divwert = ' + sval(100 / GetMaxValue(ival(sConfigJsonCont00))) + ';'
 
-              Append aContent, '                      rawValue = document.getElementById("DIVCollectWert' + sDIVVariable + '").innerHTML;'
-              Append aContent, '                      cleanedValue = rawValue.replace(`,`, `.`);'
-              Append aContent, '                      newData = createDataset' + sDIVVariable + '(cleanedValue * Divwert);'
+              Append aContent, '                      rawValue = document.getElementById("DIVCollectWert' + sDIVVariable + '")?.innerHTML;'
+              Append aContent, '                      if (rawValue !== undefined) {'
+              Append aContent, '                        cleanedValue = rawValue.replace(`,`, `.`);'
+              Append aContent, '                        newData = createDataset' + sDIVVariable + '(cleanedValue * Divwert);'
 
-              Append aContent, '                      gaugeChart' + sDIVVariable + '.data.centerText = document.getElementById("DIVCollectWert' + sDIVVariable + '").innerHTML;'
-              Append aContent, '                      gaugeChart' + sDIVVariable + '.data.datasets[0].data = newData.map(segment => segment.value);'
-              Append aContent, '                      gaugeChart' + sDIVVariable + '.data.datasets[0].backgroundColor = newData.map(segment => segment.color);'
-              Append aContent, '                      gaugeChart' + sDIVVariable + '.update();'
-
+              Append aContent, '                        gaugeChart' + sDIVVariable + '.data.centerText = document.getElementById("DIVCollectWert' + sDIVVariable + '")?.innerHTML;'
+              Append aContent, '                        gaugeChart' + sDIVVariable + '.data.datasets[0].data = newData.map(segment => segment.value);'
+              Append aContent, '                        gaugeChart' + sDIVVariable + '.data.datasets[0].backgroundColor = newData.map(segment => segment.color);'
+              Append aContent, '                        gaugeChart' + sDIVVariable + '.update();'
+              Append aContent, '                      }'
 
               Append aContent, '                    }'
               Append aContent, '                  }'
@@ -1556,37 +1557,37 @@ Proc Content
 
 
             if (isHandle(ival(sConfigJsonCont00))) then
-              Append aContent, '                      var dat01Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment01").innerHTML'
-              Append aContent, '                      var dat01Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit01").innerHTML'
-              Append aContent, '                      var dat01 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey01").innerHTML);'
+              Append aContent, '                      var dat01Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment01")?.innerHTML'
+              Append aContent, '                      var dat01Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit01")?.innerHTML'
+              Append aContent, '                      var dat01 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey01")?.innerHTML);'
               sCalcTemp := '[]'
             endif
 
             if (isHandle(ival(sConfigJsonCont03))) then
-              Append aContent, '                      var dat02Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment02").innerHTML'
-              Append aContent, '                      var dat02Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit02").innerHTML'
-              Append aContent, '                      var dat02 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey02").innerHTML);'
+              Append aContent, '                      var dat02Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment02")?.innerHTML'
+              Append aContent, '                      var dat02Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit02")?.innerHTML'
+              Append aContent, '                      var dat02 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey02")?.innerHTML);'
             endif
 
 
             if (isHandle(ival(sConfigJsonCont04))) then
-              Append aContent, '                      var dat03Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment03").innerHTML'
-              Append aContent, '                      var dat03Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit03").innerHTML'
-              Append aContent, '                      var dat03 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey03").innerHTML);'
+              Append aContent, '                      var dat03Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment03")?.innerHTML'
+              Append aContent, '                      var dat03Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit03")?.innerHTML'
+              Append aContent, '                      var dat03 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey03")?.innerHTML);'
             endif
 
 
             if (isHandle(ival(sConfigJsonCont05))) then
-              Append aContent, '                      var dat04Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment04").innerHTML'
-              Append aContent, '                      var dat04Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit04").innerHTML'
-              Append aContent, '                      var dat04 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey04").innerHTML);'
+              Append aContent, '                      var dat04Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment04")?.innerHTML'
+              Append aContent, '                      var dat04Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit04")?.innerHTML'
+              Append aContent, '                      var dat04 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey04")?.innerHTML);'
             endif
 
 
             if (isHandle(ival(sConfigJsonCont06))) then
-              Append aContent, '                      var dat05Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment05").innerHTML'
-              Append aContent, '                      var dat05Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit05").innerHTML'
-              Append aContent, '                      var dat05 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey05").innerHTML);'
+              Append aContent, '                      var dat05Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment05")?.innerHTML'
+              Append aContent, '                      var dat05Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit05")?.innerHTML'
+              Append aContent, '                      var dat05 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey05")?.innerHTML);'
             endif
 
 
@@ -1763,36 +1764,36 @@ Proc Content
 
 
             if (isHandle(ival(sConfigJsonCont00))) then
-              Append aContent, '                      var dat01Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment01").innerHTML'
-              Append aContent, '                      var dat01Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit01").innerHTML'
-              Append aContent, '                          var dat01 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey01").innerHTML);'
+              Append aContent, '                      var dat01Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment01")?.innerHTML'
+              Append aContent, '                      var dat01Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit01")?.innerHTML'
+              Append aContent, '                          var dat01 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey01")?.innerHTML);'
               sCalcTemp := '[]'
             endif
 
             if (isHandle(ival(sConfigJsonCont03))) then
-              Append aContent, '                      var dat02Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment02").innerHTML'
-              Append aContent, '                      var dat02Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit02").innerHTML'
-              Append aContent, '                      var dat02 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey02").innerHTML);'
+              Append aContent, '                      var dat02Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment02")?.innerHTML'
+              Append aContent, '                      var dat02Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit02")?.innerHTML'
+              Append aContent, '                      var dat02 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey02")?.innerHTML);'
             endif
 
 
             if (isHandle(ival(sConfigJsonCont04))) then
-              Append aContent, '                      var dat03Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment03").innerHTML'
-              Append aContent, '                      var dat03Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit03").innerHTML'
-              Append aContent, '                      var dat03 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey03").innerHTML);'
+              Append aContent, '                      var dat03Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment03")?.innerHTML'
+              Append aContent, '                      var dat03Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit03")?.innerHTML'
+              Append aContent, '                      var dat03 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey03")?.innerHTML);'
             endif
 
 
             if (isHandle(ival(sConfigJsonCont05))) then
-              Append aContent, '                      var dat04Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment04").innerHTML'
-              Append aContent, '                      var dat04Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit04").innerHTML'
-              Append aContent, '                      var dat04 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey04").innerHTML);'
+              Append aContent, '                      var dat04Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment04")?.innerHTML'
+              Append aContent, '                      var dat04Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit04")?.innerHTML'
+              Append aContent, '                      var dat04 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey04")?.innerHTML);'
             endif
 
             if (isHandle(ival(sConfigJsonCont06))) then
-              Append aContent, '                      var dat05Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment05").innerHTML'
-              Append aContent, '                      var dat05Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit05").innerHTML'
-              Append aContent, '                      var dat05 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey05").innerHTML);'
+              Append aContent, '                      var dat05Comment = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyComment05")?.innerHTML'
+              Append aContent, '                      var dat05Unit = document.getElementById("DIVCollect' + sDIVVariable + 'SankeyUnit05")?.innerHTML'
+              Append aContent, '                      var dat05 = parseInt(document.getElementById("DIVCollect' + sDIVVariable + 'Sankey05")?.innerHTML);'
             endif
 
 
@@ -1880,9 +1881,6 @@ Proc Content
 
 
 
-
-
-
             Append aContent, '<script>'
             Append aContent, '  ctx' + sDIVVariable + ' = document.getElementById(`myLiveChart' + sDIVVariable + '`).getContext(`2d`);'
             Append aContent, '  chart' + sDIVVariable + ' = new Chart(ctx' + sDIVVariable + ', {'
@@ -1896,7 +1894,7 @@ Proc Content
             if (isHandle(ival(sConfigJsonCont00))) then
               Append aContent, '        {'
               Append aContent, '          label: `' + GetComment(ival(sConfigJsonCont00)) + '`,'
-              Append aContent, '          backgroundColor: `rgba(41, 159, 255, 0.2)`,'
+              Append aContent, '          backgroundColor: `rgba(41, 159, 255, 0.8)`,'
               Append aContent, '          borderColor: `rgba(41, 159, 255, 1)`,'
               Append aContent, '          pointRadius: 1,'
               Append aContent, '          borderWidth: 1,'
@@ -1938,154 +1936,120 @@ Proc Content
               Append aContent, '        },'
             endif
 
-            Append aContent, '      ]'
+            Append aContent, '      ]'    // end datasets
 
+            Append aContent, '    },'
+
+            Append aContent, '    options: {'
+            Append aContent, '      responsive: true,'
+            Append aContent, '      maintainAspectRatio: false,'
+
+
+            Append aContent, '      interaction: {'
+            Append aContent, '        intersect: false,'
+            Append aContent, '        mode: `index`,'
             Append aContent, '      },'
 
-            Append aContent, '      options: {'
-            Append aContent, '        responsive: true,'
-            Append aContent, '        maintainAspectRatio: false,'
+            Append aContent, '      plugins: {'
 
-            Append aContent, '        plugins: {'
-
-
-            Append aContent, '          legend: {'
-            Append aContent, '            display: ' + sShowLegend + ','            
-            Append aContent, '            labels: {'
-            Append aContent, '              boxWidth: 15,'
-            Append aContent, '              boxHeight: 4,'
-            Append aContent, '              borderWidth: 0,'
-            Append aContent, '              color: `#EEE`'
-            Append aContent, '            }'
-            Append aContent, '          }'
+            Append aContent, '        tooltip: {'
+            Append aContent, '          backgroundColor: `rgba(0, 0, 0, 0.8)`'
             Append aContent, '        },'
-                  
-
-            Append aContent, '        scales: {'
-            Append aContent, '          x: {'
-
-            Append aContent, '                      ticks: {'
-            Append aContent, '                        color: `rgba(255, 255, 255, 0.5)`, // Farbe der Zahlen'
-            Append aContent, '                        backdropColor: `rgba(255, 255, 255, 0.0)` // Hintergrundfarbe der Zahlen'
-            Append aContent, '                      },'
 
 
-
-
-            Append aContent, '            type: `time`,'
-            Append aContent, '            time: {'
-            Append aContent, '              unit: `second`,'
-            Append aContent, '              displayFormats: {'
-            Append aContent, '                second: `HH:mm:ss`'
-            Append aContent, '              }'
-            Append aContent, '            },'
-            Append aContent, '          },'
-
-            Append aContent, '          y: {'
-
-
-            Append aContent, '                      ticks: {'
-            Append aContent, '                        color: `rgba(255, 255, 255, 0.5)`, // Farbe der Zahlen'
-            Append aContent, '                        backdropColor: `rgba(255, 255, 255, 0.0)` // Hintergrundfarbe der Zahlen'
-            Append aContent, '                      },'
-
-
-            Append aContent, '            beginAtZero: true,'
+            Append aContent, '        legend: {'
+            Append aContent, '          display: ' + sShowLegend + ','            
+            Append aContent, '          labels: {'
+            Append aContent, '            boxWidth: 10,'
+            Append aContent, '            boxHeight: 10,'
+            Append aContent, '            borderWidth: 0,'
+            Append aContent, '            color: `#EEE`'
             Append aContent, '          }'
             Append aContent, '        }'
+            Append aContent, '      },'
+                  
 
+            Append aContent, '      scales: {'
+            Append aContent, '        x: {'
+
+            Append aContent, '          ticks: {'
+            Append aContent, '            color: `rgba(255, 255, 255, 0.5)`, // Farbe der Zahlen'
+            Append aContent, '            backdropColor: `rgba(255, 255, 255, 0.0)` // Hintergrundfarbe der Zahlen'
+            Append aContent, '          },'
+
+
+
+
+            Append aContent, '          type: `time`,'
+            Append aContent, '          time: {'
+            Append aContent, '            tooltipFormat: `dd.MM.yyyy HH:mm:ss`,'
+            Append aContent, '            unit: `second`,'
+            Append aContent, '            displayFormats: {'
+            Append aContent, '              second: `HH:mm:ss`'
+            Append aContent, '            }'
+            Append aContent, '          },'
+            Append aContent, '        },'    // end x
+
+            Append aContent, '        y: {'
+
+
+            Append aContent, '          ticks: {'
+            Append aContent, '            color: `rgba(255, 255, 255, 0.5)`, // Farbe der Zahlen'
+            Append aContent, '            backdropColor: `rgba(255, 255, 255, 0.0)` // Hintergrundfarbe der Zahlen'
+            Append aContent, '          },'
+            Append aContent, '          beginAtZero: true,'
+            Append aContent, '        }'     // end x
+
+            Append aContent, '      }'    // end scales
+
+            Append aContent, '    }'    // end options
+            Append aContent, '  });'    // end chart
+
+
+            Append aContent, '  function addData' + sDIVVariable + '(chart, data) {'
+
+            Append aContent, '    const now = new Date();'
+    
+            Append aContent, '    Object.keys(data).forEach((key, index) => {'
+            Append aContent, '      if (index >= chart.data.datasets.length) {'
+            Append aContent, '        console.warn(`Mehr Daten als Datasets vorhanden. Überspringe Wert für ${key}.`);'
+            Append aContent, '        return;'
+            Append aContent, '      }'
+        
+            Append aContent, '      chart.data.datasets[index].data.push({x: now, y: data[key]});'
+        
+            Append aContent, '      const maxDataPoints = ' + sConfigJsonCont02 + '; // Zeigt die letzten x Datenpunkte an'
+            Append aContent, '      if (chart.data.datasets[index].data.length > maxDataPoints) {'
+            Append aContent, '        chart.data.datasets[index].data.shift();'
             Append aContent, '      }'
             Append aContent, '    });'
-  
-
-
-  Append aContent, '    var timer' + sDIVVariable + ';'
-  Append aContent, '                    if (timer' + sDIVVariable + ') {'
-  Append aContent, '        clearInterval(timer' + sDIVVariable + ');'
-  Append aContent, '        }'
-
-
-
-            Append aContent, '      function addData' + sDIVVariable + '(chart, data) {'
-
-            Append aContent, '          const now = new Date();'
     
-            Append aContent, '          Object.keys(data).forEach((key, index) => {'
-            Append aContent, '              if (index >= chart.data.datasets.length) {'
-            Append aContent, '                  console.warn(`Mehr Daten als Datasets vorhanden. Überspringe Wert für ${key}.`);'
-            Append aContent, '                  return;'
-            Append aContent, '              }'
-        
-            Append aContent, '              chart.data.datasets[index].data.push({x: now, y: data[key]});'
-        
-            Append aContent, '              const maxDataPoints = ' + sConfigJsonCont02 + '; // Zeigt die letzten x Datenpunkte an'
-            Append aContent, '              if (chart.data.datasets[index].data.length > maxDataPoints) {'
-            Append aContent, '                  chart.data.datasets[index].data.shift();'
-            Append aContent, '              }'
-            Append aContent, '          });'
-    
-            Append aContent, '          chart.update(`none`);'
+            Append aContent, '    chart.update(`none`);'
+            Append aContent, '  }'    // end addData
+
+            Append aContent, '  function getDataFromHTML' + sDIVVariable + '() {'
+            Append aContent, '    const data = {};'
+            Append aContent, '    const elements = document.querySelectorAll(`[id^="DIVCollectLChart"][id$="' + sDIVVariable + '"]`);'
+            Append aContent, '    elements.forEach(element => {'
+            Append aContent, '      const value = parseFloat(element.innerHTML);'
+            Append aContent, '      if (!isNaN(value)) {'
+            Append aContent, '        data[element.id] = value;'
             Append aContent, '      }'
-
-            Append aContent, '      function getDataFromHTML' + sDIVVariable + '() {'
-            Append aContent, '          const data = {};'
-            Append aContent, '          const elements = document.querySelectorAll(`[id^="DIVCollectLChart"][id$="' + sDIVVariable + '"]`);'
-            Append aContent, '          elements.forEach(element => {'
-            Append aContent, '              const value = parseFloat(element.innerHTML);'
-            Append aContent, '              if (!isNaN(value)) {'
-            Append aContent, '                  data[element.id] = value;'
-            Append aContent, '              }'
-            Append aContent, '          });'
-            Append aContent, '          return data;'
-            Append aContent, '      }'
+            Append aContent, '    });'
+            Append aContent, '    return data;'
+            Append aContent, '  }'    // end getDataFromHTML
 
 
+            Append aContent, '  timer' + sDIVVariable + ' = setInterval(() => {'
+            Append aContent, '    const newData' + sDIVVariable + ' = getDataFromHTML' + sDIVVariable + '();'
+            Append aContent, '    addData' + sDIVVariable + '(chart' + sDIVVariable + ', newData' + sDIVVariable + ');'
+            Append aContent, '  }, ' + sConfigJsonCont06 + ');'
 
-
-  Append aContent, '      timer' + sDIVVariable + ' = setInterval(() => {'
-  Append aContent, '          const newData' + sDIVVariable + ' = getDataFromHTML' + sDIVVariable + '();'
-  Append aContent, '          addData' + sDIVVariable + '(chart' + sDIVVariable + ', newData' + sDIVVariable + ');'
-  Append aContent, '      }, ' + sConfigJsonCont06 + ');'
-
-
-
-
-//            Append aContent, '      setInterval(() => {'
-//            Append aContent, '          const newData' + sDIVVariable + ' = getDataFromHTML' + sDIVVariable + '();'
-//            Append aContent, '          addData' + sDIVVariable + '(chart' + sDIVVariable + ', newData' + sDIVVariable + ');'
-//            Append aContent, '      }, ' + sConfigJsonCont06 + ');'
-
-//            Append aContent, '      window.addEventListener('beforeunload', () => {'
-//            Append aContent, '          clearInterval(timerP1L0R0);'
-//            Append aContent, '      });'
-
-
+            Append aContent, '  timersUnload.push(timer' + sDIVVariable + ');'
 
 
             Append aContent, '</script>'
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
