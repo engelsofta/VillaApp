@@ -289,7 +289,7 @@ Proc Main
 
         Append Page, '  function handleDivChange() {'
         Append Page, '    var DIVSliderASGLT = document.getElementById("DIVCollectslidersetasglt");'
-        Append Page, '    if (DIVSliderASGLT.innerHTML.includes("checked") == true){'
+        Append Page, '    if (DIVSliderASGLT?.innerHTML.includes("checked") == true){'
         Append Page, '      $("#hideanasettings").show();'
         Append Page, '    } else {'
         Append Page, '      $("#hideanasettings").hide();'
@@ -704,14 +704,6 @@ Proc Main
     Append Page, '      colorPicker = document.getElementById(`IDColorPicker`);'
     Append Page, '      colorPicker.value = getBackgroundColor(colorPicker);'
 
-
-// -> ausgelagert in villa.js
-    // Funktion zum Auslesen der aktuellen Hintergrundfarbe
-//    Append Page, '      function getBackgroundColor(element) {'
-//    Append Page, '        var bgColor = window.getComputedStyle(element).backgroundColor;'
-//    Append Page, '        return rgbToHex(bgColor);'
-//    Append Page, '      }'
-
     Append Page, '      colorPicker.addEventListener(`change`, function() {'
     Append Page, '        selectedColor = colorPicker.value;'
     Append Page, '        const red = selectedColor.substr(1, 2);'
@@ -722,7 +714,6 @@ Proc Main
     Append Page, '      });'
 
     Append Page, '    </script>'
-
 
 
 
@@ -986,7 +977,6 @@ Proc Main
       Append Page, '          <div class="FontRespo04 w3-padding-small" style="color:#42D06A;">' + sDateTime + '</div>'
       Append Page, '        </div>' 
 
-
       Append Page, '      </button>'
 	  
     next	  
@@ -1064,5 +1054,3 @@ Proc Main
 
 
 endProc
-
-
