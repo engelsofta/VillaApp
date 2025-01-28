@@ -13,7 +13,6 @@ var AjaxArchivTyp = '';
 var AjaxFilter = '';
 
 var AjaxFilerStart = '';
-//var AjaxFilerEnd   = '';
 
 var AjaxAktion = '0';
 var AjaxArchivMode = '50';
@@ -24,6 +23,8 @@ var AjaxSummeYear = [];
 var AjaxSummeCol = [];
 
 var sleeprefresh = false;
+
+var timersUnload = []; // Array zum Speichern der Timer-IDs
 
 var LastDPSearch = [];
 
@@ -119,6 +120,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   // refresh für Elemente, welche sich nach einem resize neu ausrichten müssen
   const REFRESH_INTERVAL = 250;
@@ -491,6 +494,12 @@ function ajax_status(DestElement, AjaxPage) {
 function ajax_menu(mainPage) {
 
   ShowDIVloader();
+
+
+  timersUnload.forEach(timerId => clearInterval(timerId)); // Alle Timer stoppen
+  timersUnload = []; // Array leeren
+
+
   AjaxAktPage = mainPage;
   AjaxFilter = '';
   datum = new Date();
