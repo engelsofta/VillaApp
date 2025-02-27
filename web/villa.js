@@ -491,10 +491,9 @@ function ajax_status(DestElement, AjaxPage) {
 
 
 
-function ajax_menu(mainPage) {
+function ajax_menu(mainPage, Link) {
 
   ShowDIVloader();
-
 
   timersUnload.forEach(timerId => clearInterval(timerId)); // Alle Timer stoppen
   timersUnload = []; // Array leeren
@@ -509,11 +508,19 @@ function ajax_menu(mainPage) {
   $('#bottommenue, #idmain').addClass("w3-hide");
   $('[id^=btnMain]').removeClass("wandy-buttonback");
   $('#btnMain' + mainPage).addClass("wandy-buttonback");
-		
-  $.get('/menue/' + mainPage + '.html', function(data) {
-    $('#idmain').html(data);	
+
+  // Link vorhanden
+  if (Link === undefined) {
+    newPage = "/menue/" + mainPage + ".html";
+  } else {
+    newPage = Link;
+  }
+
+  $.get(newPage, function(data) {
+    $('#idmain').html(data);
     CollectDataNew('RemoveHide');
-  })
+  });
+
 
 }
 
