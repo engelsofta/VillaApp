@@ -5,7 +5,7 @@ Proc Main
 
   Global Dim sConfigJson:           String    := ProPath + '\web\config.json'
   Global Dim aConfigJson:           Array     := []
-  Global Dim sVillaVersion:         String    := '9.71'
+  Global Dim sVillaVersion:         String    := '9.72'
   Global Dim sConfigJsonMode:       String    := ''
   Global Dim sPageRefresh:          String    := ''
   Global Dim SConfigJsonShowSingle: String    := ''
@@ -366,6 +366,7 @@ Proc MainMenue
   Dim s04ConfigJson:        String   := ''
   Dim s05ConfigJson:        String   := ''
   Dim s06ConfigJson:        String   := ''
+  Dim SConfigJsonLink:      String   := ''
 
   Dim aPageMenue:           array       := []
 
@@ -549,7 +550,7 @@ Proc MainMenue
     s06ConfigJson := aConfigJson.MainMenu[iSchleife01].AniColor
     sConfigJsonMode := aConfigJson.MainMenu[iSchleife01].Mode
     SConfigJsonShowSingle := aConfigJson.MainMenu[iSchleife01].Show
-  
+    SConfigJsonLink := aConfigJson.MainMenu[iSchleife01].Link
 
     // Eintrag verstecken
     If (s05ConfigJson = '3') Then
@@ -558,12 +559,16 @@ Proc MainMenue
       sAktiveLine := ''
     EndIf
 
-
-    // Handle ist vorhanden
-    Append aPageMenue, '    <div id="btnMain' + s02ConfigJson + '" onclick="ajax_menu(`' + s02ConfigJson + '`);" style="min-height:36px;" class="w3-button w3-border-white w3-block w3-display-container ' + sAktiveLine + '">'
+    // check ob Link Eintrag vorhanden ist
+    if (len(SConfigJsonLink) > 0) Then
+      Append aPageMenue, '    <div id="btnMain' + s02ConfigJson + '" onclick="ajax_menu(`' + s02ConfigJson + '`, `' + SConfigJsonLink + '`);" style="min-height:36px;" class="w3-button w3-border-white w3-block w3-display-container ' + sAktiveLine + '">'
+    else
+      Append aPageMenue, '    <div id="btnMain' + s02ConfigJson + '" onclick="ajax_menu(`' + s02ConfigJson + '`);" style="min-height:36px;" class="w3-button w3-border-white w3-block w3-display-container ' + sAktiveLine + '">'
+    endif
 
     Append aPageMenue, '      <div class="w3-display-left w3-center">'
 
+    // Handle ist vorhanden
     if (s04ConfigJson <> '0') Then
       Append aPageMenue, '        <div style="width:45px" class="w3-large w3-button" id="' + 'DIVCollect' + sVal(iSchleife01) + '" data-datapoint="' + s04ConfigJson + '" data-mode="1" data-pic="' + s03ConfigJson + '" data-col00="black" data-col01="' + s06ConfigJson + '" data-col02="00802b" data-animate="' + s05ConfigJson + '"></div>'
     else
