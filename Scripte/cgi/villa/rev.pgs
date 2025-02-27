@@ -9,6 +9,7 @@ Proc Main
   // Variable News wurden gelesen
   SetMessageVar 'sShowUpdateNews', 'false'
 
+  aREV[172] := ['9.72', 'Weblinks in the menu are now possible']
   aREV[171] := ['9.71', 'touchsupport deleted "blurry()" and "RemoveOverlay"', 'various JavaScript shenanigans that will make your brain do somersaults', 'style legend livechart', 'flex after headline']
   aREV[170] := ['9.70', 'LiveChart Beta 2']
   aREV[169] := ['9.69', 'no LiveChart fix']
